@@ -33,17 +33,16 @@ public class MainActivity extends Activity {
 		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 				.getMap();
 
-		GoogleMapOptions options = new GoogleMapOptions();
-		options.camera(CameraPosition.fromLatLngZoom(new LatLng(38.986918,
-				-76.942554), 16));
+		//GoogleMapOptions options = new GoogleMapOptions();
+		//options.camera(CameraPosition.fromLatLngZoom(new LatLng(38.986918,
+		//-76.942554), 16));
 
 		// Centering Map on UMD
-		LatLngBounds UMD = new LatLngBounds(new LatLng(38.981257, -76.95687),
-				new LatLng(39.000962, -76.932355));
+		// LatLngBounds UMD = new LatLngBounds(new LatLng(38.981257, -76.95687),
+		// new LatLng(39.000962, -76.932355));
 
 		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(38.989822,
 				-76.940637), 14));
-
 		mMap.getUiSettings().setZoomControlsEnabled(false);
 
 		fabButton = new FloatingActionButton.Builder(this)
@@ -52,21 +51,18 @@ public class MainActivity extends Activity {
 				.withButtonColor(Color.RED)
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
-		
-		
+
 		fabButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(MainActivity.this, AddEventActivity.class);
+				// TODO - add more buttons when clicked
+				Intent intent = new Intent(MainActivity.this,
+						AddEventActivity.class);
 				startActivity(intent);
-
 			}
 		});
 
-		
-
 	}
-
 
 }

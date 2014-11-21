@@ -12,6 +12,8 @@ public class ListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_list);
+		//TODO - create list layout file
+		//IDEA - use similar card style used in new material-designed Google Calendar app
 		
 	}
 }
