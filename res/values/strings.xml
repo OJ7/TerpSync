@@ -2,7 +2,16 @@
 <resources>
 
     <string name="app_name">CampusEventsApp</string>
+    <string name="title_list_activity">List View</string>
+    <string name="title_add_event_activity">New Event</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="enter_event_name">Enter event name</string>
+    <string name="add_event_location">Add location</string>
+    <string name="add_event_description">Add description</string>
+    <string name="event_admission_fee">Admission</string>
+    <string name="event_free">Free</string>
+    <string name="event_paid">Paid</string>
+    <string name="event_save">Save</string>
 
 </resources>
