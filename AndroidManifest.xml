@@ -17,10 +17,10 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    
+
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true"/>
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -35,6 +35,26 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.campuseventsapp.ListActivity"
+            android:label="@string/title_list_activity"
+            android:parentActivityName="com.example.campuseventsapp.MainActivity" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.campuseventsapp.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.example.campuseventsapp.AddEventActivity"
+            android:label="@string/title_add_event_activity"
+            android:parentActivityName="com.example.campuseventsapp.MainActivity" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.campuseventsapp.MainActivity" />
         </activity>
 
         <meta-data
