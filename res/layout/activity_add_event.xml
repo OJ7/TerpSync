@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
-        android:paddingTop="12dp"
         android:paddingBottom="12dp"
+        android:paddingTop="12dp"
         android:text="Student Org Name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -117,21 +117,30 @@
             android:text="@+string/event_admission_fee"
             android:textSize="18sp" />
 
-        <RadioButton
-            android:id="@+id/eventFree"
+        <RadioGroup
+            android:id="@+id/eventAdmissionRadioGroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingBottom="8dp"
-            android:text="@+string/event_free" />
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp" >
 
-        <RadioButton
-            android:id="@+id/eventPaid"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingBottom="8dp"
-            android:text="@+string/event_paid" />
+            <RadioButton
+                android:id="@+id/eventFree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingBottom="8dp"
+                android:text="@+string/event_free" />
+
+            <RadioButton
+                android:id="@+id/eventPaid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingBottom="8dp"
+                android:text="@+string/event_paid" />
+        </RadioGroup>
     </LinearLayout>
 
     <View

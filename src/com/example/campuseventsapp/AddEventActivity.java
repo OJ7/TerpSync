@@ -9,10 +9,12 @@ import com.example.campuseventsapp.R;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 public class AddEventActivity extends Activity {
 
@@ -61,21 +63,17 @@ public class AddEventActivity extends Activity {
 		startTimeTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new DatePickerDialog(AddEventActivity.this, endDatePicker,
-						myCalendar // TODO - change endDatePicker
-								.get(Calendar.YEAR), myCalendar
-								.get(Calendar.MONTH), myCalendar
-								.get(Calendar.DAY_OF_MONTH)).show();
+				new TimePickerDialog(AddEventActivity.this, startTimePicker,
+						myCalendar.get(Calendar.HOUR_OF_DAY), myCalendar
+								.get(Calendar.MINUTE), false).show();
 			}
 		});
 		endTimeTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new DatePickerDialog(AddEventActivity.this, endDatePicker,
-						myCalendar // TODO - change endDatePicker
-								.get(Calendar.YEAR), myCalendar
-								.get(Calendar.MONTH), myCalendar
-								.get(Calendar.DAY_OF_MONTH)).show();
+				new TimePickerDialog(AddEventActivity.this, endTimePicker,
+						myCalendar.get(Calendar.HOUR_OF_DAY), myCalendar
+								.get(Calendar.MINUTE), false).show();
 			}
 		});
 
@@ -91,7 +89,6 @@ public class AddEventActivity extends Activity {
 			updateDateLabel(startDateTextView);
 		}
 	};
-
 	DatePickerDialog.OnDateSetListener endDatePicker = new DatePickerDialog.OnDateSetListener() {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
@@ -102,9 +99,23 @@ public class AddEventActivity extends Activity {
 			updateDateLabel(endDateTextView);
 		}
 	};
+	TimePickerDialog.OnTimeSetListener startTimePicker = new TimePickerDialog.OnTimeSetListener() {
+		@Override
+		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+			myCalendar.set(Calendar.MINUTE, minute);
+			updateTimeLabel(startTimeTextView);
+		}
+	};
+	TimePickerDialog.OnTimeSetListener endTimePicker = new TimePickerDialog.OnTimeSetListener() {
+		@Override
+		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+			myCalendar.set(Calendar.MINUTE, minute);
+			updateTimeLabel(endTimeTextView);
+		}
+	};
 
-	//TODO - create TimePickerDialogs for both start and end
-	
 	/**
 	 * Updates the TextView for the associated Date
 	 * 
@@ -118,8 +129,6 @@ public class AddEventActivity extends Activity {
 		tv.setText(sdf.format(myCalendar.getTime()));
 	}
 
-	
-	//TODO - update this method
 	/**
 	 * Updates the TextView for the associated Time
 	 * 
@@ -128,7 +137,7 @@ public class AddEventActivity extends Activity {
 	 *            updated
 	 */
 	private void updateTimeLabel(TextView tv) {
-		String myFormat = "EEEE, MMM dd, yyyy";
+		String myFormat = "hh:mm aa";
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 		tv.setText(sdf.format(myCalendar.getTime()));
 	}
