@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
+        android:paddingTop="12dp"
         android:paddingBottom="12dp"
         android:text="Student Org Name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -37,7 +38,7 @@
             android:layout_weight="1"
             android:clickable="true"
             android:ems="10"
-            android:hint="Date"
+            android:hint="Start Date"
             android:onClick="onClick"
             android:paddingBottom="8dp"
             android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -66,7 +67,7 @@
             android:layout_weight="1"
             android:clickable="true"
             android:ems="10"
-            android:hint="Date"
+            android:hint="End Date"
             android:onClick="onClick"
             android:paddingBottom="8dp"
             android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -99,7 +100,7 @@
         android:ems="10"
         android:hint="@+string/add_event_description"
         android:inputType="textMultiLine"
-        android:maxHeight="20dp"
+        android:maxHeight="50dp"
         android:paddingBottom="8dp" />
 
     <LinearLayout
@@ -116,7 +117,7 @@
             android:text="@+string/event_admission_fee"
             android:textSize="18sp" />
 
-        <CheckBox
+        <RadioButton
             android:id="@+id/eventFree"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -124,7 +125,7 @@
             android:paddingBottom="8dp"
             android:text="@+string/event_free" />
 
-        <CheckBox
+        <RadioButton
             android:id="@+id/eventPaid"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

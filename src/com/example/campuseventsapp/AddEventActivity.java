@@ -17,7 +17,8 @@ import android.widget.TextView;
 public class AddEventActivity extends Activity {
 
 	Calendar myCalendar = Calendar.getInstance();
-	TextView startDateTextView, startTimeTextView, endDateTextView, endTimeTextView;
+	TextView startDateTextView, startTimeTextView, endDateTextView,
+			endTimeTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,52 +37,100 @@ public class AddEventActivity extends Activity {
 		endDateTextView = (TextView) findViewById(R.id.eventEndDate);
 		startTimeTextView = (TextView) findViewById(R.id.eventStartTime);
 		endTimeTextView = (TextView) findViewById(R.id.eventEndTime);
-		
+
 		// OnClickListeners for Date and Time pickers
 		// TODO - setOnClickListener for both Time TextViews
 		startDateTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new DatePickerDialog(AddEventActivity.this, startDate, myCalendar
-						.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-						myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+				new DatePickerDialog(AddEventActivity.this, startDatePicker,
+						myCalendar.get(Calendar.YEAR), myCalendar
+								.get(Calendar.MONTH), myCalendar
+								.get(Calendar.DAY_OF_MONTH)).show();
 			}
 		});
 		endDateTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new DatePickerDialog(AddEventActivity.this, endDate, myCalendar
-						.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-						myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+				new DatePickerDialog(AddEventActivity.this, endDatePicker,
+						myCalendar.get(Calendar.YEAR), myCalendar
+								.get(Calendar.MONTH), myCalendar
+								.get(Calendar.DAY_OF_MONTH)).show();
 			}
 		});
+		startTimeTextView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new DatePickerDialog(AddEventActivity.this, endDatePicker,
+						myCalendar // TODO - change endDatePicker
+								.get(Calendar.YEAR), myCalendar
+								.get(Calendar.MONTH), myCalendar
+								.get(Calendar.DAY_OF_MONTH)).show();
+			}
+		});
+		endTimeTextView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new DatePickerDialog(AddEventActivity.this, endDatePicker,
+						myCalendar // TODO - change endDatePicker
+								.get(Calendar.YEAR), myCalendar
+								.get(Calendar.MONTH), myCalendar
+								.get(Calendar.DAY_OF_MONTH)).show();
+			}
+		});
+
 	}
 
-	DatePickerDialog.OnDateSetListener startDate = new DatePickerDialog.OnDateSetListener() {
+	DatePickerDialog.OnDateSetListener startDatePicker = new DatePickerDialog.OnDateSetListener() {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
 				int dayOfMonth) {
 			myCalendar.set(Calendar.YEAR, year);
 			myCalendar.set(Calendar.MONTH, monthOfYear);
 			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-			updateDateLabel();
-		}
-	};
-	
-	DatePickerDialog.OnDateSetListener endDate = new DatePickerDialog.OnDateSetListener() {
-		@Override
-		public void onDateSet(DatePicker view, int year, int monthOfYear,
-				int dayOfMonth) {
-			myCalendar.set(Calendar.YEAR, year);
-			myCalendar.set(Calendar.MONTH, monthOfYear);
-			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-			updateDateLabel();
+			updateDateLabel(startDateTextView);
 		}
 	};
 
-	private void updateDateLabel() {
+	DatePickerDialog.OnDateSetListener endDatePicker = new DatePickerDialog.OnDateSetListener() {
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			myCalendar.set(Calendar.YEAR, year);
+			myCalendar.set(Calendar.MONTH, monthOfYear);
+			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+			updateDateLabel(endDateTextView);
+		}
+	};
+
+	//TODO - create TimePickerDialogs for both start and end
+	
+	/**
+	 * Updates the TextView for the associated Date
+	 * 
+	 * @param tv
+	 *            The TextView (either starting date or ending date) to be
+	 *            updated
+	 */
+	private void updateDateLabel(TextView tv) {
 		String myFormat = "EEEE, MMM dd, yyyy";
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-		startDateTextView.setText(sdf.format(myCalendar.getTime()));
+		tv.setText(sdf.format(myCalendar.getTime()));
 	}
+
+	
+	//TODO - update this method
+	/**
+	 * Updates the TextView for the associated Time
+	 * 
+	 * @param tv
+	 *            The TextView (either starting time or ending time) to be
+	 *            updated
+	 */
+	private void updateTimeLabel(TextView tv) {
+		String myFormat = "EEEE, MMM dd, yyyy";
+		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+		tv.setText(sdf.format(myCalendar.getTime()));
+	}
+
 }
