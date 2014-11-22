@@ -17,7 +17,7 @@ import android.widget.TextView;
 public class AddEventActivity extends Activity {
 
 	Calendar myCalendar = Calendar.getInstance();
-	TextView dateTextView, startTimeTextView, endTimeTextView;
+	TextView startDateTextView, startTimeTextView, endDateTextView, endTimeTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,22 +31,44 @@ public class AddEventActivity extends Activity {
 		ActionBar actionBar = getActionBar();
 		actionBar.setTitle("New Event");
 
-		dateTextView = (TextView) findViewById(R.id.eventDate);
-		// TODO - setOnClickListener for both Time TextViews
+		// Attaching Date and Time TextViews
+		startDateTextView = (TextView) findViewById(R.id.eventStartDate);
+		endDateTextView = (TextView) findViewById(R.id.eventEndDate);
 		startTimeTextView = (TextView) findViewById(R.id.eventStartTime);
 		endTimeTextView = (TextView) findViewById(R.id.eventEndTime);
-
-		dateTextView.setOnClickListener(new View.OnClickListener() {
+		
+		// OnClickListeners for Date and Time pickers
+		// TODO - setOnClickListener for both Time TextViews
+		startDateTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new DatePickerDialog(AddEventActivity.this, date, myCalendar
+				new DatePickerDialog(AddEventActivity.this, startDate, myCalendar
+						.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+						myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+			}
+		});
+		endDateTextView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new DatePickerDialog(AddEventActivity.this, endDate, myCalendar
 						.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
 						myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 			}
 		});
 	}
 
-	DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+	DatePickerDialog.OnDateSetListener startDate = new DatePickerDialog.OnDateSetListener() {
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			myCalendar.set(Calendar.YEAR, year);
+			myCalendar.set(Calendar.MONTH, monthOfYear);
+			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+			updateDateLabel();
+		}
+	};
+	
+	DatePickerDialog.OnDateSetListener endDate = new DatePickerDialog.OnDateSetListener() {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
 				int dayOfMonth) {
@@ -60,6 +82,6 @@ public class AddEventActivity extends Activity {
 	private void updateDateLabel() {
 		String myFormat = "EEEE, MMM dd, yyyy";
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-		dateTextView.setText(sdf.format(myCalendar.getTime()));
+		startDateTextView.setText(sdf.format(myCalendar.getTime()));
 	}
 }

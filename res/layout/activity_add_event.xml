@@ -26,20 +26,21 @@
         <requestFocus />
     </EditText>
 
-    <TextView
-        android:id="@+id/eventDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:ems="10"
-        android:hint="Date"
-        android:onClick="onClick"
-        android:paddingBottom="8dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/eventStartDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:ems="10"
+            android:hint="Date"
+            android:onClick="onClick"
+            android:paddingBottom="8dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:id="@+id/eventStartTime"
@@ -49,6 +50,23 @@
             android:clickable="true"
             android:ems="10"
             android:hint="Start Time"
+            android:onClick="onClick"
+            android:paddingBottom="8dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/eventEndDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:ems="10"
+            android:hint="Date"
             android:onClick="onClick"
             android:paddingBottom="8dp"
             android:textAppearance="?android:attr/textAppearanceMedium" />
