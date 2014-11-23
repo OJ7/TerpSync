@@ -19,7 +19,9 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
+import android.provider.SyncStateContract.Constants;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -30,6 +32,7 @@ public class MainActivity extends Activity {
 	private GoogleMap mMap;
 	private FloatingActionButton fabButton;
 	private Building stampBuilding;
+	private final LatLng UMD = new LatLng(38.989822, -76.940637);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +45,7 @@ public class MainActivity extends Activity {
 		// Centering Map on UMD
 		// LatLngBounds UMD = new LatLngBounds(new LatLng(38.981257, -76.95687),
 		// new LatLng(39.000962, -76.932355));
-		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(38.989822,
-				-76.940637), 15));
+		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UMD, 15));
 		mMap.getUiSettings().setZoomControlsEnabled(false);
 
 		// TODO - populate all buildings with markers (and change
@@ -98,5 +100,24 @@ public class MainActivity extends Activity {
 				.icon(BitmapDescriptorFactory
 						.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
 
+	}
+
+	/**
+	 * Centers map on current location. If current location can not be resolved,
+	 * it defaults to UMD location.
+	 */
+	private void centerMapOnMyLocation() {
+
+		mMap.setMyLocationEnabled(true);
+		mMap.setMyLocationEnabled(true);
+
+		Location location = mMap.getMyLocation();
+		LatLng myLocation = UMD;
+
+		if (location != null) {
+			myLocation = new LatLng(location.getLatitude(),
+					location.getLongitude());
+		}
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 15));
 	}
 }
