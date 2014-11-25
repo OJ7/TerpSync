@@ -1,84 +1,127 @@
 package com.example.campuseventsapp;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import com.example.campuseventsapp.R;
+import com.parse.FindCallback;
+import com.parse.ParseQuery;
+import com.parse.ParseException;
 
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 public class AddEventActivity extends Activity {
 
-	/*
-	// Used for storing extras in intent
-	public static final String EXTRA_EVENT_TITLE = "event_title";
-    public static final String EXTRA_EVENT_START_DATE = "event_start_date";
-    public static final String EXTRA_EVENT_END_DATE = "event_end_date";
-    public static final String EXTRA_EVENT_START_TIME = "event_start_time";
-    public static final String EXTRA_EVENT_END_TIME= "event_end_time";
-    public static final String EXTRA_EVENT_LOCATION = "event_location";
-    public static final String EXTRA_EVENT_DESCRIPTION = "event_description";
-    public static final String EXTRA_EVENT_ADMISSION = "event_admission_fee";
-    
-    // Values for event fields
-    String mTitle, mStartDate, mStartTime, mEndDate, mEndTime, mLocation, mDescription;
-    boolean mAdmissionFee;
-    */
-	
+	private static final String TAG = "AddEventActivity";
+
+	public EventObject eventObject;
 	Calendar myCalendar = Calendar.getInstance();
 
 	// Variables for widgets in layout
-	TextView orgNameTextView, titleTextView, startDateTextView, startTimeTextView, endDateTextView,
-			endTimeTextView, locationTextView, descriptionTextView;
+	TextView orgNameView, startDateView, startTimeView, endDateView,
+			endTimeView;
+	AutoCompleteTextView eventLocView;
+	EditText eventNameView, eventDescrView, eventCostView;
 	RadioGroup admissionRadioGroup;
 	Button saveButton;
 
-	// TODO - once AdminActivity created, change parent Activity in AndroidManifest.xml 
-	// TODO - once done with this activity, create EditEventActivity 
-	
+	// TODO - once AdminActivity created, change parent Activity in
+	// AndroidManifest.xml
+	// TODO - once done with this activity, create EditEventActivity
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_add_event);
-	
 		// TODO - Update action bar to include X button instead of back
 		// TODO - Update action bar to include save button and remove from
 		// layout
 		ActionBar actionBar = getActionBar();
 		actionBar.setTitle("New Event");
 
-		// cache all widgets
-		orgNameTextView = (TextView) findViewById(R.id.studentOrgName);
-		titleTextView = (TextView) findViewById(R.id.eventTitle);
-		startDateTextView = (TextView) findViewById(R.id.eventStartDate);
-		endDateTextView = (TextView) findViewById(R.id.eventEndDate);
-		startTimeTextView = (TextView) findViewById(R.id.eventStartTime);
-		endTimeTextView = (TextView) findViewById(R.id.eventEndTime);
-		locationTextView = (TextView) findViewById(R.id.eventLocation);
-		descriptionTextView = (TextView) findViewById(R.id.eventDescription);
-		admissionRadioGroup = (RadioGroup) findViewById(R.id.eventAdmissionRadioGroup);
-		saveButton = (Button) findViewById(R.id.save_event_button);
+		eventObject = new EventObject();
 
-		
+		// TODO - fix parse stuff
+		parseStuff();
+
+		// cache all widgets
+		cacheWidgets();
+
 		// TODO - Restore settings (if editing event)
-		
-		
+
+		setViewListeners();
+
+	} // end of onCreate
+
+	private void parseStuff() {
+		ParseQuery<UMDBuildings> query = ParseQuery
+				.getQuery(UMDBuildings.class);
+		query.whereExists("name");
+		query.setLimit(200);
+		query.findInBackground(new FindCallback<UMDBuildings>() {
+
+			@Override
+			public void done(List<UMDBuildings> arg0, ParseException arg1) {
+
+				ArrayList<String> buildNames = new ArrayList<String>(arg0
+						.size());
+
+				for (UMDBuildings a : arg0) {
+
+					/*
+					 * if (!a.getBuildAbrev().equals("EEE")) {
+					 * buildNames.add(a.getName() + " " + a.getBuildAbrev()); }
+					 * else { buildNames.add(a.getName()); }
+					 */
+
+					buildNames.add(a.getName());
+				}
+
+				Log.i(TAG,
+						"size of buildNames is: "
+								+ Integer.toString(buildNames.size()));
+				// Get a reference to the AutoCompleteTextView
+				AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.eventLocation);
+
+				// Create an ArrayAdapter containing country names
+				ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(
+						AddEventActivity.this, R.layout.list_item, buildNames
+								.toArray());
+
+				// Set the adapter for the AutoCompleteTextView
+				textView.setAdapter(adapter);
+
+			}
+		});
+
+	}
+
+	private void setViewListeners() {
+
+		// Note: we don't need a listener for orgNameView because we should be
+		// setting it automatically when they are logged in
+
 		// OnClickListeners for Date and Time pickers
-		startDateTextView.setOnClickListener(new View.OnClickListener() {
+		startDateView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new DatePickerDialog(AddEventActivity.this, startDatePicker,
@@ -87,7 +130,7 @@ public class AddEventActivity extends Activity {
 								.get(Calendar.DAY_OF_MONTH)).show();
 			}
 		});
-		endDateTextView.setOnClickListener(new View.OnClickListener() {
+		endDateView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new DatePickerDialog(AddEventActivity.this, endDatePicker,
@@ -96,7 +139,7 @@ public class AddEventActivity extends Activity {
 								.get(Calendar.DAY_OF_MONTH)).show();
 			}
 		});
-		startTimeTextView.setOnClickListener(new View.OnClickListener() {
+		startTimeView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new TimePickerDialog(AddEventActivity.this, startTimePicker,
@@ -104,7 +147,7 @@ public class AddEventActivity extends Activity {
 								.get(Calendar.MINUTE), false).show();
 			}
 		});
-		endTimeTextView.setOnClickListener(new View.OnClickListener() {
+		endTimeView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new TimePickerDialog(AddEventActivity.this, endTimePicker,
@@ -113,8 +156,88 @@ public class AddEventActivity extends Activity {
 			}
 		});
 
+		// OnClickListeners for Event Name, Location, and Description EditText
+		eventNameView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				eventObject.setEventName(eventNameView.getText().toString());
+			}
+		});
+
+		eventLocView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				eventObject.setBuildingName(eventLocView.getText().toString());
+			}
+		});
+
+		eventDescrView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				eventObject.setDescription(eventDescrView.getText().toString());
+			}
+		});
+
+		admissionRadioGroup
+				.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(RadioGroup group, int checkedId) {
+						if (checkedId == -1) {
+							// no item selected
+						} else if (checkedId == R.id.eventFree) {
+							eventObject.setAdmission("FREE");
+							eventCostView.setVisibility(View.INVISIBLE);
+						} else {
+							// event paid
+							eventCostView.setVisibility(View.VISIBLE);
+						}
+
+					}
+				});
+
+		// TODO: need to engage the done/submit button on keyboard
+		eventCostView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				eventObject.setAdmission(eventCostView.getText().toString());
+			}
+		});
+
+		saveButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				eventObject.saveInBackground();
+				Intent intent = new Intent();
+				intent.putExtra("eventID", eventObject.getObjectId());
+				setResult(Activity.RESULT_OK, intent);
+				finish();
+			}
+		});
+
 	}
 
+	private void cacheWidgets() {
+		orgNameView = (TextView) findViewById(R.id.studentOrgName);
+		orgNameView.setText("Student Org Name");
+		eventNameView = (EditText) findViewById(R.id.eventTitle);
+		startDateView = (TextView) findViewById(R.id.eventStartDate);
+		endDateView = (TextView) findViewById(R.id.eventEndDate);
+		startTimeView = (TextView) findViewById(R.id.eventStartTime);
+		endTimeView = (TextView) findViewById(R.id.eventEndTime);
+		eventLocView = (AutoCompleteTextView) findViewById(R.id.eventLocation);
+		eventDescrView = (EditText) findViewById(R.id.eventDescription);
+		admissionRadioGroup = (RadioGroup) findViewById(R.id.eventAdmissionRadioGroup);
+		eventCostView = (EditText) findViewById(R.id.eventCost);
+		saveButton = (Button) findViewById(R.id.save_event_button);
+
+	}
+
+	// TODO - manage default behaviour for date/time
+	// If startDate or startTime not set, default to current day and current time rounded up to nearest hour.
+	// If endDate or endTime not set, default to one hour past startDate/Time
+	// If endDate/Time changed to before startDate/Time, change to difference in shift in endDate/Time
+	
 	DatePickerDialog.OnDateSetListener startDatePicker = new DatePickerDialog.OnDateSetListener() {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
@@ -122,7 +245,10 @@ public class AddEventActivity extends Activity {
 			myCalendar.set(Calendar.YEAR, year);
 			myCalendar.set(Calendar.MONTH, monthOfYear);
 			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-			updateDateLabel(startDateTextView);
+			updateDateLabel(startDateView);
+			eventObject.setStartDate(Integer.toString(monthOfYear) + "/"
+					+ Integer.toString(dayOfMonth) + "/"
+					+ Integer.toString(year));
 		}
 	};
 	DatePickerDialog.OnDateSetListener endDatePicker = new DatePickerDialog.OnDateSetListener() {
@@ -132,7 +258,10 @@ public class AddEventActivity extends Activity {
 			myCalendar.set(Calendar.YEAR, year);
 			myCalendar.set(Calendar.MONTH, monthOfYear);
 			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-			updateDateLabel(endDateTextView);
+			updateDateLabel(endDateView);
+			eventObject.setEndDate(Integer.toString(monthOfYear) + "/"
+					+ Integer.toString(dayOfMonth) + "/"
+					+ Integer.toString(year));
 		}
 	};
 	TimePickerDialog.OnTimeSetListener startTimePicker = new TimePickerDialog.OnTimeSetListener() {
@@ -140,7 +269,14 @@ public class AddEventActivity extends Activity {
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
 			myCalendar.set(Calendar.MINUTE, minute);
-			updateTimeLabel(startTimeTextView);
+			updateTimeLabel(startTimeView);
+			if (myCalendar.get(Calendar.AM_PM) == Calendar.AM) {
+				eventObject.setStartTime(Integer.toString(hourOfDay) + ":"
+						+ Integer.toString(minute) + " AM");
+			} else {
+				eventObject.setStartTime(Integer.toString(hourOfDay) + ":"
+						+ Integer.toString(minute) + " PM");
+			}
 		}
 	};
 	TimePickerDialog.OnTimeSetListener endTimePicker = new TimePickerDialog.OnTimeSetListener() {
@@ -148,7 +284,14 @@ public class AddEventActivity extends Activity {
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
 			myCalendar.set(Calendar.MINUTE, minute);
-			updateTimeLabel(endTimeTextView);
+			updateTimeLabel(endTimeView);
+			if (myCalendar.get(Calendar.AM_PM) == Calendar.AM) {
+				eventObject.setEndTime(Integer.toString(hourOfDay) + ":"
+						+ Integer.toString(minute) + " AM");
+			} else {
+				eventObject.setEndTime(Integer.toString(hourOfDay) + ":"
+						+ Integer.toString(minute) + " PM");
+			}
 		}
 	};
 
@@ -177,19 +320,5 @@ public class AddEventActivity extends Activity {
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 		tv.setText(sdf.format(myCalendar.getTime()));
 	}
-	
-	/*
-	protected void onSaveInstanceStat(Bundle b){
-        b.putString(EXTRA_EVENT_TITLE, mTitle);
-        b.putString(EXTRA_EVENT_START_DATE, mStartDate);
-        b.putString(EXTRA_EVENT_START_TIME, mStartTime);
-        b.putString(EXTRA_EVENT_END_DATE, mEndDate);
-        b.putString(EXTRA_EVENT_END_TIME, mEndTime);
-        b.putString(EXTRA_EVENT_LOCATION, mLocation);
-        b.putString(EXTRA_EVENT_DESCRIPTION, mDescription);
-        b.putBoolean(EXTRA_EVENT_ADMISSION, mAdmissionFee);
-        
-    }
-    */
 
 }

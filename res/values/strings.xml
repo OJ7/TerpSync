@@ -21,5 +21,6 @@
     <string name="event_free">Free</string>
     <string name="event_paid">Paid</string>
     <string name="event_save">Save</string>
-    
+    <string name="enter_cost">Enter cost</string>
+
 </resources>
