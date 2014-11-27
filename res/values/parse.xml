@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- This file is used to store all query accessors for Parse DB -->
+
+
+    <!-- Strings used to access fields for EventObject -->
+    <string name="event_org_name">OrganizationName</string>
+    <string name="event_name">EventName</string>
+    <string name="event_location">BuildingName</string>
+    <string name="event_description">EventDescription</string>
+    <string name="event_start_date">StartDate</string>
+    <string name="event_end_date">EndDate</string>
+    <string name="event_start_time">StartTime</string>
+    <string name="event_end_time">EndTime</string>
+    <string name="event_admission">Admission</string>
+
+    <!-- Strings used to access fields for UMDBuildings -->
+    <string name="building_name">name</string>
+    <string name="building_code">code</string>
+    <string name="building_number">Number</string>
+    <string name="building_latitude">latitude</string>
+    <string name="building_longitude">longitude</string>
+
+</resources>
