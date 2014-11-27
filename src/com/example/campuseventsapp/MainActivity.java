@@ -29,123 +29,92 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
 	private GoogleMap mMap;
-	private FloatingActionButton fabButton;
+	private FloatingActionButton fabButton, item1, item2, item3, locationButton;
 	private static final String TAG = "Campus-App";
 	String buildingNameQuery;
-
-	// delete once done
-	// ========
-	private UMDBuildings stampBuilding;
+	private int toggle = 0; // 0 = hidden, 1 = shown
+	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
 	private final LatLng UMD = new LatLng(38.989822, -76.940637);
-	//private Resources context = getResources();
-
-	// ========
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i(TAG, "In main");
+
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
-			
-		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-				.getMap();
-		setupParse();
+
 		setupMap();
 		setupFAB();
+		queryAndAddEventsFromParse();
 
 	} // end of onCreate
 
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode,
-			Intent resultIntent) {
-		if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
-			// resultIntent will have a key "eventID" with value a event object
-			// to add
-			String eventObjectID = resultIntent.getStringExtra("eventID");
-
-			// TO-DO: query from database the gps coordinates using the
-			// building name from the objectID from the intent
-
-			ParseQuery<EventObject> query = ParseQuery
-					.getQuery(EventObject.class);
-
-			// Retrieve the object by id
-			query.getInBackground(eventObjectID,
-					new GetCallback<EventObject>() {
-						public void done(EventObject eventObject,
-								ParseException e) {
-							if (e == null) {
-
-								buildingNameQuery = new String(eventObject
-										.getBuildingName());
-
-							}
-						}
-					});
-
-			Log.i(TAG, "this should show" + buildingNameQuery);
-
-		}
-	}
-
-	private void setupParse() {
+	/**
+	 * TODO (minor) - Add documentation
+	 */
+	private void queryAndAddEventsFromParse() {
 		ParseObject.registerSubclass(UMDBuildings.class);
 		ParseObject.registerSubclass(EventObject.class);
 		Parse.initialize(this, this.getString(R.string.parse_app_id),
 				this.getString(R.string.parse_client_key));
-		
-		/* adding current events to map */
-		/* check also if date is past and remove from database and don't add */
-		ParseQuery<EventObject> query = ParseQuery.getQuery(EventObject.class);
-		query.whereExists("name");
-		query.setLimit(200);
-		query.findInBackground(new FindCallback<EventObject>() {
+
+		// Adding current events to map
+		// Check also if date is past and remove from database and don't add
+
+		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
+		eventsQuery.whereExists("BuildingName");
+		eventsQuery.setLimit(1000);
+		eventsQuery.findInBackground(new FindCallback<EventObject>() {
 
 			@Override
 			public void done(List<EventObject> arg0, ParseException arg1) {
+				for (EventObject x : arg0) {
 
+					ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
+							.getQuery(UMDBuildings.class);
+					buildingsQuery.whereEqualTo(getString(R.string.building_name), x.getBuildingName());
+					buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
+
+						@Override
+						public void done(List<UMDBuildings> arg0, ParseException arg1) {
+							UMDBuildings building = arg0.get(0);
+
+							// check here if the correct building is here
+							// add the market to the screen
+							addMarker(building);
+						}
+
+					});
+
+				}
 			}
 		});
 	}
 
-	
 	/**
-	 * Sets up the Map to center location on UMD campus and add markers to all
-	 * buildings
+	 * Sets up the Map to center location on UMD campus and add markers to all buildings
 	 */
 	private void setupMap() {
-		// Centering Map on UMD
-		// LatLngBounds UMD = new LatLngBounds(new LatLng(38.981257, -76.95687),
-		// new LatLng(39.000962, -76.932355));
-		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UMD, 15));
+		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+
+		centerMapOnCampus();
 		mMap.getUiSettings().setZoomControlsEnabled(false);
 
-		// TODO - populate all buildings with markers (and change
-		// colors/visibility) once database of buildings is made
-
-		// Example Building and marker
-		/*
-		 * stampBuilding = new UMDBuildings("SSU",
-		 * "Adele H. Stamp Student Union Building", 163, 38.9880489,
-		 * -76.9444026); addMarkers(stampBuilding);
-		 */
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 
 			@Override
 			public void onInfoWindowClick(Marker marker) {
-				// TODO open up list view with events from building specified in
+				// TODO (major) - open up list view with events from building specified in
 				// marker
-				String buildingName = marker.getTitle();
+				// String buildingName = marker.getTitle();
 
 			}
 		});
-
 	}
 
 	/**
@@ -153,53 +122,195 @@ public class MainActivity extends Activity {
 	 */
 	private void setupFAB() {
 		fabButton = new FloatingActionButton.Builder(this)
-				.withDrawable(
-						getResources().getDrawable(R.drawable.ic_action_star))
-				.withButtonColor(Color.RED)
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
+				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
+		showLocationButton();
 		fabButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				// TODO - add more buttons when clicked
-				// TODO - implement material design animations
-				Intent intent = new Intent(MainActivity.this,
-						AddEventActivity.class);
-				startActivity(intent);
+				// TODO (minor) - implement material design animations
+				if (toggle == 0) {
+					toggle = 1;
+					showFABMenu();
+				} else {
+					toggle = 0;
+					hideFABMenu();
+				}
+
 			}
 		});
-
 	}
 
-	// Add a marker for specified building
-	private void addMarkers(UMDBuildings building) {
-		// for (BuildingLocationRec rec : result) {}
-		mMap.addMarker(new MarkerOptions()
-				.position(new LatLng(Double.parseDouble(building.getLat()), Double.parseDouble(building.getLng())))
-				.title(building.getName())
-				.snippet("Events: " + String.valueOf(building.getNumEvents()))
-				.icon(BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+	private void hideFABMenu() {
+		showLocationButton();
+		item1.hideFloatingActionButton();
+		item2.hideFloatingActionButton();
+		item3.hideFloatingActionButton();
+	}
 
+	private void showFABMenu() {
+		locationButton.hideFloatingActionButton();
+		showItem1();
+		showItem2();
+		showItem3();
+	}
+
+	private void showLocationButton() {
+		locationButton = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
+				.withButtonColor(Color.CYAN).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withMargins(0, 0, 16, 86).create();
+
+		locationButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (locToggle == 0) {
+					locToggle = 1;
+					locationButton.setFloatingActionButtonColor(Color.MAGENTA);
+					centerMapOnMyLocation();
+					Toast.makeText(getApplicationContext(),
+							"Attempting to center map on current location", Toast.LENGTH_SHORT)
+							.show();
+				} else {
+					locToggle = 0;
+					locationButton.setFloatingActionButtonColor(Color.MAGENTA);
+					centerMapOnCampus();
+					Toast.makeText(getApplicationContext(), "Centering map on campus",
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+
+		});
+	}
+
+	private void showItem1() {
+		item1 = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
+				.withButtonColor(Color.BLUE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withMargins(0, 0, 16, 86).create();
+		item1.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(getApplicationContext(), "clicked item 1", Toast.LENGTH_SHORT)
+						.show();
+
+				Intent intent = new Intent(MainActivity.this, AddEventActivity.class);
+				startActivityForResult(intent, 0);
+			}
+
+		});
+	}
+
+	private void showItem2() {
+		item2 = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
+				.withButtonColor(Color.YELLOW).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withMargins(0, 0, 16, 156).create();
+		item2.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(getApplicationContext(), "clicked item 2", Toast.LENGTH_SHORT)
+						.show();
+			}
+
+		});
+	}
+
+	private void showItem3() {
+		item3 = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
+				.withButtonColor(Color.BLACK).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withMargins(0, 0, 16, 226).create();
+		item3.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(getApplicationContext(), "clicked item 3", Toast.LENGTH_SHORT)
+						.show();
+			}
+
+		});
 	}
 
 	/**
-	 * Centers map on current location. If current location can not be resolved,
-	 * it defaults to UMD location.
+	 * Centers map on current location. If current location can not be resolved, it defaults to UMD
+	 * location.
 	 */
 	private void centerMapOnMyLocation() {
 
-		mMap.setMyLocationEnabled(true);
 		mMap.setMyLocationEnabled(true);
 
 		Location location = mMap.getMyLocation();
 		LatLng myLocation = UMD;
 
 		if (location != null) {
-			myLocation = new LatLng(location.getLatitude(),
-					location.getLongitude());
+			myLocation = new LatLng(location.getLatitude(), location.getLongitude());
 		}
-		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 15));
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
 	}
+
+	private void centerMapOnCampus() {
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(UMD, 14));
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
+		if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
+			// resultIntent will have a key "eventID" with value an event object to add
+			String eventObjectID = resultIntent.getStringExtra("eventID");
+
+			ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
+
+			// Retrieve the object by id
+			// runs on main thread I can change this
+			eventsQuery.getInBackground(eventObjectID, new GetCallback<EventObject>() {
+				public void done(EventObject eventObject, ParseException e) {
+					if (e == null) {
+
+						buildingNameQuery = new String(eventObject.getBuildingName());
+
+						ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
+								.getQuery(UMDBuildings.class);
+						buildingsQuery.whereEqualTo(getString(R.string.building_name),
+								buildingNameQuery);
+						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
+
+							@Override
+							public void done(List<UMDBuildings> arg0, ParseException arg1) {
+								UMDBuildings building = arg0.get(0);
+								// check here if the correct building is here
+								// add the marker to the screen
+								addMarker(building);
+							}
+
+						});
+
+					}
+				}
+			});
+
+		}
+	}
+
+	private void addMarker(UMDBuildings building) {
+
+		// check here if the correct building is here
+		// add the market to the screen
+		Double lat = Double.parseDouble(building.getLat());
+		Double lon = Double.parseDouble(building.getLng());
+		String name = String.valueOf(building.getName());
+		String numEvent = "0";
+
+		// TODO (minor) - change color depending on number of events
+		mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lon)).title(name)
+				.snippet("Events: " + numEvent));
+		// Code to change color
+		// .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
+
+	}
+
 }
