@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
 
 	private GoogleMap mMap;
 	private FloatingActionButton fabButton, item1, item2, item3, locationButton;
-	private static final String TAG = "Campus-App";
+	private static final String TAG = "MainActivity";
 	String buildingNameQuery;
 	private int toggle = 0; // 0 = hidden, 1 = shown
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
@@ -77,7 +77,8 @@ public class MainActivity extends Activity {
 
 					ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
 							.getQuery(UMDBuildings.class);
-					buildingsQuery.whereEqualTo(getString(R.string.building_name), x.getBuildingName());
+					buildingsQuery.whereEqualTo(getString(R.string.building_name),
+							x.getBuildingName());
 					buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
 
 						@Override
@@ -207,7 +208,7 @@ public class MainActivity extends Activity {
 	private void showItem2() {
 		item2 = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
-				.withButtonColor(Color.YELLOW).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withButtonColor(Color.GREEN).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 156).create();
 		item2.setOnClickListener(new OnClickListener() {
 
@@ -215,6 +216,9 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Toast.makeText(getApplicationContext(), "clicked item 2", Toast.LENGTH_SHORT)
 						.show();
+				Intent intent = new Intent(MainActivity.this, ListActivity.class);
+				startActivity(intent);
+
 			}
 
 		});
@@ -223,7 +227,7 @@ public class MainActivity extends Activity {
 	private void showItem3() {
 		item3 = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
-				.withButtonColor(Color.BLACK).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withButtonColor(Color.GRAY).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 226).create();
 		item3.setOnClickListener(new OnClickListener() {
 
@@ -303,14 +307,19 @@ public class MainActivity extends Activity {
 		Double lat = Double.parseDouble(building.getLat());
 		Double lon = Double.parseDouble(building.getLng());
 		String name = String.valueOf(building.getName());
-		String numEvent = "0";
+		int numEvent = 0;
+		float markerColor;
+		if (numEvent < 3) {
+			markerColor = BitmapDescriptorFactory.HUE_YELLOW;
+		} else if (numEvent < 5) {
+			markerColor = BitmapDescriptorFactory.HUE_BLUE;
+		} else {
+			markerColor = BitmapDescriptorFactory.HUE_RED;
+		}
 
-		// TODO (minor) - change color depending on number of events
 		mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lon)).title(name)
-				.snippet("Events: " + numEvent));
-		// Code to change color
-		// .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
-
+				.snippet("Events: " + numEvent)
+				.icon(BitmapDescriptorFactory.defaultMarker(markerColor)));
 	}
 
 }
