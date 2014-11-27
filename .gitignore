@@ -28,3 +28,4 @@ proguard/
 .project
 .settings/org.eclipse.jdt.core.prefs
 res/values/api.xml
+res/values/api.xml
