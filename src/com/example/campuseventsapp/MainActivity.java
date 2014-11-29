@@ -77,7 +77,7 @@ public class MainActivity extends Activity {
 
 					ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
 							.getQuery(UMDBuildings.class);
-					buildingsQuery.whereEqualTo(getString(R.string.building_name),
+					buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
 							x.getBuildingName());
 					buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
 
@@ -279,7 +279,7 @@ public class MainActivity extends Activity {
 
 						ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
 								.getQuery(UMDBuildings.class);
-						buildingsQuery.whereEqualTo(getString(R.string.building_name),
+						buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
 								buildingNameQuery);
 						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
 
