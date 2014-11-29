@@ -37,11 +37,12 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 	private GoogleMap mMap;
-	private FloatingActionButton fabButton, item1, item2, item3, locationButton;
+	private FloatingActionButton fabButton, item1, item2, item3, item4,locationButton;
 	private static final String TAG = "MainActivity";
 	String buildingNameQuery;
 	private int toggle = 0; // 0 = hidden, 1 = shown
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
+	private int mapTypeToggle = 0;
 	private final LatLng UMD = new LatLng(38.989822, -76.940637);
 	private List<Marker> markers = new ArrayList<Marker>();
 
@@ -133,9 +134,11 @@ public class MainActivity extends Activity {
 				if (toggle == 0) {
 					toggle = 1;
 					showFABMenu();
+					fabButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_action_cancel));
 				} else {
 					toggle = 0;
 					hideFABMenu();
+					fabButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_action_star));
 				}
 
 			}
@@ -147,6 +150,7 @@ public class MainActivity extends Activity {
 		item1.hideFloatingActionButton();
 		item2.hideFloatingActionButton();
 		item3.hideFloatingActionButton();
+		item4.hideFloatingActionButton();
 	}
 
 	private void showFABMenu() {
@@ -154,6 +158,7 @@ public class MainActivity extends Activity {
 		showItem1();
 		showItem2();
 		showItem3();
+		showItem4();
 	}
 
 	private void showLocationButton() {
@@ -183,26 +188,65 @@ public class MainActivity extends Activity {
 
 		});
 	}
-
+	/*
+	 * This FAB changes map types:
+	 * variable: mapTypeToggle
+	 * 0 = Normal
+	 * 1 = Hybrid
+	 * 2 = Satellite
+	 * 3 = Terrain
+	 * 
+	 */
 	private void showItem1() {
 		item1 = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
 				.withButtonColor(Color.BLUE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 86).create();
+		mapTypeToggle++; // Increase one so that when user clicks it first time, it changes map type
 		item1.setOnClickListener(new OnClickListener() {
-
+	
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(getApplicationContext(), "clicked item 1", Toast.LENGTH_SHORT)
-						.show();
 
-				Intent intent = new Intent(MainActivity.this, AddEventActivity.class);
-				startActivityForResult(intent, 0);
+				
+				if(mapTypeToggle == 0){
+					//Show normal map
+					mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+					mapTypeToggle++;
+					Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
+					.show();
+					
+				}else if(mapTypeToggle == 1){
+					//Show Hybrid map
+					mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+					mapTypeToggle++;
+					Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_SHORT)
+					.show();
+					
+				}else if (mapTypeToggle == 2){
+					//Show Satellite map
+					mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+					mapTypeToggle++;
+					Toast.makeText(getApplicationContext(), "Satellite Map", Toast.LENGTH_SHORT)
+					.show();
+					
+				}else if (mapTypeToggle == 3){
+					//Show Terrain map
+					mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+					mapTypeToggle = 0;
+					Toast.makeText(getApplicationContext(), "Terrain Map", Toast.LENGTH_SHORT)
+					.show();
+				}
+				
+
 			}
 
 		});
 	}
 
+	/*
+	 * List View short cut FAB
+	 */
 	private void showItem2() {
 		item2 = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
@@ -222,6 +266,9 @@ public class MainActivity extends Activity {
 		});
 	}
 
+	/*
+	 * Setting short cut FAB
+	 */
 	private void showItem3() {
 		item3 = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
@@ -235,6 +282,25 @@ public class MainActivity extends Activity {
 						.show();
 			}
 
+		});
+	}
+	
+	/*
+	 * Admin panel short cut FAB
+	 */
+	private void showItem4(){
+		item4 = new FloatingActionButton.Builder(this)
+		.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
+		.withButtonColor(Color.WHITE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+		.withMargins(0, 0, 16, 296).create();
+		item4.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(getApplicationContext(), "clicked item 3", Toast.LENGTH_SHORT)
+						.show();
+			}
+		
 		});
 	}
 
