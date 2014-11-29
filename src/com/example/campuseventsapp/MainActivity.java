@@ -1,13 +1,16 @@
 package com.example.campuseventsapp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.campuseventsapp.FloatingActionButton;
 import com.example.campuseventsapp.R;
+import com.google.android.gms.analytics.n;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -40,6 +43,7 @@ public class MainActivity extends Activity {
 	private int toggle = 0; // 0 = hidden, 1 = shown
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
 	private final LatLng UMD = new LatLng(38.989822, -76.940637);
+	private List<Marker> markers = new ArrayList<Marker>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +69,6 @@ public class MainActivity extends Activity {
 
 		// Adding current events to map
 		// Check also if date is past and remove from database and don't add
-
 		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
 		eventsQuery.whereExists("BuildingName");
 		eventsQuery.setLimit(1000);
@@ -84,14 +87,9 @@ public class MainActivity extends Activity {
 						@Override
 						public void done(List<UMDBuildings> arg0, ParseException arg1) {
 							UMDBuildings building = arg0.get(0);
-
-							// check here if the correct building is here
-							// add the market to the screen
 							addMarker(building);
 						}
-
 					});
-
 				}
 			}
 		});
@@ -286,9 +284,9 @@ public class MainActivity extends Activity {
 							@Override
 							public void done(List<UMDBuildings> arg0, ParseException arg1) {
 								UMDBuildings building = arg0.get(0);
-								// check here if the correct building is here
-								// add the marker to the screen
 								addMarker(building);
+								Toast.makeText(getApplicationContext(), "Added event to map",
+										Toast.LENGTH_SHORT).show();
 							}
 
 						});
@@ -301,25 +299,42 @@ public class MainActivity extends Activity {
 	}
 
 	private void addMarker(UMDBuildings building) {
-
-		// check here if the correct building is here
-		// add the market to the screen
 		Double lat = Double.parseDouble(building.getLat());
 		Double lon = Double.parseDouble(building.getLng());
+		LatLng latLng = new LatLng(lat, lon);
 		String name = String.valueOf(building.getName());
-		int numEvent = 0;
+		Marker marker = null;
+		int numEvent;
+
+		for (Marker m : markers) { // Check if marker already exists
+			if (m.getTitle().equals(name)) {
+				marker = m;
+			}
+		}
+
+		if (marker == null) { // Marker not already on map
+			numEvent = 1;
+			marker = mMap.addMarker(new MarkerOptions().position(latLng).title(name));
+			markers.add(marker);
+
+		} else { // Marker already on map
+			String temp = marker.getSnippet();
+			numEvent = Integer.parseInt(temp.substring(temp.length() - 1)) + 1;
+		}
+
+		// Getting marker color based on number of events
 		float markerColor;
 		if (numEvent < 3) {
 			markerColor = BitmapDescriptorFactory.HUE_YELLOW;
 		} else if (numEvent < 5) {
-			markerColor = BitmapDescriptorFactory.HUE_BLUE;
+			markerColor = BitmapDescriptorFactory.HUE_ORANGE;
 		} else {
 			markerColor = BitmapDescriptorFactory.HUE_RED;
 		}
 
-		mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lon)).title(name)
-				.snippet("Events: " + numEvent)
-				.icon(BitmapDescriptorFactory.defaultMarker(markerColor)));
+		marker.setSnippet("Events: " + numEvent);
+		marker.setIcon(BitmapDescriptorFactory.defaultMarker(markerColor));
+
 	}
 
 }
