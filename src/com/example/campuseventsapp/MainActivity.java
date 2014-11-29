@@ -158,7 +158,7 @@ public class MainActivity extends Activity {
 
 	private void showLocationButton() {
 		locationButton = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 				.withButtonColor(Color.CYAN).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 86).create();
 
@@ -174,7 +174,7 @@ public class MainActivity extends Activity {
 							.show();
 				} else {
 					locToggle = 0;
-					locationButton.setFloatingActionButtonColor(Color.MAGENTA);
+					locationButton.setFloatingActionButtonColor(Color.CYAN);
 					centerMapOnCampus();
 					Toast.makeText(getApplicationContext(), "Centering map on campus",
 							Toast.LENGTH_SHORT).show();
