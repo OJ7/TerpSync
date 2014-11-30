@@ -37,7 +37,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 	private GoogleMap mMap;
-	private FloatingActionButton fabButton, item1, item2, item3, item4,locationButton;
+	private FloatingActionButton fabButton, item1, item2, item3, item4, locationButton;
 	private static final String TAG = "MainActivity";
 	String buildingNameQuery;
 	private int toggle = 0; // 0 = hidden, 1 = shown
@@ -134,11 +134,13 @@ public class MainActivity extends Activity {
 				if (toggle == 0) {
 					toggle = 1;
 					showFABMenu();
-					fabButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_action_cancel));
+					fabButton.setFloatingActionButtonDrawable(getResources().getDrawable(
+							R.drawable.ic_action_cancel));
 				} else {
 					toggle = 0;
 					hideFABMenu();
-					fabButton.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_action_star));
+					fabButton.setFloatingActionButtonDrawable(getResources().getDrawable(
+							R.drawable.ic_action_star));
 				}
 
 			}
@@ -188,14 +190,11 @@ public class MainActivity extends Activity {
 
 		});
 	}
+
 	/*
-	 * This FAB changes map types:
-	 * variable: mapTypeToggle
-	 * 0 = Normal
-	 * 1 = Hybrid
-	 * 2 = Satellite
-	 * 3 = Terrain
+	 * This FAB changes map types for the variable mapTypeToggle
 	 * 
+	 * 0 = Normal, 1 = Hybrid, 2 = Satellite, 3 = Terrain
 	 */
 	private void showItem1() {
 		item1 = new FloatingActionButton.Builder(this)
@@ -204,40 +203,38 @@ public class MainActivity extends Activity {
 				.withMargins(0, 0, 16, 86).create();
 		mapTypeToggle++; // Increase one so that when user clicks it first time, it changes map type
 		item1.setOnClickListener(new OnClickListener() {
-	
+
 			@Override
 			public void onClick(View v) {
 
-				
-				if(mapTypeToggle == 0){
-					//Show normal map
+				if (mapTypeToggle == 0) {
+					// Show normal map
 					mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 					mapTypeToggle++;
 					Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
-					.show();
-					
-				}else if(mapTypeToggle == 1){
-					//Show Hybrid map
+							.show();
+
+				} else if (mapTypeToggle == 1) {
+					// Show Hybrid map
 					mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 					mapTypeToggle++;
 					Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_SHORT)
-					.show();
-					
-				}else if (mapTypeToggle == 2){
-					//Show Satellite map
+							.show();
+
+				} else if (mapTypeToggle == 2) {
+					// Show Satellite map
 					mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 					mapTypeToggle++;
 					Toast.makeText(getApplicationContext(), "Satellite Map", Toast.LENGTH_SHORT)
-					.show();
-					
-				}else if (mapTypeToggle == 3){
-					//Show Terrain map
+							.show();
+
+				} else if (mapTypeToggle == 3) {
+					// Show Terrain map
 					mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 					mapTypeToggle = 0;
 					Toast.makeText(getApplicationContext(), "Terrain Map", Toast.LENGTH_SHORT)
-					.show();
+							.show();
 				}
-				
 
 			}
 
@@ -245,7 +242,7 @@ public class MainActivity extends Activity {
 	}
 
 	/*
-	 * List View short cut FAB
+	 * List View shortcut FAB
 	 */
 	private void showItem2() {
 		item2 = new FloatingActionButton.Builder(this)
@@ -267,7 +264,7 @@ public class MainActivity extends Activity {
 	}
 
 	/*
-	 * Setting short cut FAB
+	 * Setting shortcut FAB
 	 */
 	private void showItem3() {
 		item3 = new FloatingActionButton.Builder(this)
@@ -284,15 +281,15 @@ public class MainActivity extends Activity {
 
 		});
 	}
-	
+
 	/*
-	 * Admin panel short cut FAB
+	 * Admin panel shortcut FAB
 	 */
-	private void showItem4(){
+	private void showItem4() {
 		item4 = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
-		.withButtonColor(Color.WHITE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-		.withMargins(0, 0, 16, 296).create();
+				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
+				.withButtonColor(Color.WHITE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withMargins(0, 0, 16, 296).create();
 		item4.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -300,7 +297,7 @@ public class MainActivity extends Activity {
 				Toast.makeText(getApplicationContext(), "clicked item 3", Toast.LENGTH_SHORT)
 						.show();
 			}
-		
+
 		});
 	}
 
@@ -364,6 +361,15 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	/**
+	 * Places a marker on the building specified. The marker pop-up shows the name of the building
+	 * and the number of events happening there. If the marker already exists, this method updates
+	 * the number of events. The color of the marker is related to the number of events: (1-2 =
+	 * YELLOW, 3-5 = ORANGE, 6+ = RED)
+	 * 
+	 * @param building
+	 *            The location to place/update marker at
+	 */
 	private void addMarker(UMDBuildings building) {
 		Double lat = Double.parseDouble(building.getLat());
 		Double lon = Double.parseDouble(building.getLng());
@@ -392,7 +398,7 @@ public class MainActivity extends Activity {
 		float markerColor;
 		if (numEvent < 3) {
 			markerColor = BitmapDescriptorFactory.HUE_YELLOW;
-		} else if (numEvent < 5) {
+		} else if (numEvent < 6) {
 			markerColor = BitmapDescriptorFactory.HUE_ORANGE;
 		} else {
 			markerColor = BitmapDescriptorFactory.HUE_RED;
@@ -400,7 +406,6 @@ public class MainActivity extends Activity {
 
 		marker.setSnippet("Events: " + numEvent);
 		marker.setIcon(BitmapDescriptorFactory.defaultMarker(markerColor));
-
 	}
 
 }
