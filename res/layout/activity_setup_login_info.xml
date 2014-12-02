@@ -13,14 +13,14 @@
         android:id="@+id/user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Please enter a Username" >
+        android:hint="Please enter a Username" >
     </EditText>
 
     <EditText
         android:id="@+id/pw"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Please enter a Password" >
+        android:hint="Please enter a Password" >
     </EditText>
 
     <AutoCompleteTextView
@@ -35,7 +35,9 @@
     <Button
         android:id="@+id/submitRequest"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:text="Submit" >
+        
     </Button>
 
 </LinearLayout>

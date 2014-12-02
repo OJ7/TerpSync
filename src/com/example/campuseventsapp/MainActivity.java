@@ -397,8 +397,8 @@ public class MainActivity extends Activity {
 	private void showAdminFAB() {
 		adminFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
-				.withButtonColor(Color.WHITE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 296).create();
+				.withButtonColor(Color.LTGRAY).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withMargins(0, 0, 16, 226).create();
 		adminFAB.setOnClickListener(new OnClickListener() {
 
 			@Override
