@@ -1,5 +1,5 @@
 package com.example.campuseventsapp;
-import com.example.campuseventsapp.R;
+
 
 import android.app.Activity;
 import android.content.Intent;

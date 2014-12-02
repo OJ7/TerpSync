@@ -13,7 +13,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!--
      The following two permissions are not required to use
-     Google Maps Android API v2, but are recommended.    -->
+     Google Maps Android API v2, but are recommended.
+    -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -43,11 +44,10 @@
             android:name="com.example.campuseventsapp.AddEventActivity"
             android:label="@string/title_add_event_activity"
             android:parentActivityName="com.example.campuseventsapp.MainActivity" >
-
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.campuseventsapp.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SetupLoginInfo"
+            android:label="@string/title_activity_setup_login_info" >
         </activity>
 
         <meta-data

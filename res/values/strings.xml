@@ -15,6 +15,7 @@
     <string name="end_time">End Time</string>
     <string name="end_date">End Date</string>
     <string name="add_event_location">Add location</string>
+    <string name="search_text">Please type to search for building</string>
     <string name="add_event_description">Add description</string>
     <!-- Widget Labels. -->
     <string name="event_admission_fee">Admission</string>
@@ -22,5 +23,10 @@
     <string name="event_paid">Paid</string>
     <string name="event_save">Save</string>
     <string name="enter_cost">Enter cost</string>
+
+    <!-- Admin specific strings: -->
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="title_activity_setup_login_info">SetupLoginInfo</string>
 
 </resources>
