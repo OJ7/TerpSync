@@ -1,6 +1,8 @@
 package com.example.campuseventsapp;
 
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,6 +11,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 
@@ -17,6 +21,8 @@ public class ListActivity extends Activity {
 	private static final String TAG = "ListActivity";
 	private FloatingActionButton fabButton, item1, item2, item3;
 	private int toggle = 0; // 0 = hidden, 1 = shown
+	private ArrayList<EventObject> events = new ArrayList<EventObject>();
+	private ListView list;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +32,23 @@ public class ListActivity extends Activity {
 		//TODO - create list layout file
 		//IDEA - use similar card style used in new material-designed Google Calendar app
 		setupFAB();
+		
+		
+		CustomList adapter = new CustomList(ListActivity.this, events);
+		list = (ListView) findViewById(R.id.eventsList);
+		list.setAdapter(adapter);
+		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Toast.makeText(ListActivity.this, "You Clicked at " + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+		
+		
 	} // end of onCreate
+	
+	
 	
 	/**
 	 * Sets up the Floating Action Button the Map Screen
