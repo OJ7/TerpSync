@@ -41,12 +41,12 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 	private GoogleMap mMap;
-	private FloatingActionButton fabButton, mapFAB, listFAB, signInFAB, adminFAB, locationButton;
+	private FloatingActionButton fabButton, mapFAB, normalMapFAB, hybridMapFAB, satelliteMapFAB, terrainMapFAB, listFAB, signInFAB, adminFAB, locationButton;
 	private static final String TAG = "MainActivity";
 	String buildingNameQuery;
 	private int expandFAB = 0; // 0 = collapsed, 1 = expanded
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
-	private int mapTypeToggle = 1, adminToggle = 0;
+	private int mapTypeToggle = 0, adminToggle = 0;
 	private final LatLng UMD = new LatLng(38.989822, -76.940637);
 	private List<Marker> markers = new ArrayList<Marker>();
 	AlertDialog.Builder builder, list_builder;
@@ -215,55 +215,128 @@ public class MainActivity extends Activity {
 	/*
 	 * This FAB changes map types for the variable mapTypeToggle
 	 * 
-	 * 0 = Normal, 1 = Hybrid, 2 = Satellite, 3 = Terrain
+	 * 
 	 */
 	private void showMapFAB() {
+		//Normal
 		mapFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
 				.withButtonColor(Color.BLUE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 86).create();
-
+		
+		//Show maptype FAB menu
 		mapFAB.setOnClickListener(new OnClickListener() {
-
 			@Override
-			public void onClick(View v) {
-
-				switch (mapTypeToggle) {
-				case 0:
-					// Show normal map
-					mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-					mapTypeToggle++;
-					Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
-							.show();
-					break;
-				case 1:
-					// Show Hybrid map
-					mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-					mapTypeToggle++;
-					Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_SHORT)
-							.show();
-					break;
-				case 2:
-					// Show Satellite map
-					mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-					mapTypeToggle++;
-					Toast.makeText(getApplicationContext(), "Satellite Map", Toast.LENGTH_SHORT)
-							.show();
-					break;
-				case 3:
-					// Show Terrain map
-					mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-					mapTypeToggle = 0;
-					Toast.makeText(getApplicationContext(), "Terrain Map", Toast.LENGTH_SHORT)
-							.show();
-				default:
-					break;
+			public void onClick(View v){
+				// Show FAB menu of map types
+				if(mapTypeToggle == 0){
+					showMapFABMenu();
+					mapFAB.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_action_cancel));
+					Toast.makeText(getApplicationContext(), "Show Menu", Toast.LENGTH_SHORT).show();
+					mapTypeToggle = 1;
+				}else{
+					hideMapFABMenu();
+					mapFAB.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_action_map));
+					Toast.makeText(getApplicationContext(), "Hide Menu", Toast.LENGTH_SHORT).show();
+					mapTypeToggle=0;
+					
 				}
 			}
-
+			
 		});
+		
+
 	} // end of MapFAB
 
+	private void showMapFABMenu(){
+				//Normal
+				normalMapFAB = new FloatingActionButton.Builder(this)
+				  				.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
+				  				.withButtonColor(Color.LTGRAY).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				  				.withMargins(0, 0, 86, 86).create();
+		
+				//Hybrid
+				hybridMapFAB = new FloatingActionButton.Builder(this)
+							  .withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
+				              .withButtonColor(Color.WHITE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				              .withMargins(0, 0, 156, 86).create();
+				
+				//Satellite
+				satelliteMapFAB = new FloatingActionButton.Builder(this)
+								.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
+								.withButtonColor(Color.CYAN).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+								.withMargins(0, 0, 226, 86).create();
+				
+				//Terrain
+				terrainMapFAB = new FloatingActionButton.Builder(this)
+								.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
+								.withButtonColor(Color.YELLOW).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+								.withMargins(0, 0, 296, 86).create();
+						
+				
+				normalMapFAB.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v){
+						// Show normal map
+						mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+						Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
+								.show();
+					}
+					
+				});
+				
+				hybridMapFAB.setOnClickListener(new OnClickListener(){
+
+					@Override
+					public void onClick(View arg0) {
+						// TODO Auto-generated method stub
+						// Show Hybrid map
+						mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+						Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_SHORT)
+								.show();
+					}
+					
+				});
+				
+				satelliteMapFAB.setOnClickListener(new OnClickListener(){
+
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						// Show Satellite map
+						mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+						Toast.makeText(getApplicationContext(), "Satellite Map", Toast.LENGTH_SHORT)
+								.show();
+					}
+					
+				});
+				
+				terrainMapFAB.setOnClickListener(new OnClickListener(){
+
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						// Show Terrain map
+						mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+						Toast.makeText(getApplicationContext(), "Terrain Map", Toast.LENGTH_SHORT)
+								.show();
+					}
+					
+				});
+	} // end of showMapFABMenu
+	
+	/*
+	 * hideMapFABMenu
+	 */
+	
+	private void hideMapFABMenu(){
+		normalMapFAB.hideFloatingActionButton();
+		hybridMapFAB.hideFloatingActionButton();
+		satelliteMapFAB.hideFloatingActionButton();
+		terrainMapFAB.hideFloatingActionButton();
+		
+	}//end of hideMapFABMenu
+	
 	/*
 	 * List View shortcut FAB
 	 */
