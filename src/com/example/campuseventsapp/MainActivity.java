@@ -1,11 +1,15 @@
 package com.example.campuseventsapp;
 
+/*
+ * 
+ * OMIDS CHANGE
+ */
 import java.util.ArrayList;
+
 import java.util.List;
 
 import com.example.campuseventsapp.FloatingActionButton;
 import com.example.campuseventsapp.R;
-import com.google.android.gms.analytics.n;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
