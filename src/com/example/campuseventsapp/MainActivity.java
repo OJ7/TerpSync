@@ -69,11 +69,9 @@ public class MainActivity extends Activity {
 		list_builder = new AlertDialog.Builder(this);
 		view = getLayoutInflater().inflate(R.layout.dialog_signin, null);
 
-		
 		setupMap();
 		setupFAB();
 		queryAndAddEventsFromParse();
-		centerMapOnMyLocation();
 	} // end of onCreate
 
 	/**
@@ -122,6 +120,10 @@ public class MainActivity extends Activity {
 
 		centerMapOnCampus();
 		mMap.getUiSettings().setZoomControlsEnabled(false);
+		
+		mMap.setMyLocationEnabled(true);
+		mMap.getMyLocation();
+
 
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 
@@ -201,7 +203,7 @@ public class MainActivity extends Activity {
 				if (locToggle == 0) {
 					locToggle = 1;
 					locationButton.setFloatingActionButtonColor(Color.MAGENTA);
-					animateMapOnMyLocation();
+					centerMapOnMyLocation();
 					Toast.makeText(getApplicationContext(),
 							"Attempting to center map on current location", Toast.LENGTH_SHORT)
 							.show();
@@ -494,8 +496,7 @@ public class MainActivity extends Activity {
 			myLocation = new LatLng(location.getLatitude(), location.getLongitude());
 		}
 		
-	}
-	private void animateMapOnMyLocation(){
+	
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
 	}
 
