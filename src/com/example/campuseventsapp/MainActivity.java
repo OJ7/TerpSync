@@ -2,7 +2,10 @@ package com.example.campuseventsapp;
 
 /*
  * 
- * OMIDS CHANGE
+ * HUGE 
+ * COMMENT
+ * FOR
+ * OMID
  */
 import java.util.ArrayList;
 
