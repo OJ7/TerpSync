@@ -41,7 +41,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 	private GoogleMap mMap;
-	private FloatingActionButton fabButton, mapFAB, normalMapFAB, hybridMapFAB, satelliteMapFAB, terrainMapFAB, listFAB, signInFAB, adminFAB, locationButton;
+	private FloatingActionButton fabButton, mapFAB, normalMapFAB, hybridMapFAB, listFAB, signInFAB, adminFAB, locationButton;
 	private static final String TAG = "MainActivity";
 	String buildingNameQuery;
 	private int expandFAB = 0; // 0 = collapsed, 1 = expanded
@@ -261,17 +261,6 @@ public class MainActivity extends Activity {
 				              .withButtonColor(Color.WHITE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				              .withMargins(0, 0, 156, 86).create();
 				
-				//Satellite
-				satelliteMapFAB = new FloatingActionButton.Builder(this)
-								.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-								.withButtonColor(Color.CYAN).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-								.withMargins(0, 0, 226, 86).create();
-				
-				//Terrain
-				terrainMapFAB = new FloatingActionButton.Builder(this)
-								.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-								.withButtonColor(Color.YELLOW).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-								.withMargins(0, 0, 296, 86).create();
 						
 				
 				normalMapFAB.setOnClickListener(new OnClickListener() {
@@ -298,31 +287,6 @@ public class MainActivity extends Activity {
 					
 				});
 				
-				satelliteMapFAB.setOnClickListener(new OnClickListener(){
-
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						// Show Satellite map
-						mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-						Toast.makeText(getApplicationContext(), "Satellite Map", Toast.LENGTH_SHORT)
-								.show();
-					}
-					
-				});
-				
-				terrainMapFAB.setOnClickListener(new OnClickListener(){
-
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						// Show Terrain map
-						mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-						Toast.makeText(getApplicationContext(), "Terrain Map", Toast.LENGTH_SHORT)
-								.show();
-					}
-					
-				});
 	} // end of showMapFABMenu
 	
 	/*
@@ -332,8 +296,7 @@ public class MainActivity extends Activity {
 	private void hideMapFABMenu(){
 		normalMapFAB.hideFloatingActionButton();
 		hybridMapFAB.hideFloatingActionButton();
-		satelliteMapFAB.hideFloatingActionButton();
-		terrainMapFAB.hideFloatingActionButton();
+
 		
 	}//end of hideMapFABMenu
 	
@@ -404,16 +367,6 @@ public class MainActivity extends Activity {
 										boolean flag = false;
 										for (AdminAccounts x : arg0) {
 											if (x.getUsername().equals(UN)
-													&& x.getPassword().equals(PW)
-													&& x.getObjectId().equals("6q5lDmyI1R")) {
-
-												// default
-												startActivity(new Intent(MainActivity.this,
-														SetupLoginInfo.class));
-												flag = true;
-												break;
-
-											} else if (x.getUsername().equals(UN)
 													&& x.getPassword().equals(PW)) {
 												signInFAB.hideFloatingActionButton();
 												adminToggle = 1;
@@ -422,14 +375,14 @@ public class MainActivity extends Activity {
 												showAdminFAB();
 												flag = true;
 												break;
-											} else {
-
 											}
 										}
 										if (!flag) {
 											Toast.makeText(getApplicationContext(),
 													"Invalid Password or Username",
 													Toast.LENGTH_LONG).show();
+										}else{
+											Toast.makeText(getApplicationContext(), "Logged in", Toast.LENGTH_LONG).show();
 										}
 									}
 								});
@@ -477,7 +430,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				String[] arr = { "Add Event", "Delete An Event", "See All Current Events",
-						"Update A Current Event", "Log Out" };
+						"Update A Current Event", "Change PW/UN", "Log Out" };
 
 				list_builder.setTitle("Please select an Option")
 						.setItems(arr, new DialogInterface.OnClickListener() {
@@ -505,8 +458,13 @@ public class MainActivity extends Activity {
 											Toast.LENGTH_SHORT).show();
 									break;
 								case 4:
-									Toast.makeText(getApplicationContext(), "clicked Log out",
+									Toast.makeText(getApplicationContext(), "clicked change pw/un",
 											Toast.LENGTH_SHORT).show();
+									break;
+								case 5:
+									adminFAB.hideFloatingActionButton();
+									adminToggle = 0;
+									showSignInFAB();
 									break;
 								default:
 									break;

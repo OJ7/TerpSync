@@ -137,6 +137,7 @@ public class ListActivity extends Activity {
 		showItem3();
 	}
 
+	//Add event intent
 	private void showItem1() {
 		item1 = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
@@ -156,6 +157,7 @@ public class ListActivity extends Activity {
 		});
 	}
 
+	//This FAB goes back to main activity
 	private void showItem2() {
 		item2 = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
@@ -175,6 +177,7 @@ public class ListActivity extends Activity {
 		});
 	}
 
+	//Not yet implemented
 	private void showItem3() {
 		item3 = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))

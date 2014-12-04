@@ -21,7 +21,7 @@
     <ImageView
         android:id="@+id/card_image"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="0dp"
         android:layout_weight="0.04"
         android:scaleType="fitXY"
         android:layout_margin="2dp"/>
