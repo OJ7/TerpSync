@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
 	EditText usernameView;
 	EditText passwordView;
 	View view = null;
-
+	LatLng myLocation = UMD;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,10 +65,11 @@ public class MainActivity extends Activity {
 		list_builder = new AlertDialog.Builder(this);
 		view = getLayoutInflater().inflate(R.layout.dialog_signin, null);
 
+		
 		setupMap();
 		setupFAB();
 		queryAndAddEventsFromParse();
-
+		centerMapOnMyLocation();
 	} // end of onCreate
 
 	/**
@@ -196,7 +197,7 @@ public class MainActivity extends Activity {
 				if (locToggle == 0) {
 					locToggle = 1;
 					locationButton.setFloatingActionButtonColor(Color.MAGENTA);
-					centerMapOnMyLocation();
+					animateMapOnMyLocation();
 					Toast.makeText(getApplicationContext(),
 							"Attempting to center map on current location", Toast.LENGTH_SHORT)
 							.show();
@@ -484,11 +485,13 @@ public class MainActivity extends Activity {
 		mMap.setMyLocationEnabled(true);
 
 		Location location = mMap.getMyLocation();
-		LatLng myLocation = UMD;
 
 		if (location != null) {
 			myLocation = new LatLng(location.getLatitude(), location.getLongitude());
 		}
+		
+	}
+	private void animateMapOnMyLocation(){
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
 	}
 
