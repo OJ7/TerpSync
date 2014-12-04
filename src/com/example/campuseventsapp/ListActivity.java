@@ -21,8 +21,8 @@ import android.widget.Toast;
 public class ListActivity extends Activity {
 	
 	private static final String TAG = "ListActivity";
-	private FloatingActionButton fabButton, item1, item2, item3;
-	private int toggle = 0; // 0 = hidden, 1 = shown
+	private FloatingActionButton fabButton;
+	//private int toggle = 0; // 0 = hidden, 1 = shown
 	
 	//List of cards
 	private List<Card> cardList;
@@ -104,7 +104,7 @@ public class ListActivity extends Activity {
 	 */
 	private void setupFAB() {
 		fabButton = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_undo))
 				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
 		fabButton.setOnClickListener(new OnClickListener() {
@@ -112,87 +112,12 @@ public class ListActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO (minor) - implement material design animations
-				if (toggle == 0) {
-					toggle = 1;
-					showFABMenu();
-				} else {
-					toggle = 0;
-					hideFABMenu();
-				}
+				finish();
 
 			}
 		});
 	}
 
-	private void hideFABMenu() {
-		item1.hideFloatingActionButton();
-		item2.hideFloatingActionButton();
-		item3.hideFloatingActionButton();
-	}
-
-	private void showFABMenu() {
-
-		showItem1();
-		showItem2();
-		showItem3();
-	}
-
-	//Add event intent
-	private void showItem1() {
-		item1 = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
-				.withButtonColor(Color.BLUE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 86).create();
-		item1.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(getApplicationContext(), "clicked item 1", Toast.LENGTH_SHORT)
-						.show();
-
-				Intent intent = new Intent(ListActivity.this, AddEventActivity.class);
-				startActivityForResult(intent, 0);
-			}
-
-		});
-	}
-
-	//This FAB goes back to main activity
-	private void showItem2() {
-		item2 = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
-				.withButtonColor(Color.GREEN).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 156).create();
-		item2.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(getApplicationContext(), "clicked item 2", Toast.LENGTH_SHORT)
-						.show();
-				Intent intent = new Intent(ListActivity.this, MainActivity.class);
-				startActivity(intent);
-
-			}
-
-		});
-	}
-
-	//Not yet implemented
-	private void showItem3() {
-		item3 = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_launcher))
-				.withButtonColor(Color.GRAY).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 226).create();
-		item3.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(getApplicationContext(), "clicked item 3", Toast.LENGTH_SHORT)
-						.show();
-			}
-
-		});
-	}
 
 	
 }
