@@ -55,7 +55,7 @@ public class FloatingActionButton extends View {
 		mButtonPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mButtonPaint.setColor(FloatingActionButtonColor);
 		mButtonPaint.setStyle(Paint.Style.FILL);
-		mButtonPaint.setShadowLayer(10.0f, 0.0f, 3.5f, Color.argb(100, 0, 0, 0));
+		mButtonPaint.setShadowLayer(10.0f, 0.0f, 3.5f, Color.argb(200, 0, 0, 0));
 		mDrawablePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
 		invalidate();
