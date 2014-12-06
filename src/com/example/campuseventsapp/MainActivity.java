@@ -80,8 +80,7 @@ public class MainActivity extends Activity {
 		setupFAB();
 		queryAndAddEventsFromParse();
 		
-<<<<<<< HEAD
-=======
+
 		
 		LayoutInflater inflater = getLayoutInflater();
 		View tview;
@@ -89,7 +88,7 @@ public class MainActivity extends Activity {
 		getWindow().addContentView(	tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 	
 		
->>>>>>> upstream/master
+
 	} 
 
 	/**
