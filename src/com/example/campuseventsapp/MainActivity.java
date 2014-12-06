@@ -179,10 +179,13 @@ public class MainActivity extends Activity {
 
 	private void hideFABMenu() {
 		showLocationButton();
-		mapTypeToggle = 0;
 		mapFAB.hideFloatingActionButton();
-		normalMapFAB.hideFloatingActionButton();
-		hybridMapFAB.hideFloatingActionButton();
+		if(mapTypeToggle == 1){
+			normalMapFAB.hideFloatingActionButton();
+			hybridMapFAB.hideFloatingActionButton();
+			mapTypeToggle = 0;
+		}
+		
 		listFAB.hideFloatingActionButton();
 		if (adminToggle == 0) {
 			signInFAB.hideFloatingActionButton();
