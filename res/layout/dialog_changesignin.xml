@@ -3,12 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     
-    <EditText
-        android:id="@+id/oldUsername"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/oldUsername" />
-    
+
     <EditText
         android:id="@+id/newUsername"
         android:layout_width="match_parent"

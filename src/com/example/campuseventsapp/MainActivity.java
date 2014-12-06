@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
 	AlertDialog.Builder builder, list_builder;
 	EditText usernameView;
 	EditText passwordView;
-	EditText oldUNView, newUNView, newPWView;
+	EditText newUNView, newPWView;
 	View view = null;
 	View signInChangesView = null;
 	LatLng myLocation = UMD;
@@ -185,7 +185,7 @@ public class MainActivity extends Activity {
 			hybridMapFAB.hideFloatingActionButton();
 			mapTypeToggle = 0;
 		}
-		
+
 		listFAB.hideFloatingActionButton();
 		if (adminToggle == 0) {
 			signInFAB.hideFloatingActionButton();
@@ -253,7 +253,6 @@ public class MainActivity extends Activity {
 		.withButtonColor(Color.parseColor("#EDC951")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 86).create();
 
-
 		//Show maptype FAB menu
 		mapFAB.setOnClickListener(new OnClickListener() {
 			@Override
@@ -269,10 +268,8 @@ public class MainActivity extends Activity {
 					mapFAB.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_map));
 					Toast.makeText(getApplicationContext(), "Hide Menu", Toast.LENGTH_SHORT).show();
 					mapTypeToggle=0;
-
 				}
 			}
-
 		});
 
 
@@ -280,7 +277,7 @@ public class MainActivity extends Activity {
 
 	private void showMapFABMenu(){
 
-		
+
 
 		//Normal
 		normalMapFAB = new FloatingActionButton.Builder(this)
@@ -502,7 +499,7 @@ public class MainActivity extends Activity {
 							Toast.makeText(getApplicationContext(), "clicked change pw/un",
 									Toast.LENGTH_SHORT).show();
 
-							oldUNView = (EditText)signInChangesView.findViewById(R.id.oldUsername);
+
 							newUNView = (EditText)signInChangesView.findViewById(R.id.newUsername);
 							newPWView = (EditText)signInChangesView.findViewById(R.id.newPassword);
 
@@ -511,12 +508,12 @@ public class MainActivity extends Activity {
 							.setCancelable(false)
 							.setPositiveButton("Change!", new DialogInterface.OnClickListener() {
 
-								final String oldUN = oldUNView.getEditableText().toString();
-								final String newPW = newPWView.getEditableText().toString();
-								final String newUN = newUNView.getEditableText().toString();
+								
 
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
+									final String newPW = newPWView.getEditableText().toString();
+									final String newUN = newUNView.getEditableText().toString();
 
 									ParseQuery<AdminAccounts> query = ParseQuery.getQuery(AdminAccounts.class);
 									query.whereContains("username", currentUser);
@@ -530,16 +527,13 @@ public class MainActivity extends Activity {
 											arg0.get(0).setPassword(newPW);
 											arg0.get(0).saveInBackground();
 										}
-
 									});
 
 									newUNView.setText("");
-									oldUNView.setText("");
 									newPWView.setText("");
 									((ViewGroup)signInChangesView.getParent()).removeView(signInChangesView);
 									dialog.cancel();
 									dialog.dismiss();
-
 								}
 							})
 
@@ -549,7 +543,6 @@ public class MainActivity extends Activity {
 								public void onClick(DialogInterface dialog, int which) {
 									// TODO Auto-generated method stub
 									newUNView.setText("");
-									oldUNView.setText("");
 									newPWView.setText("");
 									((ViewGroup)signInChangesView.getParent()).removeView(signInChangesView);
 									dialog.cancel();
@@ -558,8 +551,6 @@ public class MainActivity extends Activity {
 							});
 							final AlertDialog alertDialog = builder.create();
 							alertDialog.show();
-
-
 
 							break;
 						case 5:
@@ -590,7 +581,6 @@ public class MainActivity extends Activity {
 			myLocation = new LatLng(location.getLatitude(), location.getLongitude());
 		}
 
-
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
 	}
 
@@ -611,7 +601,6 @@ public class MainActivity extends Activity {
 					if (e == null) {
 
 						buildingNameQuery = new String(eventObject.getBuildingName());
-
 						ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
 								.getQuery(UMDBuildings.class);
 						buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
@@ -625,9 +614,7 @@ public class MainActivity extends Activity {
 								Toast.makeText(getApplicationContext(), "Added event to map",
 										Toast.LENGTH_SHORT).show();
 							}
-
 						});
-
 					}
 				}
 			});
