@@ -80,6 +80,7 @@ public class MainActivity extends Activity {
 		setupFAB();
 		queryAndAddEventsFromParse();
 		
+
 		
 		LayoutInflater inflater = getLayoutInflater();
 		View tview;
@@ -87,6 +88,7 @@ public class MainActivity extends Activity {
 		getWindow().addContentView(	tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 	
 		
+
 	} 
 
 	/**
@@ -145,10 +147,10 @@ public class MainActivity extends Activity {
 
 		centerMapOnCampus();
 		mMap.getUiSettings().setZoomControlsEnabled(false);
-
+		mMap.getUiSettings().setMyLocationButtonEnabled(false);
 		mMap.setMyLocationEnabled(true);
 		mMap.getMyLocation();
-
+		
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 
 			@Override
