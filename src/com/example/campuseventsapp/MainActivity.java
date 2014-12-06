@@ -38,6 +38,7 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -80,6 +81,7 @@ public class MainActivity extends Activity {
 		setupFAB();
 		queryAndAddEventsFromParse();
 		
+		ImageView m1 = (ImageView)findViewById(R.id.marker1);
 		
 		LayoutInflater inflater = getLayoutInflater();
 		View tview;
