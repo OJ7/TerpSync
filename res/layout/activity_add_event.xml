@@ -15,17 +15,33 @@
         android:paddingRight="8dp"
         android:paddingTop="12dp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <EditText
-        android:id="@+id/eventTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:hint="@+string/enter_event_name"
-        android:paddingBottom="8dp" >
-
-        <requestFocus />
-    </EditText>
+	<LinearLayout 
+	    android:layout_width = "match_parent"
+	    android:layout_height = "wrap_content"
+	    android:orientation="horizontal"
+	    android:weightSum="4">
+	    	 <TextView
+	    	     android:id="@+id/eventTitleTextView"
+	    	     android:layout_width="match_parent"
+	    	     android:layout_height="wrap_content"
+	    	     android:text="@+string/enter_event_name"
+	    	     android:layout_weight="2.5"
+	    	     android:textAppearance="?android:attr/textAppearanceLarge">"
+	    	     
+	    	 </TextView>
+		     <EditText
+		        android:id="@+id/eventTitle"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:maxLines="1"
+		        android:hint="@+string/enter_event_name"
+		        android:paddingBottom="8dp" 
+		        android:layout_weight="1.5">
+	
+	        	<requestFocus />
+	    	</EditText>
+	</LinearLayout>
+   
 
     <LinearLayout
         android:layout_width="match_parent"

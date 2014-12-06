@@ -81,7 +81,11 @@ public class MainActivity extends Activity {
 		setupFAB();
 		queryAndAddEventsFromParse();
 		
+<<<<<<< HEAD
 		ImageView m1 = (ImageView)findViewById(R.id.marker1);
+=======
+
+>>>>>>> origin/master
 		
 		LayoutInflater inflater = getLayoutInflater();
 		View tview;
@@ -89,6 +93,7 @@ public class MainActivity extends Activity {
 		getWindow().addContentView(	tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 	
 		
+
 	} 
 
 	/**
@@ -147,10 +152,10 @@ public class MainActivity extends Activity {
 
 		centerMapOnCampus();
 		mMap.getUiSettings().setZoomControlsEnabled(false);
-
+		mMap.getUiSettings().setMyLocationButtonEnabled(false);
 		mMap.setMyLocationEnabled(true);
 		mMap.getMyLocation();
-
+		
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 
 			@Override
