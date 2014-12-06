@@ -75,6 +75,7 @@ public class MainActivity extends Activity {
 		setupMap();
 		setupFAB();
 		queryAndAddEventsFromParse();
+		
 	} 
 
 	/**
@@ -133,10 +134,10 @@ public class MainActivity extends Activity {
 
 		centerMapOnCampus();
 		mMap.getUiSettings().setZoomControlsEnabled(false);
-
+		mMap.getUiSettings().setMyLocationButtonEnabled(false);
 		mMap.setMyLocationEnabled(true);
 		mMap.getMyLocation();
-
+		
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 
 			@Override
