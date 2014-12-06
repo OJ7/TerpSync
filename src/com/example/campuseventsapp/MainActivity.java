@@ -280,43 +280,7 @@ public class MainActivity extends Activity {
 
 	private void showMapFABMenu(){
 
-		//Normal
-		normalMapFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-		.withButtonColor(Color.LTGRAY).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-		.withMargins(0, 0, 86, 86).create();
-
-		//Hybrid
-		hybridMapFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-		.withButtonColor(Color.WHITE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-		.withMargins(0, 0, 156, 86).create();
-
-
-
-		normalMapFAB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v){
-				// Show normal map
-				mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-				Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
-				.show();
-			}
-
-		});
-
-		hybridMapFAB.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				// Show Hybrid map
-				mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-				Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_SHORT)
-				.show();
-			}
-
-		});
+		
 
 		//Normal
 		normalMapFAB = new FloatingActionButton.Builder(this)
@@ -591,14 +555,9 @@ public class MainActivity extends Activity {
 									dialog.cancel();
 									dialog.dismiss();
 								}
-
-
 							});
 							final AlertDialog alertDialog = builder.create();
 							alertDialog.show();
-
-
-
 
 
 
