@@ -206,15 +206,13 @@ public class MainActivity extends Activity {
 
 	private void showLocationButton() {
 		locationButton = new FloatingActionButton.Builder(this)
-<<<<<<< HEAD
+
+
+
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-		.withButtonColor(Color.CYAN).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+		.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 86).create();
-=======
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-				.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 86).create();
->>>>>>> origin/master
+
 
 		locationButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -246,17 +244,13 @@ public class MainActivity extends Activity {
 	private void showMapFAB() {
 		//Normal
 		mapFAB = new FloatingActionButton.Builder(this)
-<<<<<<< HEAD
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-		.withButtonColor(Color.BLUE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+
+
+		.withDrawable(getResources().getDrawable(R.drawable.ic_map))
+		.withButtonColor(Color.parseColor("#EDC951")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 86).create();
 
-=======
-				.withDrawable(getResources().getDrawable(R.drawable.ic_map))
-				.withButtonColor(Color.parseColor("#EDC951")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 86).create();
-		
->>>>>>> origin/master
+
 		//Show maptype FAB menu
 		mapFAB.setOnClickListener(new OnClickListener() {
 			@Override
@@ -282,7 +276,7 @@ public class MainActivity extends Activity {
 	} // end of MapFAB
 
 	private void showMapFABMenu(){
-<<<<<<< HEAD
+
 		//Normal
 		normalMapFAB = new FloatingActionButton.Builder(this)
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
@@ -320,34 +314,40 @@ public class MainActivity extends Activity {
 			}
 
 		});
-=======
-				//Normal
-				normalMapFAB = new FloatingActionButton.Builder(this)
-				  				.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-				  				.withButtonColor(Color.parseColor("#F8CA00")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				  				.withMargins(0, 0, 86, 86).create();
-		
-				//Hybrid
-				hybridMapFAB = new FloatingActionButton.Builder(this)
-							  .withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
-				              .withButtonColor(Color.parseColor("#C7F464")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				              .withMargins(0, 0, 156, 86).create();
-				
-						
-				
-				normalMapFAB.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v){
-						// Show normal map
-						mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-						Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
-								.show();
-					}
-					
-				});
-				
-				hybridMapFAB.setOnClickListener(new OnClickListener(){
->>>>>>> origin/master
+
+		//Normal
+		normalMapFAB = new FloatingActionButton.Builder(this)
+		.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
+		.withButtonColor(Color.parseColor("#F8CA00")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+		.withMargins(0, 0, 86, 86).create();
+
+		//Hybrid
+		hybridMapFAB = new FloatingActionButton.Builder(this)
+		.withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
+		.withButtonColor(Color.parseColor("#C7F464")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+		.withMargins(0, 0, 156, 86).create();
+
+
+
+		normalMapFAB.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v){
+				// Show normal map
+				mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+				Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
+				.show();
+			}
+
+		});
+
+		hybridMapFAB.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+				Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_LONG).show();
+			}
+		});
 
 	} // end of showMapFABMenu
 
@@ -367,15 +367,11 @@ public class MainActivity extends Activity {
 	 */
 	private void showListFAB() {
 		listFAB = new FloatingActionButton.Builder(this)
-<<<<<<< HEAD
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_view_as_list))
-		.withButtonColor(Color.GREEN).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+
+		.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
+		.withButtonColor(Color.parseColor("#CBE86B")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 156).create();
-=======
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
-				.withButtonColor(Color.parseColor("#CBE86B")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 156).create();
->>>>>>> origin/master
+
 		listFAB.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -399,15 +395,12 @@ public class MainActivity extends Activity {
 	 */
 	private void showSignInFAB() {
 		signInFAB = new FloatingActionButton.Builder(this)
-<<<<<<< HEAD
+
+
 		.withDrawable(getResources().getDrawable(R.drawable.ic_gear_50))
-		.withButtonColor(Color.GRAY).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+		.withButtonColor(Color.parseColor("#FA6900")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 226).create();
-=======
-				.withDrawable(getResources().getDrawable(R.drawable.ic_gear_50))
-				.withButtonColor(Color.parseColor("#FA6900")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 226).create();
->>>>>>> origin/master
+
 		signInFAB.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -500,15 +493,12 @@ public class MainActivity extends Activity {
 	 */
 	private void showAdminFAB() {
 		adminFAB = new FloatingActionButton.Builder(this)
-<<<<<<< HEAD
+
+
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
-		.withButtonColor(Color.LTGRAY).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+		.withButtonColor(Color.parseColor("#53777A")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 226).create();
-=======
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
-				.withButtonColor(Color.parseColor("#53777A")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 226).create();
->>>>>>> origin/master
+
 		adminFAB.setOnClickListener(new OnClickListener() {
 
 			@Override
