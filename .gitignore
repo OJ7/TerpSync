@@ -30,4 +30,8 @@ proguard/
 .project
 .settings/org.eclipse.jdt.core.prefs
 res/values/api.xml
+res/drawable-hdpi/Thumbs.db
+res/drawable-mdpi/Thumbs.db
+res/drawable-xhdpi/Thumbs.db
+res/drawable-xxhdpi/Thumbs.db
 project.properties
