@@ -395,7 +395,7 @@ public class MainActivity extends Activity {
 
 				builder.setView(view)
 
-				.setTitle("Please enter your Username and Password. Use default if first time user.")
+				.setTitle("Enter your Username and Password.")
 				.setCancelable(false)
 
 				.setPositiveButton("Sign in", new DialogInterface.OnClickListener() {
