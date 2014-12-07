@@ -6,11 +6,12 @@ import java.util.List;
 
 import com.example.campuseventsapp.FloatingActionButton;
 import com.example.campuseventsapp.R;
+import com.example.campuseventsapp.card.EventListActivity;
+import com.example.campuseventsapp.card.EventObject;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -36,11 +37,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -346,7 +344,8 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Toast.makeText(getApplicationContext(), "Implement List of ALL current events",
 						Toast.LENGTH_SHORT).show();
-				Intent intent = new Intent(MainActivity.this, ListActivity.class);
+				Log.i(TAG, "about to enter EventsList Activity");
+				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 				startActivity(intent);
 			}
 		});

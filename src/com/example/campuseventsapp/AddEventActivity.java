@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.example.campuseventsapp.R;
+import com.example.campuseventsapp.card.EventObject;
 import com.parse.FindCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
