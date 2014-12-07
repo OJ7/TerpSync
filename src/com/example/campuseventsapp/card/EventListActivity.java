@@ -115,8 +115,13 @@ public class EventListActivity extends Activity{
 		lv.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
+			public void onItemClick(AdapterView<?> adaptView, View view,
 					int position, long id) {
+
+				final int pos = position;
+				final AdapterView<?> pView = adaptView;
+
+				final EventObject x = (EventObject) pView.getItemAtPosition(pos);
 
 				delete_builder.setView(view).setTitle("Delete Event?")
 				.setPositiveButton("Delete!", new DialogInterface.OnClickListener() {
@@ -124,7 +129,9 @@ public class EventListActivity extends Activity{
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 
-						
+						pView.removeViewAt(pos);
+						x.deleteInBackground();
+
 					}					
 				})
 
