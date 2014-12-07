@@ -39,7 +39,7 @@ public class AddEventActivity extends Activity {
 	Calendar myCalendar = Calendar.getInstance();
 
 	TextView orgNameTextView, startDateTextView, startTimeTextView, endDateTextView,
-			endTimeTextView;
+			endTimeTextView,dollarSignTextView;
 	AutoCompleteTextView eventLocationTextView;
 	EditText eventNameEditText, eventDescriptionEditText, costEditText;
 	RadioGroup admissionRadioGroup;
@@ -83,6 +83,7 @@ public class AddEventActivity extends Activity {
 		paidButton = (RadioButton) findViewById(R.id.eventPaid);
 		costEditText = (EditText) findViewById(R.id.eventCost);
 		saveButton = (Button) findViewById(R.id.save_event_button);
+		dollarSignTextView = (TextView) findViewById(R.id.eventCost_textView);
 
 	}
 
@@ -126,9 +127,11 @@ public class AddEventActivity extends Activity {
 				} else if (checkedId == R.id.eventFree) {
 					// This is a free event
 					costEditText.setVisibility(View.INVISIBLE);
+					dollarSignTextView.setVisibility(View.INVISIBLE);
 				} else {
 					// This is has an admission fee
 					costEditText.setVisibility(View.VISIBLE);
+					dollarSignTextView.setVisibility(View.VISIBLE);
 				}
 
 			}
