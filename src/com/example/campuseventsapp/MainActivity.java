@@ -572,7 +572,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				String[] arr = { "Add Event", "Delete An Event", "See All Current Events",
-						"Update A Current Event", "Change PW/UN", "Log Out" };
+						 "Change PW/UN", "Log Out" };
 
 				list_builder.setTitle("Please select an Option")
 				.setItems(arr, new DialogInterface.OnClickListener() {
@@ -589,21 +589,17 @@ public class MainActivity extends Activity {
 											currentOrganization), 0);
 							break;
 						case 1: //delete
-							Intent intent2 = new Intent(MainActivity.this, EventListActivity.class);
-							intent2.putExtra("Delete", currentOrganization);
-							startActivity(intent2);
+							
+							
+							startActivityForResult(new Intent(MainActivity.this, EventListActivity.class).putExtra("Delete", currentOrganization), 0);
+							
 							break;
 						case 2: //see all for club
 							Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 							intent.putExtra("SeeAll", currentOrganization);
 							startActivity(intent);
 							break;
-						case 3: //update 
-							Intent intent3 = new Intent(MainActivity.this, EventListActivity.class);
-							intent3.putExtra("Update", currentOrganization);
-							startActivity(intent3);
-							break;
-						case 4: // User selected change PW/UN
+						case 3: // User selected change PW/UN
 
 							newUNView = (EditText) signInChangesView
 							.findViewById(R.id.newUsername);
@@ -670,7 +666,7 @@ public class MainActivity extends Activity {
 							newPWView.setText("");
 							break;
 
-						case 5: // Log out
+						case 4: // Log out
 							currentUser = "";
 							currentOrganization = "";
 							adminFAB.hideFloatingActionButton();
@@ -759,33 +755,49 @@ public class MainActivity extends Activity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
 		if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
-			// resultIntent will have a key "eventID" with value an event object to add
-			String eventObjectID = resultIntent.getStringExtra("eventID");
 
-			ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
+			if (resultIntent.getStringExtra("eventID") != null) {
+				// resultIntent will have a key "eventID" with value an event object to add
+				String eventObjectID = resultIntent.getStringExtra("eventID");
 
-			eventsQuery.getInBackground(eventObjectID, new GetCallback<EventObject>() {
-				public void done(EventObject eventObject, ParseException e) {
-					if (e == null) {
+				ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
 
-						buildingNameQuery = new String(eventObject.getBuildingName());
-						ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
-								.getQuery(UMDBuildings.class);
-						buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
-								buildingNameQuery);
-						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
+				eventsQuery.getInBackground(eventObjectID, new GetCallback<EventObject>() {
+					public void done(EventObject eventObject, ParseException e) {
+						if (e == null) {
 
-							@Override
-							public void done(List<UMDBuildings> arg0, ParseException arg1) {
-								UMDBuildings building = arg0.get(0);
-								addMarker(building);
-								Toast.makeText(getApplicationContext(), "Added event to map",
-										Toast.LENGTH_SHORT).show();
-							}
-						});
+							buildingNameQuery = new String(eventObject.getBuildingName());
+							ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
+									.getQuery(UMDBuildings.class);
+							buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
+									buildingNameQuery);
+							buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
+
+								@Override
+								public void done(List<UMDBuildings> arg0, ParseException arg1) {
+									UMDBuildings building = arg0.get(0);
+									addMarker(building);
+									Toast.makeText(getApplicationContext(), "Added event to map",
+											Toast.LENGTH_SHORT).show();
+								}
+							});
+						}
 					}
-				}
-			});
+				});
+			} else if(resultIntent.getStringExtra("buildName") != null) {
+				
+				String deleteBuild = resultIntent.getStringExtra("buildName"); 
+					//for (Marker m: markers) {
+						//if (m.getTitle().equals(deleteBuild)) {
+							
+					//	}
+				//	}
+			}else {
+				
+			}
+
+
+
 		}
 	}
 
