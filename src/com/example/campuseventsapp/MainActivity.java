@@ -231,14 +231,14 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				if (locToggle == 0) {
 					locToggle = 1;
-					locationButton.setFloatingActionButtonColor(Color.MAGENTA);
+					locationButton.setFloatingActionButtonColor(Color.parseColor("#BD1550"));
 					centerMapOnMyLocation();
 					Toast.makeText(getApplicationContext(),
 							"Attempting to center map on current location", Toast.LENGTH_SHORT)
 							.show();
 				} else {
 					locToggle = 0;
-					locationButton.setFloatingActionButtonColor(Color.CYAN);
+					locationButton.setFloatingActionButtonColor(Color.parseColor("#00A0B0"));
 					centerMapOnCampus();
 					Toast.makeText(getApplicationContext(), "Centering map on campus",
 							Toast.LENGTH_SHORT).show();
