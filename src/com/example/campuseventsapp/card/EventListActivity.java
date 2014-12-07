@@ -41,11 +41,12 @@ public class EventListActivity extends Activity{
 		//create list layout file
 		setContentView(R.layout.activity_list);
 		delete_builder = new AlertDialog.Builder(this);
-
+		
 		setupFAB();
 
 		//Setting up list view
 		lv = (ListView)findViewById(R.id.event_list);
+		lv.setBackgroundColor(Color.parseColor("#BD1550"));
 		view = getLayoutInflater().inflate(R.layout.dialog_delete_confirmation, null);
 
 		Intent intent = getIntent();
@@ -202,7 +203,7 @@ public class EventListActivity extends Activity{
 				if (e == null) {
 
 					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card,events);
-					lv.setAdapter(mAdapter);	
+					lv.setAdapter(mAdapter);
 				}
 				else {
 					// object retrieval failed throw exception -- fail fast

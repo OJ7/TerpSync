@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import com.example.campuseventsapp.R;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,8 +71,7 @@ public class CardListAdapter extends ArrayAdapter<EventObject>{
 		
 		// set background image
 		String resourceLocation = getBitMapLocation(currCard.getBuildingName());
-		
-		// TODO: YUSIK DO WORK HERE
+		vh.card.setBackground(mContext.getResources().getDrawable(mContext.getResources().getIdentifier(resourceLocation, "drawable", mContext.getPackageName())));
 		
 		// display date
 		if (currCard.getStartDate().equals(currCard.getEndDate())){

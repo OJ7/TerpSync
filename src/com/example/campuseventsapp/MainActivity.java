@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import com.example.campuseventsapp.FloatingActionButton;
 import com.example.campuseventsapp.R;
 import com.example.campuseventsapp.card.EventListActivity;
@@ -24,8 +23,6 @@ import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
-
-import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -71,7 +68,7 @@ public class MainActivity extends Activity {
 	TextView key1;
 	TextView key2;
 	TextView key3;
-	private int numevents = 0; // used for debugging
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +167,7 @@ public class MainActivity extends Activity {
 		.withButtonColor(Color.parseColor("#FA6900"))
 		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
 	}
+
 
 	/**
 	 * TODO (minor) - Add documentation
@@ -428,6 +426,7 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
+
 	}
 
 	private void mapTypeListeners() {
@@ -457,6 +456,7 @@ public class MainActivity extends Activity {
 				Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_LONG).show();
 			}
 		});
+
 	}
 
 	/*
@@ -820,7 +820,12 @@ public class MainActivity extends Activity {
 	 *            Represents whether an event was added or deleted from the building. True if added,
 	 *            False if deleted.
 	 */
+
 	private void updateMarker(UMDBuildings building, boolean add) {
+<<<<<<< HEAD
+=======
+		
+>>>>>>> origin/master
 
 		Double lat = Double.parseDouble(building.getLat());
 		Double lon = Double.parseDouble(building.getLng());
@@ -841,9 +846,9 @@ public class MainActivity extends Activity {
 			numEvent = 1;
 			marker = mMap.addMarker(new MarkerOptions().position(latLng).title(name));
 			markers.add(marker);
-			Log.i(TAG, "Number of markers: " + markers.size());
 
 		} else { // Marker already on map
+
 			String temp = marker.getSnippet().replaceAll("\\D+", "");
 			if (add) {
 				numEvent = Integer.parseInt(temp) + 1;
