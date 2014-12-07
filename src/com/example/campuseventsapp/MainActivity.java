@@ -84,11 +84,6 @@ public class MainActivity extends Activity {
 
 		getWindow().addContentView(	tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-		getWindow().addContentView(
-				tview,
-				new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-						ViewGroup.LayoutParams.WRAP_CONTENT));
-
 	}
 
 	/**
