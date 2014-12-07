@@ -63,9 +63,9 @@ public class MainActivity extends Activity {
 	LatLng myLocation = UMD;
 	String currentUser = "";
 	String currentOrganization = "";
-	
-	
-	
+
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,17 +80,20 @@ public class MainActivity extends Activity {
 		setupMap();
 		setupFAB();
 		queryAndAddEventsFromParse();
+<<<<<<< HEAD
 		
 
 		ImageView m1 = (ImageView)findViewById(R.id.marker1);
 
 		
+=======
+
+>>>>>>> upstream/master
 		LayoutInflater inflater = getLayoutInflater();
 		View tview;
 		tview = inflater.inflate(R.layout.legend_key_item, null);
-		getWindow().addContentView(	tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-	
 		
+		getWindow().addContentView(	tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
 	} 
 
@@ -153,7 +156,7 @@ public class MainActivity extends Activity {
 		mMap.getUiSettings().setMyLocationButtonEnabled(false);
 		mMap.setMyLocationEnabled(true);
 		mMap.getMyLocation();
-		
+
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 
 			@Override
@@ -224,7 +227,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void showLocationButton() {
-		
+
 		locationButton = new FloatingActionButton.Builder(this)
 
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
@@ -319,7 +322,7 @@ public class MainActivity extends Activity {
 
 	} 
 
-	
+
 
 	/*
 	 * This collapses all the FAB except fort he main FAB
@@ -329,12 +332,12 @@ public class MainActivity extends Activity {
 		hybridMapFAB.hideFloatingActionButton();
 	}
 
-	
+
 	/*
 	 * List View shortcut FAB
 	 */
 	private void showListFAB() {
-		
+
 		listFAB = new FloatingActionButton.Builder(this)
 
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
@@ -352,7 +355,7 @@ public class MainActivity extends Activity {
 			}
 		});
 	} 
-	
+
 
 	/*
 	 * Dialog that requires a sign in by the Admin
@@ -384,7 +387,7 @@ public class MainActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 
-						final String UN = usernameView.getEditableText().toString();
+						final String UN = usernameView.getEditableText().toString().toLowerCase();
 						final String PW = passwordView.getEditableText().toString();
 
 						ParseQuery<AdminAccounts> query = ParseQuery
