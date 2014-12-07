@@ -75,11 +75,11 @@ public class MainActivity extends Activity {
 		setupMap();
 		setupFAB();
 		queryAndAddEventsFromParse();
-		
+
 		LayoutInflater inflater = getLayoutInflater();
 		View tview;
 		tview = inflater.inflate(R.layout.legend_key_item, null);
-		
+
 		getWindow().addContentView(	tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
 		//MapLegend TextView
@@ -138,6 +138,7 @@ public class MainActivity extends Activity {
 		});
 	}
 
+	
 	/**
 	 * Sets up the Map to center location on UMD campus and add markers to all buildings
 	 */
@@ -216,7 +217,7 @@ public class MainActivity extends Activity {
 		locationButton.hideFloatingActionButton();
 		//showMapFAB();
 
-			createMapFAB();
+		createMapFAB();
 		//showListFAB();
 		if(listFAB == null){
 			createListFAB();
@@ -229,7 +230,7 @@ public class MainActivity extends Activity {
 			}else{
 				signInFAB.showFloatingActionButton();
 			}
-			
+
 		} else {
 			if(adminFAB == null){
 				createAdminFAB();
@@ -240,10 +241,10 @@ public class MainActivity extends Activity {
 	}
 
 	private void showLocationButton() {
-		
+
 		if(locToggle == 1){
 			locationButton = new FloatingActionButton.Builder(this)
-	
+
 			.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 			.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 			.withMargins(0, 0, 16, 86).create();
@@ -320,7 +321,6 @@ public class MainActivity extends Activity {
 		.withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
 		.withButtonColor(Color.parseColor("#C7F464")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 156, 86).create();
-
 		
 			normalMapFAB.setOnClickListener(new OnClickListener() {
 				@Override
@@ -345,6 +345,7 @@ public class MainActivity extends Activity {
 				}
 			});
 		
+
 	} 
 
 
