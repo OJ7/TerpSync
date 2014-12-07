@@ -44,6 +44,7 @@ public class AddEventActivity extends Activity {
 	RadioGroup admissionRadioGroup;
 	RadioButton freeButton, paidButton;
 	Button saveButton;
+	String currentOrganization;
 
 	// TODO - once AdminActivity created, change this class's parent Activity in
 	// AndroidManifest.xml
@@ -55,6 +56,9 @@ public class AddEventActivity extends Activity {
 		ActionBar actionBar = getActionBar();
 		actionBar.setTitle("New Event");
 
+		Intent intent = getIntent();
+		currentOrganization = intent.getStringExtra(this.getString(R.string.parse_admin_org_name));
+		
 		eventObject = new EventObject();
 
 		cacheWidgets();
@@ -62,8 +66,7 @@ public class AddEventActivity extends Activity {
 		setViewListeners();
 		setSubmitButtonListener();
 
-		// need to change once student orgs are implemented
-		orgNameTextView.setText("Student Org Name");
+		orgNameTextView.setText(currentOrganization);
 
 	} // end of onCreate
 
