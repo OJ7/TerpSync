@@ -73,11 +73,11 @@ public class MainActivity extends Activity {
 		setupMap();
 		setupFAB();
 		queryAndAddEventsFromParse();
-		
+
 		LayoutInflater inflater = getLayoutInflater();
 		View tview;
 		tview = inflater.inflate(R.layout.legend_key_item, null);
-		
+
 		getWindow().addContentView(	tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
 	} 
@@ -130,6 +130,7 @@ public class MainActivity extends Activity {
 		});
 	}
 
+	
 	/**
 	 * Sets up the Map to center location on UMD campus and add markers to all buildings
 	 */
@@ -208,7 +209,7 @@ public class MainActivity extends Activity {
 		locationButton.hideFloatingActionButton();
 		//showMapFAB();
 
-			createMapFAB();
+		createMapFAB();
 		//showListFAB();
 		if(listFAB == null){
 			createListFAB();
@@ -221,7 +222,7 @@ public class MainActivity extends Activity {
 			}else{
 				signInFAB.showFloatingActionButton();
 			}
-			
+
 		} else {
 			if(adminFAB == null){
 				createAdminFAB();
@@ -232,10 +233,10 @@ public class MainActivity extends Activity {
 	}
 
 	private void showLocationButton() {
-		
+
 		if(locToggle == 1){
 			locationButton = new FloatingActionButton.Builder(this)
-	
+
 			.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 			.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 			.withMargins(0, 0, 16, 86).create();
@@ -313,28 +314,28 @@ public class MainActivity extends Activity {
 		.withButtonColor(Color.parseColor("#C7F464")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 156, 86).create();
 
-		
-			normalMapFAB.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v){
-					// Show normal map
-					mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-					Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
-					.show();
-				}
-			});
-		
 
-		
-			hybridMapFAB.setOnClickListener(new OnClickListener(){
-	
-				@Override
-				public void onClick(View arg0) {
-					mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-					Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_LONG).show();
-				}
-			});
-		
+		normalMapFAB.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v){
+				// Show normal map
+				mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+				Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
+				.show();
+			}
+		});
+
+
+
+		hybridMapFAB.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+				Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_LONG).show();
+			}
+		});
+
 	} 
 
 
