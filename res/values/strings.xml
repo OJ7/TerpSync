@@ -37,4 +37,5 @@
     <string name="newUsername">Please enter your new UN</string>
 	<string name="oldUsername">Please enter your old UN</string>
 	<string name="newPassword">Please enter your new PW</string>
+	<string name="ora">#ffa500</string>
 </resources>
