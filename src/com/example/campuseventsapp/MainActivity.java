@@ -135,15 +135,10 @@ public class MainActivity extends Activity {
 
 		// Normal Map FAB
 		normalMapFAB = new FloatingActionButton.Builder(this)
-<<<<<<< HEAD
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
 		.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 86, 86).create();
-=======
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-				.withButtonColor(Color.parseColor("#F8CA00"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 86, 86).create();
->>>>>>> origin/master
+
 
 		// Hybrid Map FAB
 		hybridMapFAB = new FloatingActionButton.Builder(this)
@@ -153,31 +148,17 @@ public class MainActivity extends Activity {
 
 		// location FAB
 		locationButton = new FloatingActionButton.Builder(this)
-<<<<<<< HEAD
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 		.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 86).create();
-=======
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-				.withButtonColor(Color.parseColor("#BD1550"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
->>>>>>> origin/master
 
 		// List FAB
 		listFAB = new FloatingActionButton.Builder(this)
-<<<<<<< HEAD
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
 		.withButtonColor(Color.parseColor("#CBE86B")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 156).create();
 
 		//Admin FAB
-=======
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
-				.withButtonColor(Color.parseColor("#CBE86B"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
-
-		// Admin FAB
->>>>>>> origin/master
 		adminFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
 				.withButtonColor(Color.parseColor("#53777A"))
@@ -367,28 +348,18 @@ public class MainActivity extends Activity {
 
 			// location FAB
 			locationButton = new FloatingActionButton.Builder(this)
-<<<<<<< HEAD
 			.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 			.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 			.withMargins(0, 0, 16, 86).create();
-=======
-					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-					.withButtonColor(Color.parseColor("#BD1550"))
-					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
->>>>>>> origin/master
+
 		} else {
 
 			// location FAB
 			locationButton = new FloatingActionButton.Builder(this)
-<<<<<<< HEAD
 			.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 			.withButtonColor(Color.parseColor("#BD1550")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 			.withMargins(0, 0, 16, 86).create();
-=======
-					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-					.withButtonColor(Color.parseColor("#00A0B0"))
-					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
->>>>>>> origin/master
+
 		}
 
 		locationButton.showFloatingActionButton();
@@ -804,7 +775,6 @@ public class MainActivity extends Activity {
 						}
 					}
 				});
-<<<<<<< HEAD
 			} else if(resultIntent.getStringExtra("buildName") != null) {
 				
 				String deleteBuild = resultIntent.getStringExtra("buildName"); 
@@ -816,20 +786,7 @@ public class MainActivity extends Activity {
 			}else {
 				
 			}
-=======
-			} else if (resultIntent.getStringExtra("buildName") != null) {
 
-				String deleteBuild = resultIntent.getStringExtra("buildName");
-				// for (Marker m: markers) {
-				// if (m.getTitle().equals(deleteBuild)) {
-
-				// }
-				// }
-			} else {
-
-			}
-
->>>>>>> origin/master
 		}
 	}
 
@@ -846,6 +803,7 @@ public class MainActivity extends Activity {
 	 *            False if deleted.
 	 */
 	private void updateMarker(UMDBuildings building, boolean add) {
+		
 		Double lat = Double.parseDouble(building.getLat());
 		Double lon = Double.parseDouble(building.getLng());
 		LatLng latLng = new LatLng(lat, lon);
