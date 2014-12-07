@@ -3,6 +3,7 @@ package com.example.campuseventsapp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -38,12 +39,13 @@ public class AddEventActivity extends Activity {
 	Calendar myCalendar = Calendar.getInstance();
 
 	TextView orgNameTextView, startDateTextView, startTimeTextView, endDateTextView,
-			endTimeTextView,dollarSignTextView;
+			endTimeTextView, dollarSignTextView;
 	AutoCompleteTextView eventLocationTextView;
 	EditText eventNameEditText, eventDescriptionEditText, costEditText;
 	RadioGroup admissionRadioGroup;
 	RadioButton freeButton, paidButton;
 	Button saveButton;
+	String currentOrganization;
 
 	// TODO - once AdminActivity created, change this class's parent Activity in
 	// AndroidManifest.xml
@@ -55,6 +57,9 @@ public class AddEventActivity extends Activity {
 		ActionBar actionBar = getActionBar();
 		actionBar.setTitle("New Event");
 
+		Intent intent = getIntent();
+		currentOrganization = intent.getStringExtra(this.getString(R.string.parse_admin_org_name));
+
 		eventObject = new EventObject();
 
 		cacheWidgets();
@@ -62,8 +67,7 @@ public class AddEventActivity extends Activity {
 		setViewListeners();
 		setSubmitButtonListener();
 
-		// need to change once student orgs are implemented
-		orgNameTextView.setText("Student Org Name");
+		orgNameTextView.setText(currentOrganization);
 
 	} // end of onCreate
 
@@ -143,7 +147,7 @@ public class AddEventActivity extends Activity {
 				new DatePickerDialog(AddEventActivity.this, startDatePicker, myCalendar
 						.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar
 						.get(Calendar.DAY_OF_MONTH)).show();
-				
+
 			}
 		});
 		endDateTextView.setOnClickListener(new View.OnClickListener() {
@@ -209,7 +213,7 @@ public class AddEventActivity extends Activity {
 
 				// All valid input from User, create parse object and add to DB
 				if (formFilled) {
-				
+
 					eventObject.setOrgName(orgNameTextView.getText().toString());
 					eventObject.setEventName(eventNameEditText.getText().toString());
 					eventObject.setBuildingName(eventLocationTextView.getText().toString());
@@ -257,11 +261,19 @@ public class AddEventActivity extends Activity {
 			myCalendar.set(Calendar.MONTH, monthOfYear);
 			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 			updateDateLabel(startDateTextView);
-			Log.i("Campus-App", Integer.toString(monthOfYear));
-			eventObject.setStartDate(Integer.toString(monthOfYear) + "/"
-					+ Integer.toString(dayOfMonth) + "/" + Integer.toString(year));
+			Date date = null;
+			try {
+				date = new SimpleDateFormat("MM/dd/yyyy").parse(String.format("%02d/%02d/%04d",
+						monthOfYear, dayOfMonth, year));
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+				eventObject.setStartDate(sdf.format(date));
+			} catch (java.text.ParseException e) {
+
+				e.printStackTrace();
+			}
 		}
 	};
+
 	DatePickerDialog.OnDateSetListener endDatePicker = new DatePickerDialog.OnDateSetListener() {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -269,38 +281,53 @@ public class AddEventActivity extends Activity {
 			myCalendar.set(Calendar.MONTH, monthOfYear);
 			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 			updateDateLabel(endDateTextView);
-			eventObject.setEndDate(Integer.toString(monthOfYear) + "/"
-					+ Integer.toString(dayOfMonth) + "/" + Integer.toString(year));
+			Date date = null;
+			try {
+				date = new SimpleDateFormat("MM/dd/yyyy").parse(String.format("%02d/%02d/%04d",
+						monthOfYear, dayOfMonth, year));
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+				eventObject.setEndDate(sdf.format(date));
+			} catch (java.text.ParseException e) {
+
+				e.printStackTrace();
+			}
 		}
 	};
-	
+
 	TimePickerDialog.OnTimeSetListener startTimePicker = new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
 			myCalendar.set(Calendar.MINUTE, minute);
 			updateTimeLabel(startTimeTextView);
-			if (myCalendar.get(Calendar.AM_PM) == Calendar.AM) {
-				eventObject.setStartTime(Integer.toString(hourOfDay) + ":"
-						+ Integer.toString(minute) + " AM");
-			} else {
-				eventObject.setStartTime(Integer.toString(hourOfDay) + ":"
-						+ Integer.toString(minute) + " PM");
+			Date date = null;
+			try {
+				date = new SimpleDateFormat("hh:mm").parse(String.format("%02d:%02d", hourOfDay,
+						minute));
+				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+				eventObject.setStartTime(sdf.format(date));
+			} catch (java.text.ParseException e) {
+
+				e.printStackTrace();
 			}
 		}
 	};
+
 	TimePickerDialog.OnTimeSetListener endTimePicker = new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
 			myCalendar.set(Calendar.MINUTE, minute);
 			updateTimeLabel(endTimeTextView);
-			if (myCalendar.get(Calendar.AM_PM) == Calendar.AM) {
-				eventObject.setEndTime(Integer.toString(hourOfDay) + ":" + Integer.toString(minute)
-						+ " AM");
-			} else {
-				eventObject.setEndTime(Integer.toString(hourOfDay) + ":" + Integer.toString(minute)
-						+ " PM");
+			Date date = null;
+			try {
+				date = new SimpleDateFormat("hh:mm").parse(String.format("%02d:%02d", hourOfDay,
+						minute));
+				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+				eventObject.setEndTime(sdf.format(date));
+			} catch (java.text.ParseException e) {
+
+				e.printStackTrace();
 			}
 		}
 	};

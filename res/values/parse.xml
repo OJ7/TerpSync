@@ -21,5 +21,11 @@
     <string name="parse_building_number">Number</string>
     <string name="parse_building_latitude">latitude</string>
     <string name="parse_building_longitude">longitude</string>
+    
+    <!-- Strings used to access fields for AdminAccoutns -->
+    <string name="parse_admin_username">"username"</string>
+    <string name="parse_admin_password">"password"</string>
+    <string name="parse_admin_org_name">"organizationName"</string>
+
 
 </resources>
