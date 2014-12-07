@@ -65,14 +65,10 @@ public class MainActivity extends Activity {
 	LatLng myLocation = UMD;
 	String currentUser = "";
 	String currentOrganization = "";
-<<<<<<< HEAD
-	TextView mapLegendTextViewLess;//Map Legend textview
-
-=======
 	TextView key1;
 	TextView key2;
 	TextView key3;
->>>>>>> upstream/master
+
 
 
 	@Override
@@ -119,15 +115,6 @@ public class MainActivity extends Activity {
 
 
 
-<<<<<<< HEAD
-		//MapLegend TextView
-		mapLegendTextViewLess = (TextView)findViewById(R.id.tv3);
-		//Set text color to black if the map is in normal view
-		if(mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL){
-			mapLegendTextViewLess.setTextColor(Color.BLACK);
-		}
-	} 
-=======
 	/* 
 	 * Creates ALL FAB Views
 	 */
@@ -184,7 +171,7 @@ public class MainActivity extends Activity {
 		.withMargins(0, 0, 16, 226).create();
 	}
 
->>>>>>> upstream/master
+
 
 	/**
 	 * TODO (minor) - Add documentation
@@ -448,58 +435,7 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
-<<<<<<< HEAD
-	} 
 
-	private void showMapFABMenu(){
-
-		//Normal
-		normalMapFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-		.withButtonColor(Color.parseColor("#F8CA00")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-		.withMargins(0, 0, 86, 86).create();
-
-		//Hybrid
-		hybridMapFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
-		.withButtonColor(Color.parseColor("#C7F464")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-		.withMargins(0, 0, 156, 86).create();
-		
-			normalMapFAB.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v){
-					// Show normal map
-					mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-					mapLegendTextViewLess.setTextColor(Color.BLACK);
-					Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
-					.show();
-				}
-			});
-		
-
-		
-			hybridMapFAB.setOnClickListener(new OnClickListener(){
-	
-				@Override
-				public void onClick(View arg0) {
-					mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-					mapLegendTextViewLess.setTextColor(Color.parseColor("#ffef00"));
-					Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_LONG).show();
-				}
-			});
-		
-
-	} 
-
-
-
-	/*
-	 * This collapses all the FAB except fort he main FAB
-	 */
-	private void hideMapFABMenu(){
-		normalMapFAB.hideFloatingActionButton();
-		hybridMapFAB.hideFloatingActionButton();
-=======
 	}
 
 	private void mapTypeListeners() {
@@ -531,7 +467,7 @@ public class MainActivity extends Activity {
 				Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_LONG).show();
 			}
 		});
->>>>>>> upstream/master
+
 	}
 
 	
