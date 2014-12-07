@@ -18,7 +18,8 @@
         android:layout_toRightOf="@+id/marker1"
         android:text="   Hot Spot!!"
         android:textSize="18sp" 
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textColor="#ff0000"/>
 
     <ImageView
         android:id="@+id/marker2"
@@ -36,7 +37,8 @@
         android:layout_toRightOf="@+id/marker2"
         android:text="   3-6 Events"
         android:textSize="18sp" 
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textColor="#ffa500"/>
 
     <ImageView
         android:id="@+id/marker3"
@@ -54,6 +56,7 @@
         android:layout_toRightOf="@+id/marker3"
         android:text="   Less than 3 Events"
         android:textSize="18sp" 
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textColor="#ffef00"/>
 
 </RelativeLayout>
