@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
 import com.example.campuseventsapp.FloatingActionButton;
 import com.example.campuseventsapp.R;
 import com.example.campuseventsapp.card.EventListActivity;
@@ -23,6 +24,8 @@ import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
+
+import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -68,6 +71,7 @@ public class MainActivity extends Activity {
 	TextView key1;
 	TextView key2;
 	TextView key3;
+	private int numevents = 0; // used for debugging
 
 
 
@@ -824,13 +828,14 @@ public class MainActivity extends Activity {
 	 *            The location to place/update marker at
 	 */
 	private void addMarker(UMDBuildings building) {
+		Log.i(TAG, "Number of events: " + ++numevents);
 		Double lat = Double.parseDouble(building.getLat());
 		Double lon = Double.parseDouble(building.getLng());
 		LatLng latLng = new LatLng(lat, lon);
 		String name = String.valueOf(building.getName());
 		Marker marker = null;
 		int numEvent;
-
+		
 		for (Marker m : markers) { // Check if marker already exists
 			if (m.getTitle().equals(name)) {
 				marker = m;
@@ -841,10 +846,11 @@ public class MainActivity extends Activity {
 			numEvent = 1;
 			marker = mMap.addMarker(new MarkerOptions().position(latLng).title(name));
 			markers.add(marker);
+			Log.i(TAG, "Number of markers: " + markers.size());
 
 		} else { // Marker already on map
-			String temp = marker.getSnippet();
-			numEvent = Integer.parseInt(temp.substring(temp.length() - 1)) + 1;
+			String temp = marker.getSnippet().replaceAll("\\D+","");
+			numEvent = Integer.parseInt(temp) + 1;
 		}
 
 		// Getting marker color based on number of events
