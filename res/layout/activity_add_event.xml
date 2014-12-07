@@ -24,9 +24,9 @@
 	    	     android:id="@+id/eventTitleTextView"
 	    	     android:layout_width="match_parent"
 	    	     android:layout_height="wrap_content"
-	    	     android:text="@+string/enter_event_name"
+	    	     android:text="@+string/enter_event_name_textView"
 	    	     android:layout_weight="2.5"
-	    	     android:textAppearance="?android:attr/textAppearanceLarge">"
+	    	     android:textAppearance="?android:attr/textAppearanceSmall">"
 	    	     
 	    	 </TextView>
 		     <EditText
@@ -99,23 +99,42 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
-    <AutoCompleteTextView
-        android:id="@+id/eventLocation"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:completionThreshold="1"
-        android:maxLines="1"
-        android:hint="@string/search_text"
-        android:paddingBottom="8dp" />
-
-    <EditText
-        android:id="@+id/eventDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@+string/add_event_description"
-        android:maxLines="4"
-        android:maxHeight="50dp"
-        android:paddingBottom="8dp" />
+        android:orientation="vertical"
+        android:weightSum="4">
+	    <TextView 
+	        android:id="@+id/eventLocationTextView"
+	        android:layout_width = "match_parent"
+	        android:layout_height = "wrap_content"
+	        android:text="@+string/search_text_textView"
+	        />
+        
+	    <AutoCompleteTextView
+	        android:id="@+id/eventLocation"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:completionThreshold="1"
+	        android:maxLines="1"
+	        android:hint="@string/search_text"
+	        android:paddingBottom="8dp" />
+	
+	    <TextView
+	        android:id="@+id/eventDescriptionTextView"
+	        android:layout_width = "match_parent"
+	        android:layout_height = "wrap_content"
+	        android:text="@+string/add_event_description_textView"
+	        />
+	    <EditText
+	        android:id="@+id/eventDescription"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:hint="@+string/add_event_description"
+	        android:maxLines="4"
+	        android:maxHeight="50dp"
+	        android:paddingBottom="8dp" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -155,33 +174,52 @@
         </RadioGroup>
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/eventCost"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/enter_cost"
-        android:inputType="numberDecimal"
-        android:maxLines="1"
-        android:paddingBottom="8dp"
-        android:paddingLeft="8dp"
-        android:visibility="invisible" />
+    <RelativeLayout
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        >
+     
+        	<TextView
+	            android:id="@+id/eventCost_textView"
+	            android:layout_width = "wrap_content"
+	            android:layout_height ="wrap_content"
+	            android:text="@+string/enter_cost_textView"
+	            android:layout_toLeftOf="@+id/eventCost"
+	            android:paddingTop="12dp"
+		        android:paddingLeft="8dp"
+		        android:visibility="invisible"
+            />
+	   		<EditText
+		        android:id="@+id/eventCost"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:hint="@string/enter_cost"
+		        android:inputType="numberDecimal"
+		        android:maxLines="1"
+		        android:paddingBottom="8dp"
+		        android:paddingLeft="8dp"
+		        android:visibility="invisible"
+	        
+	        />
 
+
+    </RelativeLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.5" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.5" >
 
         <Button
             android:id="@+id/save_event_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
             android:text="@+string/event_save" />
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

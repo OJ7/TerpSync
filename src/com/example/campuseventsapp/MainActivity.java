@@ -81,11 +81,9 @@ public class MainActivity extends Activity {
 		setupFAB();
 		queryAndAddEventsFromParse();
 		
-<<<<<<< HEAD
-		ImageView m1 = (ImageView)findViewById(R.id.marker1);
-=======
 
->>>>>>> origin/master
+		ImageView m1 = (ImageView)findViewById(R.id.marker1);
+
 		
 		LayoutInflater inflater = getLayoutInflater();
 		View tview;

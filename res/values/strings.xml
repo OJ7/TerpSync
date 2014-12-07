@@ -10,19 +10,23 @@
     <!-- AddEventActivity specific strings: -->
     <!-- Hint Labels. -->
     <string name="enter_event_name">Enter event name</string>
+    <string name="enter_event_name_textView">Event event name:</string>
     <string name="start_time">Start Time</string>
     <string name="start_date">Start Date</string>
     <string name="end_time">End Time</string>
     <string name="end_date">End Date</string>
     <string name="add_event_location">Add location</string>
     <string name="search_text">Please type to search for building</string>
+    <string name="search_text_textView">Please type to search for building:</string>
     <string name="add_event_description">Add description</string>
+    <string name="add_event_description_textView">Add description (optional):</string>
     <!-- Widget Labels. -->
     <string name="event_admission_fee">Admission</string>
     <string name="event_free">Free</string>
     <string name="event_paid">Paid</string>
-    <string name="event_save">Save</string>
+    <string name="event_save">Submit Event</string>
     <string name="enter_cost">Enter cost</string>
+    <string name="enter_cost_textView">$</string>
 
     <!-- Admin specific strings: -->
     <string name="username">Username</string>
