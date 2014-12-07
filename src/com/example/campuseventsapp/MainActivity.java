@@ -81,9 +81,6 @@ public class MainActivity extends Activity {
 		setupFAB();
 		queryAndAddEventsFromParse();
 
-
-		
-
 		LayoutInflater inflater = getLayoutInflater();
 		View tview;
 		tview = inflater.inflate(R.layout.legend_key_item, null);
