@@ -3,6 +3,7 @@ package com.example.campuseventsapp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -38,7 +39,7 @@ public class AddEventActivity extends Activity {
 	Calendar myCalendar = Calendar.getInstance();
 
 	TextView orgNameTextView, startDateTextView, startTimeTextView, endDateTextView,
-			endTimeTextView,dollarSignTextView;
+			endTimeTextView, dollarSignTextView;
 	AutoCompleteTextView eventLocationTextView;
 	EditText eventNameEditText, eventDescriptionEditText, costEditText;
 	RadioGroup admissionRadioGroup;
@@ -58,7 +59,7 @@ public class AddEventActivity extends Activity {
 
 		Intent intent = getIntent();
 		currentOrganization = intent.getStringExtra(this.getString(R.string.parse_admin_org_name));
-		
+
 		eventObject = new EventObject();
 
 		cacheWidgets();
@@ -260,10 +261,16 @@ public class AddEventActivity extends Activity {
 			myCalendar.set(Calendar.MONTH, monthOfYear);
 			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 			updateDateLabel(startDateTextView);
-			Log.i("Campus-App", Integer.toString(monthOfYear));
-			// need to add 1 because the monthOfYear starts at 0
-			eventObject.setStartDate(Integer.toString(monthOfYear + 1) + "/"
-					+ Integer.toString(dayOfMonth) + "/" + Integer.toString(year));
+			Date date = null;
+			try {
+				date = new SimpleDateFormat("MM/dd/yyyy").parse(String.format("%02d/%02d/%04d",
+						monthOfYear, dayOfMonth, year));
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+				eventObject.setStartDate(sdf.format(date));
+			} catch (java.text.ParseException e) {
+
+				e.printStackTrace();
+			}
 		}
 	};
 
@@ -274,9 +281,16 @@ public class AddEventActivity extends Activity {
 			myCalendar.set(Calendar.MONTH, monthOfYear);
 			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 			updateDateLabel(endDateTextView);
-			// need to add 1 because the monthOfYear starts at 0
-			eventObject.setEndDate(Integer.toString(monthOfYear + 1) + "/"
-					+ Integer.toString(dayOfMonth) + "/" + Integer.toString(year));
+			Date date = null;
+			try {
+				date = new SimpleDateFormat("MM/dd/yyyy").parse(String.format("%02d/%02d/%04d",
+						monthOfYear, dayOfMonth, year));
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+				eventObject.setEndDate(sdf.format(date));
+			} catch (java.text.ParseException e) {
+
+				e.printStackTrace();
+			}
 		}
 	};
 
@@ -286,12 +300,16 @@ public class AddEventActivity extends Activity {
 			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
 			myCalendar.set(Calendar.MINUTE, minute);
 			updateTimeLabel(startTimeTextView);
-			if (myCalendar.get(Calendar.AM_PM) == Calendar.AM) {
-				eventObject.setStartTime(String.format("%02d:%02d", hourOfDay, minute) + " AM");
-			} else {
-				eventObject.setStartTime(String.format("%02d:%02d", hourOfDay, minute) + " PM");
-			}
+			Date date = null;
+			try {
+				date = new SimpleDateFormat("hh:mm").parse(String.format("%02d:%02d", hourOfDay,
+						minute));
+				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+				eventObject.setStartTime(sdf.format(date));
+			} catch (java.text.ParseException e) {
 
+				e.printStackTrace();
+			}
 		}
 	};
 
@@ -301,10 +319,15 @@ public class AddEventActivity extends Activity {
 			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
 			myCalendar.set(Calendar.MINUTE, minute);
 			updateTimeLabel(endTimeTextView);
-			if (myCalendar.get(Calendar.AM_PM) == Calendar.AM) {
-				eventObject.setEndTime(String.format("%02d:%02d", hourOfDay, minute) + " AM");
-			} else {
-				eventObject.setEndTime(String.format("%02d:%02d", hourOfDay, minute) + " PM");
+			Date date = null;
+			try {
+				date = new SimpleDateFormat("hh:mm").parse(String.format("%02d:%02d", hourOfDay,
+						minute));
+				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+				eventObject.setEndTime(sdf.format(date));
+			} catch (java.text.ParseException e) {
+
+				e.printStackTrace();
 			}
 		}
 	};
