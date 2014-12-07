@@ -1,6 +1,9 @@
 package com.example.campuseventsapp;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import java.util.List;
 
@@ -114,12 +117,19 @@ public class MainActivity extends Activity {
 					 * Check now if outdated, dont add, and remove from database
 					 */
 
-					Log.i(TAG, "The event " + x.getEventName() + " ends on date " + x.getEndDate());
-					//Date date = null;
+									
 
-
-
-					//SimpleDateFormat = format = new SimpleDateFormat("M/")
+					SimpleDateFormat format = new SimpleDateFormat("M/d/y", Locale.US);
+					try {
+						if (format.parse(x.getEndDate()).before(new Date())) {
+							Log.i(TAG, "The event " + x.getEventName() + " has passed");
+						}
+					} catch (java.text.ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					
 					ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
 							.getQuery(UMDBuildings.class);
 					buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
