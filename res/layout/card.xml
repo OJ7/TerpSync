@@ -18,7 +18,7 @@
         	android:layout_marginBottom="4dp"
 	        android:text=""
 	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:background="#0a000000"
+	        android:background="#7f000000"
 	        android:textStyle="bold"
 	        android:typeface="sans" />
 	       
@@ -30,7 +30,7 @@
        	 	android:layout_alignLeft="@+id/card_location"
        	 	android:layout_marginBottom="1dp"
 	        android:text=""
-	        android:background="#0a000000"
+	        android:background="#7f000000"
 	        android:textAppearance="?android:attr/textAppearanceMedium"
 	        android:textStyle="bold"
 	        android:typeface="sans" />
@@ -42,7 +42,7 @@
 	        android:layout_above="@+id/card_date"
         	android:layout_alignLeft="@+id/card_date"
 	        android:text=""
-	        android:background="#0a000000"
+	        android:background="#7f000000"
 	        android:textAppearance="?android:attr/textAppearanceMedium"
 	        android:textStyle="bold"
 	        android:typeface="sans" />
@@ -52,9 +52,10 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_above="@+id/card_time"
-        	android:layout_alignLeft="@+id/card_time"
+        	android:layout_alignParentBottom="true"
+        	android:layout_alignParentLeft="true"
 	        android:text=""
-	        android:background="#0a000000"
+	        android:background="#7f000000"
 	        android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:textStyle="bold"
 	        android:typeface="sans" />
@@ -64,10 +65,11 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text=""
-	        android:background="#0a000000"
+	        android:background="#7f000000"
 	        android:textStyle="bold"
-	        android:layout_alignParentBottom="true"
-        	android:layout_alignParentLeft="true"
+        	android:layout_toRightOf="@+id/card_date"
+        	android:layout_alignParentBottom="true"
+        	android:layout_marginLeft="10dp"
 	        android:textAppearance="?android:attr/textAppearanceSmall" />
 	</RelativeLayout>
 </LinearLayout>
