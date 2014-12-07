@@ -87,10 +87,10 @@ public class MainActivity extends Activity {
 		view = getLayoutInflater().inflate(R.layout.dialog_signin, null);
 		signInChangesView = getLayoutInflater().inflate(R.layout.dialog_changesignin, null);
 
-		// Check if network is connected -- UNCOMMENT THIS SHIT FOR FINAL VERSION
-//		if (!isNetworkAvailable()) {
-//			openNetworkDialog();
-//		} else {
+		//Check if network is connected -- 
+		if (!isNetworkAvailable()) {
+			openNetworkDialog();
+		} else {
 
 			setupMap();
 			createAllFAB(); //creates all FAB objects - better performance
@@ -112,7 +112,7 @@ public class MainActivity extends Activity {
 			key2.setTextColor(Color.BLACK);
 			key3.setTextColor(Color.BLACK);
 
-	// NEED TO UNCOMMENT THIS FOR FINAL VERSION	}
+		}
 	}
 
 
@@ -185,7 +185,7 @@ public class MainActivity extends Activity {
 		Parse.initialize(this, this.getString(R.string.parse_app_id),
 				this.getString(R.string.parse_client_key));
 
-		
+
 		// Adding current events to map
 		// Check also if date is past and remove from database and don't add
 		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
@@ -195,7 +195,7 @@ public class MainActivity extends Activity {
 			public void done(List<EventObject> arg0, ParseException arg1) {
 				int count = 1;
 				for (EventObject x : arg0) {
-					
+
 					Log.i(TAG, "count is " + count);
 					//Toast.makeText(getApplicationContext(), "count is " + count, Toast.LENGTH_LONG).show();
 					count++;
@@ -400,7 +400,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				
+
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 				intent.putExtra("ListType","ListFABList");
 				startActivity(intent);
@@ -470,31 +470,6 @@ public class MainActivity extends Activity {
 		});
 	}
 
-	
-	/*
-	 * List View shortcut FAB
-	 */
-//	private void showListFAB() {
-//		
-//		listFAB = new FloatingActionButton.Builder(this)
-//
-//		.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
-//		.withButtonColor(Color.parseColor("#CBE86B")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-//		.withMargins(0, 0, 16, 156).create();
-//
-//		listFAB.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				Toast.makeText(getApplicationContext(), "Implement List of ALL current events",
-//						Toast.LENGTH_SHORT).show();
-//				Log.i(TAG, "about to enter EventsList Activity");
-//				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
-//				startActivity(intent);
-//			}
-//		});
-//	} 
-	
 
 	/*
 	 * Dialog that requires a sign in by the Admin
@@ -831,7 +806,7 @@ public class MainActivity extends Activity {
 		String name = String.valueOf(building.getName());
 		Marker marker = null;
 		int numEvent;
-		
+
 		for (Marker m : markers) { // Check if marker already exists
 			if (m.getTitle().equals(name)) {
 				marker = m;
