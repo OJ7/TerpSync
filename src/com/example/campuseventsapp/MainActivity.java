@@ -51,8 +51,8 @@ public class MainActivity extends Activity {
 	String buildingNameQuery;
 	private int expandFAB = 0; // 0 = collapsed, 1 = expanded
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
-	private int mapTypeToggle = 0, adminToggle = 0;
-	private int mapTypeUpdateToggle = 0; // 0 for normal, 1 for hybrid
+	private int mapTypeToggle = 0; // 0 for normal, 1 for hybrid
+	private int adminToggle = 0;
 	private final LatLng UMD = new LatLng(38.989822, -76.940637);
 	private List<Marker> markers = new ArrayList<Marker>();
 	private Context context;
@@ -83,8 +83,7 @@ public class MainActivity extends Activity {
 		// Check if network is connected
 		if (!isNetworkAvailable()) {
 			openNetworkDialog();
-		}
-		else{
+		} else {
 			setupMap();
 			setupFAB();
 			queryAndAddEventsFromParse();
@@ -137,7 +136,6 @@ public class MainActivity extends Activity {
 							oldEvent = true;
 						}
 					} catch (java.text.ParseException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
@@ -184,7 +182,9 @@ public class MainActivity extends Activity {
 				// TODO (major) - open up list view with events from building specified in
 				// marker
 				String buildingName = marker.getTitle();
-
+				Intent intent = new Intent(MainActivity.this, ListActivity.class).putExtra(
+						context.getString(R.string.parse_building_name), buildingName);
+				startActivity(intent);
 			}
 		});
 	}
@@ -206,7 +206,6 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO (minor) - implement material design animations
 				if (expandFAB == 0) {
 					expandFAB = 1;
 					showFABMenu();
@@ -242,7 +241,6 @@ public class MainActivity extends Activity {
 	private void showFABMenu() {
 		locationButton.hideFloatingActionButton();
 		// showMapFAB();
-
 		createMapFAB();
 		// showListFAB();
 		if (listFAB == null) {
@@ -431,7 +429,7 @@ public class MainActivity extends Activity {
 							public void onClick(DialogInterface dialog, int which) {
 
 								final String UN = usernameView.getEditableText().toString()
-										.toLowerCase().replaceAll("\\s","");
+										.toLowerCase().replaceAll("\\s", "");
 								final String PW = passwordView.getEditableText().toString();
 
 								ParseQuery<AdminAccounts> query = ParseQuery
@@ -470,7 +468,6 @@ public class MainActivity extends Activity {
 										}
 									}
 								});
-
 								usernameView.setText("");
 								passwordView.setText("");
 								((ViewGroup) view.getParent()).removeView(view);
@@ -483,7 +480,6 @@ public class MainActivity extends Activity {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-
 								usernameView.setText("");
 								passwordView.setText("");
 								((ViewGroup) view.getParent()).removeView(view);
@@ -507,8 +503,7 @@ public class MainActivity extends Activity {
 	private void createAdminFAB() {
 
 		adminFAB = new FloatingActionButton.Builder(this)
-
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
 				.withButtonColor(Color.parseColor("#53777A"))
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
 
@@ -597,8 +592,6 @@ public class MainActivity extends Activity {
 														@Override
 														public void onClick(DialogInterface dialog,
 																int which) {
-															// TODO Auto-generated method stub
-
 															((ViewGroup) signInChangesView
 																	.getParent())
 																	.removeView(signInChangesView);
