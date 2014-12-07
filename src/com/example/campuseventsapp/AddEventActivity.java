@@ -7,6 +7,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import com.example.campuseventsapp.R;
+import com.example.campuseventsapp.card.EventObject;
+import com.parse.FindCallback;
+import com.parse.ParseQuery;
+import com.parse.ParseException;
+import com.parse.SaveCallback;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -59,6 +65,7 @@ public class AddEventActivity extends Activity {
 
 		Intent intent = getIntent();
 		currentOrganization = intent.getStringExtra(this.getString(R.string.parse_admin_org_name));
+		Log.i(TAG, "Adding event as:" + currentOrganization);
 
 		eventObject = new EventObject();
 
