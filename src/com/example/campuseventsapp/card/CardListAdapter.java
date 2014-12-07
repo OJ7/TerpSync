@@ -1,5 +1,6 @@
 package com.example.campuseventsapp.card;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -18,11 +19,12 @@ public class CardListAdapter extends ArrayAdapter<EventObject>{
 	
 	//Context
 	Context mContext;
-	
+	ArrayList<EventObject> list;
 	//Constructor
 	public CardListAdapter(Context context, int resourceId, List<EventObject> item){
 		super(context, resourceId, item);
 		this.mContext = context;
+		this.list = (ArrayList<EventObject>) item;
 	}
 	
 	//View holder pattern for list adapter
