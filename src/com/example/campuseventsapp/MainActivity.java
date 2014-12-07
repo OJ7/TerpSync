@@ -779,7 +779,7 @@ public class MainActivity extends Activity {
 				String deleteBuild = resultIntent.getStringExtra("buildName"); 
 				ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
 
-				eventsQuery.getInBackground(eventObjectID, new GetCallback<EventObject>() {
+				eventsQuery.getInBackground(deleteBuild, new GetCallback<EventObject>() {
 					public void done(EventObject eventObject, ParseException e) {
 						if (e == null) {
 
@@ -822,10 +822,7 @@ public class MainActivity extends Activity {
 	 */
 
 	private void updateMarker(UMDBuildings building, boolean add) {
-<<<<<<< HEAD
-=======
-		
->>>>>>> origin/master
+
 
 		Double lat = Double.parseDouble(building.getLat());
 		Double lon = Double.parseDouble(building.getLng());
