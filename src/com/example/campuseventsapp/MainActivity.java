@@ -81,11 +81,8 @@ public class MainActivity extends Activity {
 		LayoutInflater inflater = getLayoutInflater();
 		View tview;
 		tview = inflater.inflate(R.layout.legend_key_item, null);
-<<<<<<< HEAD
 
 		getWindow().addContentView(	tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-=======
->>>>>>> origin/master
 
 		getWindow().addContentView(
 				tview,
@@ -115,9 +112,9 @@ public class MainActivity extends Activity {
 			public void done(List<EventObject> arg0, ParseException arg1) {
 				for (EventObject x : arg0) {
 
-<<<<<<< HEAD
+
 					boolean oldEvent = false;
-=======
+
 					/*
 					 * Check now if outdated, dont add, and remove from database
 					 */
@@ -127,7 +124,7 @@ public class MainActivity extends Activity {
 
 					// SimpleDateFormat = format = new SimpleDateFormat("M/")
 
->>>>>>> origin/master
+
 					SimpleDateFormat format = new SimpleDateFormat("M/d/y", Locale.US);
 					try {
 						if (format.parse(x.getEndDate()).before(new Date())) {
@@ -139,7 +136,7 @@ public class MainActivity extends Activity {
 						e.printStackTrace();
 					}
 
-<<<<<<< HEAD
+
 					if (oldEvent) { //dont add to map and delete from database
 						
 						x.deleteInBackground();
@@ -158,7 +155,7 @@ public class MainActivity extends Activity {
 							}
 						});
 					}
-=======
+
 					ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
 							.getQuery(UMDBuildings.class);
 					buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
@@ -171,7 +168,7 @@ public class MainActivity extends Activity {
 							addMarker(building);
 						}
 					});
->>>>>>> origin/master
+
 				}
 			}
 		});
