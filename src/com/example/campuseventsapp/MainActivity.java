@@ -44,6 +44,7 @@ public class MainActivity extends Activity {
 	private int expandFAB = 0; // 0 = collapsed, 1 = expanded
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
 	private int mapTypeToggle = 0, adminToggle = 0;
+	private int mapTypeUpdateToggle = 0; // 0 for normal, 1 for hybrid
 	private final LatLng UMD = new LatLng(38.989822, -76.940637);
 	private List<Marker> markers = new ArrayList<Marker>();
 	AlertDialog.Builder builder, list_builder;
@@ -161,7 +162,11 @@ public class MainActivity extends Activity {
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
 		.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 16).create();
-		showLocationButton();
+		if(locationButton == null){
+			showLocationButton();
+		}else{
+			locationButton.showFloatingActionButton();
+		}
 		fabButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -183,7 +188,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void hideFABMenu() {
-		showLocationButton();
+		locationButton.showFloatingActionButton();
 		mapFAB.hideFloatingActionButton();
 		if(mapTypeToggle == 1){
 			normalMapFAB.hideFloatingActionButton();
@@ -201,22 +206,46 @@ public class MainActivity extends Activity {
 
 	private void showFABMenu() {
 		locationButton.hideFloatingActionButton();
-		showMapFAB();
-		showListFAB();
+		//showMapFAB();
+
+			createMapFAB();
+		//showListFAB();
+		if(listFAB == null){
+			createListFAB();
+		}else{
+			listFAB.showFloatingActionButton();
+		}
 		if (adminToggle == 0) {
-			showSignInFAB();
+			if(signInFAB == null){
+				createSignInFAB();
+			}else{
+				signInFAB.showFloatingActionButton();
+			}
+			
 		} else {
-			showAdminFAB();
+			if(adminFAB == null){
+				createAdminFAB();
+			}else{
+				adminFAB.showFloatingActionButton();
+			}
 		}
 	}
 
 	private void showLocationButton() {
+		
+		if(locToggle == 1){
+			locationButton = new FloatingActionButton.Builder(this)
+	
+			.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
+			.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+			.withMargins(0, 0, 16, 86).create();
+		}else{
+			locationButton = new FloatingActionButton.Builder(this)
 
-		locationButton = new FloatingActionButton.Builder(this)
-
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-		.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-		.withMargins(0, 0, 16, 86).create();
+			.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
+			.withButtonColor(Color.parseColor("#BD1550")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+			.withMargins(0, 0, 16, 86).create();
+		}
 
 		locationButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -242,7 +271,7 @@ public class MainActivity extends Activity {
 	/*
 	 * This FAB changes map types for the variable mapTypeToggle	 * 
 	 */
-	private void showMapFAB() {
+	private void createMapFAB() {
 		//Normal
 		mapFAB = new FloatingActionButton.Builder(this)
 
@@ -284,26 +313,28 @@ public class MainActivity extends Activity {
 		.withButtonColor(Color.parseColor("#C7F464")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 156, 86).create();
 
+		
+			normalMapFAB.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v){
+					// Show normal map
+					mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+					Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
+					.show();
+				}
+			});
+		
 
-		normalMapFAB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v){
-				// Show normal map
-				mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-				Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
-				.show();
-			}
-		});
-
-		hybridMapFAB.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View arg0) {
-				mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-				Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_LONG).show();
-			}
-		});
-
+		
+			hybridMapFAB.setOnClickListener(new OnClickListener(){
+	
+				@Override
+				public void onClick(View arg0) {
+					mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+					Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_LONG).show();
+				}
+			});
+		
 	} 
 
 
@@ -320,7 +351,7 @@ public class MainActivity extends Activity {
 	/*
 	 * List View shortcut FAB
 	 */
-	private void showListFAB() {
+	private void createListFAB() {
 
 		listFAB = new FloatingActionButton.Builder(this)
 
@@ -346,7 +377,7 @@ public class MainActivity extends Activity {
 	 * If password and username are valid, it replaces 
 	 * the sign in FAB with an admin account FAB 
 	 */
-	private void showSignInFAB() {
+	private void createSignInFAB() {
 
 		signInFAB = new FloatingActionButton.Builder(this)
 
@@ -394,7 +425,7 @@ public class MainActivity extends Activity {
 										Log.i(TAG, "current user is " + currentUser);
 										// adds the new settings floating button to the
 										// screen where the original button was
-										showAdminFAB();
+										createAdminFAB();
 										flag = true;
 										break;
 									}
@@ -444,7 +475,7 @@ public class MainActivity extends Activity {
 	 * This FAB creates a dialog with a list of all options 
 	 * an Admin can perform. 
 	 */
-	private void showAdminFAB() {
+	private void createAdminFAB() {
 
 		adminFAB = new FloatingActionButton.Builder(this)
 
@@ -542,7 +573,7 @@ public class MainActivity extends Activity {
 							currentOrganization = "";
 							adminFAB.hideFloatingActionButton();
 							adminToggle = 0;
-							showSignInFAB();
+							createSignInFAB();
 							Toast.makeText(getBaseContext(), "Logged out Successfully :]", Toast.LENGTH_LONG).show();
 							break;
 						default: 
