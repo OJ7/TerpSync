@@ -74,7 +74,6 @@ public class MainActivity extends Activity {
 	private int numevents = 0; // used for debugging
 
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -174,7 +173,6 @@ public class MainActivity extends Activity {
 		.withButtonColor(Color.parseColor("#FA6900")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 226).create();
 	}
-
 
 
 	/**
@@ -439,7 +437,6 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
-
 	}
 
 	private void mapTypeListeners() {
@@ -471,7 +468,6 @@ public class MainActivity extends Activity {
 				Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_LONG).show();
 			}
 		});
-
 	}
 
 	

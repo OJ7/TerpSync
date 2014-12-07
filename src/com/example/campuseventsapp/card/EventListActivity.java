@@ -1,18 +1,14 @@
 package com.example.campuseventsapp.card;
 
 
-import java.util.ArrayList;
 import java.util.List;
-
 import com.example.campuseventsapp.FloatingActionButton;
 import com.example.campuseventsapp.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -20,19 +16,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
 
 public class EventListActivity extends Activity{
 
-	private static final String TAG = "ListActivity";
 	private FloatingActionButton fabButton;
-	//private int toggle = 0; // 0 = hidden, 1 = shown
-
-	//List of cards
-	private ArrayList<EventObject> cardList;
 	CardListAdapter mAdapter;
 	ListView lv;
 
@@ -48,8 +38,6 @@ public class EventListActivity extends Activity{
 
 		//Setting up list view
 		lv = (ListView)findViewById(R.id.event_list);
-		cardList = new ArrayList<EventObject>();
-
 
 		Intent intent = getIntent();
 
