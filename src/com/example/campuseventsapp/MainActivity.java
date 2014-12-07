@@ -1,7 +1,10 @@
 package com.example.campuseventsapp;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -73,12 +76,12 @@ public class MainActivity extends Activity {
 		list_builder = new AlertDialog.Builder(this);
 		view = getLayoutInflater().inflate(R.layout.dialog_signin, null);
 		signInChangesView  = getLayoutInflater().inflate(R.layout.dialog_changesignin, null);
-		
+
 		// Check if network is connected
 		if(!isNetworkAvailable()){
-			
+
 		}
-		
+
 		setupMap();
 		setupFAB();
 		queryAndAddEventsFromParse();
@@ -112,34 +115,46 @@ public class MainActivity extends Activity {
 			public void done(List<EventObject> arg0, ParseException arg1) {
 				for (EventObject x : arg0) {
 
-					/*
-					 * Check now if outdated, dont add, and remove from database
-					 */
-
-					Log.i(TAG, "The event " + x.getEventName() + " ends on date " + x.getEndDate());
-					//Date date = null;
-
-
-
-					//SimpleDateFormat = format = new SimpleDateFormat("M/")
-					ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
-							.getQuery(UMDBuildings.class);
-					buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
-							x.getBuildingName());
-					buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
-
-						@Override
-						public void done(List<UMDBuildings> arg0, ParseException arg1) {
-							UMDBuildings building = arg0.get(0);
-							addMarker(building);
+					boolean oldEvent = false;
+					SimpleDateFormat format = new SimpleDateFormat("M/d/y", Locale.US);
+					try {
+						if (format.parse(x.getEndDate()).before(new Date())) {
+							Log.i(TAG, "The event " + x.getEventName() + " has passed");
+							oldEvent = true;
 						}
-					});
+					} catch (java.text.ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+
+					if (oldEvent) { //dont add to map and delete from database
+
+						x.deleteInBackground();
+
+					} else {
+						ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
+								.getQuery(UMDBuildings.class);
+						buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
+								x.getBuildingName());
+						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
+
+							@Override
+							public void done(List<UMDBuildings> arg0, ParseException arg1) {
+								UMDBuildings building = arg0.get(0);
+								addMarker(building);
+							}
+						});
+					}
 				}
 			}
 		});
+
 	}
 
-	
+
+
+
 	/**
 	 * Sets up the Map to center location on UMD campus and add markers to all buildings
 	 */
@@ -621,12 +636,12 @@ public class MainActivity extends Activity {
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(UMD, 14));
 	}
 
-	
+
 	private boolean isNetworkAvailable() {
-	    ConnectivityManager connectivityManager 
-	          = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+		ConnectivityManager connectivityManager 
+		= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
 
 
