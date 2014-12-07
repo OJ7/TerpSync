@@ -517,7 +517,9 @@ public class MainActivity extends Activity {
 													// clicked
 								case 0:
 									startActivityForResult(new Intent(MainActivity.this,
-											AddEventActivity.class), 0);
+											AddEventActivity.class).putExtra(
+											context.getString(R.string.parse_admin_org_name),
+											currentOrganization), 0);
 									break;
 								case 1:
 									Toast.makeText(getApplicationContext(), "clicked Delete",
@@ -654,8 +656,9 @@ public class MainActivity extends Activity {
 
 	/**
 	 * 
-	 * @param if requestCode is 0, then this is a result from returning from add event activity with
-	 *        the event object that needs to be added to the markers on the map.
+	 * @param requestCode
+	 *            If this is 0, then this is a result from returning from add event activity with
+	 *            the event object that needs to be added to the markers on the map.
 	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
