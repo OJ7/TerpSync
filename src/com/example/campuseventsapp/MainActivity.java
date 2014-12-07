@@ -383,7 +383,7 @@ public class MainActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 
-						final String UN = usernameView.getEditableText().toString();
+						final String UN = usernameView.getEditableText().toString().toLowerCase();
 						final String PW = passwordView.getEditableText().toString();
 
 						ParseQuery<AdminAccounts> query = ParseQuery
