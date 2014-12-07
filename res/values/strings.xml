@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">CampusEventsApp</string>
+    <string name="app_name">TerpSync</string>
     <string name="title_list_activity">List View</string>
     <string name="title_add_event_activity">New Event</string>
     <string name="hello_world">Hello world!</string>
