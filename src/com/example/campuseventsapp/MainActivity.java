@@ -5,10 +5,13 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -72,6 +75,12 @@ public class MainActivity extends Activity {
 		list_builder = new AlertDialog.Builder(this);
 		view = getLayoutInflater().inflate(R.layout.dialog_signin, null);
 		signInChangesView  = getLayoutInflater().inflate(R.layout.dialog_changesignin, null);
+		
+		// Check if network is connected
+		if(!isNetworkAvailable()){
+			
+		}
+		
 		setupMap();
 		setupFAB();
 		queryAndAddEventsFromParse();
@@ -405,7 +414,7 @@ public class MainActivity extends Activity {
 
 				builder.setView(view)
 
-				.setTitle("Please enter your Username and Password. Use default if first time user.")
+				.setTitle("Enter your Username and Password.")
 				.setCancelable(false)
 
 				.setPositiveButton("Sign in", new DialogInterface.OnClickListener() {
@@ -459,7 +468,7 @@ public class MainActivity extends Activity {
 					}
 				})
 
-				.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+				.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -622,6 +631,13 @@ public class MainActivity extends Activity {
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(UMD, 14));
 	}
 
+	
+	private boolean isNetworkAvailable() {
+	    ConnectivityManager connectivityManager 
+	          = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	}
 
 
 	/*
