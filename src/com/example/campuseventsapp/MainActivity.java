@@ -82,29 +82,30 @@ public class MainActivity extends Activity {
 
 		// Check if network is connected
 		if (!isNetworkAvailable()) {
+			openNetworkDialog();
+		}
+		else{
+			setupMap();
+			setupFAB();
+			queryAndAddEventsFromParse();
+
+			LayoutInflater inflater = getLayoutInflater();
+			View tview;
+			tview = inflater.inflate(R.layout.legend_key_item, null);
+
+			getWindow().addContentView(
+					tview,
+					new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+							ViewGroup.LayoutParams.WRAP_CONTENT));
+
+			// MapLegend TextView
+			mapLegendTextViewLess = (TextView) findViewById(R.id.tv3);
+			// Set text color to black if the map is in normal view
+			if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL) {
+				mapLegendTextViewLess.setTextColor(Color.BLACK);
+			}
 
 		}
-
-		setupMap();
-		setupFAB();
-		queryAndAddEventsFromParse();
-
-		LayoutInflater inflater = getLayoutInflater();
-		View tview;
-		tview = inflater.inflate(R.layout.legend_key_item, null);
-
-		getWindow().addContentView(
-				tview,
-				new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-						ViewGroup.LayoutParams.WRAP_CONTENT));
-
-		// MapLegend TextView
-		mapLegendTextViewLess = (TextView) findViewById(R.id.tv3);
-		// Set text color to black if the map is in normal view
-		if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL) {
-			mapLegendTextViewLess.setTextColor(Color.BLACK);
-		}
-
 	}
 
 	/**
@@ -663,6 +664,32 @@ public class MainActivity extends Activity {
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	}
+
+	private void openNetworkDialog() {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+
+		alertDialogBuilder.setMessage("Network not available");
+		// set positive button: Yes message
+		alertDialogBuilder.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// reopens network dialog if not available
+				if (!isNetworkAvailable()) {
+					openNetworkDialog();
+				}
+			}
+		});
+		// set neutral button: Exit the app message
+		alertDialogBuilder.setNeutralButton("Exit app", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// exit the app and go to the HOME
+				MainActivity.this.finish();
+			}
+		});
+
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		// show alert
+		alertDialog.show();
 	}
 
 	/**
