@@ -25,7 +25,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/ic_terpsync"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -46,10 +46,7 @@
             android:label="@string/title_add_event_activity"
             android:parentActivityName="com.example.campuseventsapp.MainActivity" >
         </activity>
-        <activity
-            android:name=".SetupLoginInfo"
-            android:label="@string/title_activity_setup_login_info" >
-        </activity>
+       
 
         <meta-data
             android:name="com.google.android.gms.version"

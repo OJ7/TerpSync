@@ -4,59 +4,91 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ImageView
-        android:id="@+id/marker1"
+    <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_action_place" 
-        android:background="#ff0000"/>
+        android:layout_alignParentLeft="true" >
 
-    <TextView
-        android:id="@+id/tv1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/marker1"
-        android:text="   Hot Spot!!"
-        android:textSize="18sp" 
-        android:textStyle="bold"
-        android:textColor="#ff0000"/>
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
-    <ImageView
-        android:id="@+id/marker2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/marker1"
-        android:src="@drawable/ic_action_place" 
-         android:background="#ffa500"/>
+            <ImageView
+                android:id="@+id/marker1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ff0000"
+                android:src="@drawable/ic_action_place" />
 
-    <TextView
-        android:id="@+id/tv2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv1"
-        android:layout_toRightOf="@+id/marker2"
-        android:text="   3-6 Events"
-        android:textSize="18sp" 
-        android:textStyle="bold"
-        android:textColor="#ffa500"/>
+            <TextView
+                android:id="@+id/tv1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:text="Hot Spot !!"
+                android:textColor="#ff0000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/marker3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/marker2"
-        android:src="@drawable/ic_action_place" 
-        android:background="#ffef00"/>
+        </TableRow>
 
-    <TextView
-        android:id="@+id/tv3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv2"
-        android:layout_toRightOf="@+id/marker3"
-        android:text="   Less than 3 Events"
-        android:textSize="18sp" 
-        android:textStyle="bold"
-        android:textColor="#ffef00"/>
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/marker2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ffa500"
+                android:src="@drawable/ic_action_place" />
+
+            <TextView
+                android:id="@+id/tv2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:text="3-6 Events"
+                android:textColor="#ffa500"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/marker3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ffef00"
+                android:src="@drawable/ic_action_place" />
+
+            <TextView
+                android:id="@+id/tv3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:text="1-3 Events"
+                android:textColor="#ffef00"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </TableRow>
+    </TableLayout>
 
 </RelativeLayout>

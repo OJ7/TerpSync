@@ -62,7 +62,7 @@
                     android:id="@+id/eventStartDate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:clickable="true"
                     android:hint="@string/start_date"
                     android:onClick="onClick"
@@ -92,7 +92,7 @@
                     android:id="@+id/eventEndDate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:clickable="true"
                     android:hint="@string/end_date"
                     android:onClick="onClick"
@@ -142,7 +142,7 @@
                 android:layout_height="wrap_content"
                 android:completionThreshold="1"
                 android:hint="@string/search_text"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:paddingBottom="8dp" />
 
         </LinearLayout>

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
 import com.example.campuseventsapp.FloatingActionButton;
 import com.example.campuseventsapp.R;
 import com.example.campuseventsapp.card.EventListActivity;
@@ -23,6 +24,8 @@ import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
+
+import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -68,6 +71,7 @@ public class MainActivity extends Activity {
 	TextView key1;
 	TextView key2;
 	TextView key3;
+	private int numevents = 0; // used for debugging
 
 
 	@Override
@@ -83,10 +87,10 @@ public class MainActivity extends Activity {
 		view = getLayoutInflater().inflate(R.layout.dialog_signin, null);
 		signInChangesView = getLayoutInflater().inflate(R.layout.dialog_changesignin, null);
 
-		// Check if network is connected -- UNCOMMENT THIS SHIT FOR FINAL VERSION
-//		if (!isNetworkAvailable()) {
-//			openNetworkDialog();
-//		} else {
+		//Check if network is connected -- 
+		if (!isNetworkAvailable()) {
+			openNetworkDialog();
+		} else {
 
 			setupMap();
 			createAllFAB(); //creates all FAB objects - better performance
@@ -108,7 +112,7 @@ public class MainActivity extends Activity {
 			key2.setTextColor(Color.BLACK);
 			key3.setTextColor(Color.BLACK);
 
-	// NEED TO UNCOMMENT THIS FOR FINAL VERSION	}
+		}
 	}
 
 
@@ -168,7 +172,6 @@ public class MainActivity extends Activity {
 		.withDrawable(getResources().getDrawable(R.drawable.ic_gear_50))
 		.withButtonColor(Color.parseColor("#FA6900")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 226).create();
-
 	}
 
 
@@ -182,17 +185,20 @@ public class MainActivity extends Activity {
 		Parse.initialize(this, this.getString(R.string.parse_app_id),
 				this.getString(R.string.parse_client_key));
 
+
 		// Adding current events to map
 		// Check also if date is past and remove from database and don't add
 		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
-		eventsQuery.whereExists("BuildingName");
-		eventsQuery.setLimit(1000);
 		eventsQuery.findInBackground(new FindCallback<EventObject>() {
 
 			@Override
 			public void done(List<EventObject> arg0, ParseException arg1) {
+				int count = 1;
 				for (EventObject x : arg0) {
 
+					Log.i(TAG, "count is " + count);
+					//Toast.makeText(getApplicationContext(), "count is " + count, Toast.LENGTH_LONG).show();
+					count++;
 					boolean oldEvent = false;
 					SimpleDateFormat format = new SimpleDateFormat("M/d/y", Locale.US);
 					try {
@@ -205,7 +211,7 @@ public class MainActivity extends Activity {
 					}
 
 					if (oldEvent) { // dont add to map and delete from database
-
+						Log.i(TAG, "Shouldnt be in here");
 						x.deleteInBackground();
 
 					} else {
@@ -247,8 +253,8 @@ public class MainActivity extends Activity {
 				// TODO (major) - open up list view with events from building specified in
 				// marker
 				String buildingName = marker.getTitle();
-				Intent intent = new Intent(MainActivity.this, EventListActivity.class).putExtra(
-						context.getString(R.string.parse_building_name), buildingName);
+				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
+				intent.putExtra("MarkerList", buildingName);
 				startActivity(intent);
 			}
 		});
@@ -394,9 +400,9 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(getApplicationContext(), "Implement List of ALL current events",
-						Toast.LENGTH_SHORT).show();
+
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
+				intent.putExtra("ListType","ListFABList");
 				startActivity(intent);
 			}
 		});
@@ -433,12 +439,7 @@ public class MainActivity extends Activity {
 		});
 	}
 
-
-
-
-
 	private void mapTypeListeners() {
-
 
 		normalMapFAB.setOnClickListener(new OnClickListener() {
 			@Override
@@ -469,31 +470,6 @@ public class MainActivity extends Activity {
 		});
 	}
 
-	
-	/*
-	 * List View shortcut FAB
-	 */
-//	private void showListFAB() {
-//		
-//		listFAB = new FloatingActionButton.Builder(this)
-//
-//		.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
-//		.withButtonColor(Color.parseColor("#CBE86B")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-//		.withMargins(0, 0, 16, 156).create();
-//
-//		listFAB.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				Toast.makeText(getApplicationContext(), "Implement List of ALL current events",
-//						Toast.LENGTH_SHORT).show();
-//				Log.i(TAG, "about to enter EventsList Activity");
-//				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
-//				startActivity(intent);
-//			}
-//		});
-//	} 
-	
 
 	/*
 	 * Dialog that requires a sign in by the Admin
@@ -612,17 +588,20 @@ public class MainActivity extends Activity {
 											context.getString(R.string.parse_admin_org_name),
 											currentOrganization), 0);
 							break;
-						case 1:
-							Toast.makeText(getApplicationContext(), "clicked Delete",
-									Toast.LENGTH_SHORT).show();
+						case 1: //delete
+							Intent intent2 = new Intent(MainActivity.this, EventListActivity.class);
+							intent2.putExtra("Delete", currentOrganization);
+							startActivity(intent2);
 							break;
-						case 2:
-							Toast.makeText(getApplicationContext(), "clicked See All",
-									Toast.LENGTH_SHORT).show();
+						case 2: //see all for club
+							Intent intent = new Intent(MainActivity.this, EventListActivity.class);
+							intent.putExtra("SeeAll", currentOrganization);
+							startActivity(intent);
 							break;
-						case 3:
-							Toast.makeText(getApplicationContext(), "clicked Update",
-									Toast.LENGTH_SHORT).show();
+						case 3: //update 
+							Intent intent3 = new Intent(MainActivity.this, EventListActivity.class);
+							intent3.putExtra("Update", currentOrganization);
+							startActivity(intent3);
 							break;
 						case 4: // User selected change PW/UN
 
@@ -820,6 +799,7 @@ public class MainActivity extends Activity {
 	 *            The location to place/update marker at
 	 */
 	private void addMarker(UMDBuildings building) {
+		Log.i(TAG, "Number of events: " + ++numevents);
 		Double lat = Double.parseDouble(building.getLat());
 		Double lon = Double.parseDouble(building.getLng());
 		LatLng latLng = new LatLng(lat, lon);
@@ -837,10 +817,11 @@ public class MainActivity extends Activity {
 			numEvent = 1;
 			marker = mMap.addMarker(new MarkerOptions().position(latLng).title(name));
 			markers.add(marker);
+			Log.i(TAG, "Number of markers: " + markers.size());
 
 		} else { // Marker already on map
-			String temp = marker.getSnippet();
-			numEvent = Integer.parseInt(temp.substring(temp.length() - 1)) + 1;
+			String temp = marker.getSnippet().replaceAll("\\D+","");
+			numEvent = Integer.parseInt(temp) + 1;
 		}
 
 		// Getting marker color based on number of events
@@ -855,5 +836,4 @@ public class MainActivity extends Activity {
 		marker.setSnippet("Events: " + numEvent);
 		marker.setIcon(BitmapDescriptorFactory.defaultMarker(markerColor));
 	}
-
 }

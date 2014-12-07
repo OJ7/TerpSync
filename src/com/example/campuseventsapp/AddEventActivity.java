@@ -208,7 +208,6 @@ public class AddEventActivity extends Activity {
 						|| startTimeTextView.getText().toString().isEmpty()
 						|| endTimeTextView.getText().toString().isEmpty()
 						|| eventLocationTextView.getText().toString().isEmpty()
-						|| eventDescriptionEditText.getText().toString().isEmpty()
 						|| (paidButton.isChecked() && costEditText.getText().toString().isEmpty())
 						|| (!paidButton.isChecked() && !freeButton.isChecked())) {
 
