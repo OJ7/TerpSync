@@ -251,8 +251,8 @@ public class MainActivity extends Activity {
 				// TODO (major) - open up list view with events from building specified in
 				// marker
 				String buildingName = marker.getTitle();
-				Intent intent = new Intent(MainActivity.this, EventListActivity.class).putExtra(
-						context.getString(R.string.parse_building_name), buildingName);
+				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
+				intent.putExtra("MarkerList", buildingName);
 				startActivity(intent);
 			}
 		});
@@ -613,17 +613,20 @@ public class MainActivity extends Activity {
 											context.getString(R.string.parse_admin_org_name),
 											currentOrganization), 0);
 							break;
-						case 1:
-							Toast.makeText(getApplicationContext(), "clicked Delete",
-									Toast.LENGTH_SHORT).show();
+						case 1: //delete
+							Intent intent2 = new Intent(MainActivity.this, EventListActivity.class);
+							intent2.putExtra("Delete", currentOrganization);
+							startActivity(intent2);
 							break;
-						case 2:
-							Toast.makeText(getApplicationContext(), "clicked See All",
-									Toast.LENGTH_SHORT).show();
+						case 2: //see all for club
+							Intent intent = new Intent(MainActivity.this, EventListActivity.class);
+							intent.putExtra("SeeAll", currentOrganization);
+							startActivity(intent);
 							break;
-						case 3:
-							Toast.makeText(getApplicationContext(), "clicked Update",
-									Toast.LENGTH_SHORT).show();
+						case 3: //update 
+							Intent intent3 = new Intent(MainActivity.this, EventListActivity.class);
+							intent3.putExtra("Update", currentOrganization);
+							startActivity(intent3);
 							break;
 						case 4: // User selected change PW/UN
 
