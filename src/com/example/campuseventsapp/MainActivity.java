@@ -2,12 +2,10 @@ package com.example.campuseventsapp;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-<<<<<<< HEAD
+
 import java.util.Date;
 import java.util.Locale;
 
-=======
->>>>>>> origin/master
 import java.util.List;
 
 import android.app.Activity;
