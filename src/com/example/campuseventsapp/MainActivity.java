@@ -24,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -62,6 +63,7 @@ public class MainActivity extends Activity {
 	LatLng myLocation = UMD;
 	String currentUser = "";
 	String currentOrganization = "";
+	TextView mapLegendTextViewLess;//Map Legend textview
 
 
 
@@ -92,6 +94,12 @@ public class MainActivity extends Activity {
 
 		getWindow().addContentView(	tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
+		//MapLegend TextView
+		mapLegendTextViewLess = (TextView)findViewById(R.id.tv3);
+		//Set text color to black if the map is in normal view
+		if(mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL){
+			mapLegendTextViewLess.setTextColor(Color.BLACK);
+		}
 	} 
 
 	/**
@@ -337,28 +345,30 @@ public class MainActivity extends Activity {
 		.withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
 		.withButtonColor(Color.parseColor("#C7F464")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 156, 86).create();
+		
+			normalMapFAB.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v){
+					// Show normal map
+					mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+					mapLegendTextViewLess.setTextColor(Color.BLACK);
+					Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
+					.show();
+				}
+			});
+		
 
-
-		normalMapFAB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v){
-				// Show normal map
-				mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-				Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT)
-				.show();
-			}
-		});
-
-
-
-		hybridMapFAB.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View arg0) {
-				mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-				Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_LONG).show();
-			}
-		});
+		
+			hybridMapFAB.setOnClickListener(new OnClickListener(){
+	
+				@Override
+				public void onClick(View arg0) {
+					mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+					mapLegendTextViewLess.setTextColor(Color.parseColor("#ffef00"));
+					Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_LONG).show();
+				}
+			});
+		
 
 	} 
 
