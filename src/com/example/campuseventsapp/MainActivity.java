@@ -139,7 +139,7 @@ public class MainActivity extends Activity {
 		//Normal Map FAB
 		normalMapFAB = new FloatingActionButton.Builder(this)
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-		.withButtonColor(Color.parseColor("#F8CA00")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+		.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 86, 86).create();
 
 		//Hybrid Map FAB
@@ -151,7 +151,7 @@ public class MainActivity extends Activity {
 		// location FAB
 		locationButton = new FloatingActionButton.Builder(this)
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-		.withButtonColor(Color.parseColor("#BD1550")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+		.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 86).create();
 
 		//List FAB
@@ -159,7 +159,6 @@ public class MainActivity extends Activity {
 		.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
 		.withButtonColor(Color.parseColor("#CBE86B")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 156).create();
-
 
 		//Admin FAB
 		adminFAB = new FloatingActionButton.Builder(this)
@@ -287,14 +286,14 @@ public class MainActivity extends Activity {
 
 				if (locToggle == 0) {
 					locToggle = 1;
-					locationButton.setFloatingActionButtonColor(Color.parseColor("#00A0B0"));
+					locationButton.setFloatingActionButtonColor(Color.parseColor("#BD1550"));
 					centerMapOnMyLocation();
 					Toast.makeText(getApplicationContext(),
 							"Centering map on current location", Toast.LENGTH_SHORT)
 							.show();
 				} else {
 					locToggle = 0;
-					locationButton.setFloatingActionButtonColor(Color.parseColor("#BD1550"));
+					locationButton.setFloatingActionButtonColor(Color.parseColor("#00A0B0"));
 					centerMapOnCampus();
 					Toast.makeText(getApplicationContext(), "Centering map on campus",
 							Toast.LENGTH_SHORT).show();
@@ -357,7 +356,7 @@ public class MainActivity extends Activity {
 			// location FAB
 			locationButton = new FloatingActionButton.Builder(this)
 			.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-			.withButtonColor(Color.parseColor("#BD1550")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+			.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 			.withMargins(0, 0, 16, 86).create();
 		} else {
 
@@ -365,7 +364,7 @@ public class MainActivity extends Activity {
 			// location FAB
 			locationButton = new FloatingActionButton.Builder(this)
 			.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-			.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+			.withButtonColor(Color.parseColor("#BD1550")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 			.withMargins(0, 0, 16, 86).create();
 		}
 
@@ -795,9 +794,6 @@ public class MainActivity extends Activity {
 			}else {
 				
 			}
-
-
-
 		}
 	}
 
