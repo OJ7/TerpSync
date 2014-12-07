@@ -249,8 +249,8 @@ public class MainActivity extends Activity {
 				// TODO (major) - open up list view with events from building specified in
 				// marker
 				String buildingName = marker.getTitle();
-				Intent intent = new Intent(MainActivity.this, EventListActivity.class).putExtra(
-						context.getString(R.string.parse_building_name), buildingName);
+				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
+				intent.putExtra("MarkerList", buildingName);
 				startActivity(intent);
 			}
 		});
