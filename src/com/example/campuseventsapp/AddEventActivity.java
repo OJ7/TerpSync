@@ -285,9 +285,9 @@ public class AddEventActivity extends Activity {
 			myCalendar.set(Calendar.MINUTE, minute);
 			updateTimeLabel(startTimeTextView);
 			if (myCalendar.get(Calendar.AM_PM) == Calendar.AM) {
-				eventObject.setEndTime(String.format("%02d:%02d", hourOfDay, minute) + " AM");
+				eventObject.setStartTime(String.format("%02d:%02d", hourOfDay, minute) + " AM");
 			} else {
-				eventObject.setEndTime(String.format("%02d:%02d", hourOfDay, minute) + " PM");
+				eventObject.setStartTime(String.format("%02d:%02d", hourOfDay, minute) + " PM");
 			}
 
 		}
