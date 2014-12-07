@@ -168,7 +168,6 @@ public class MainActivity extends Activity {
 		.withDrawable(getResources().getDrawable(R.drawable.ic_gear_50))
 		.withButtonColor(Color.parseColor("#FA6900")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 		.withMargins(0, 0, 16, 226).create();
-
 	}
 
 
@@ -185,8 +184,6 @@ public class MainActivity extends Activity {
 		// Adding current events to map
 		// Check also if date is past and remove from database and don't add
 		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
-		eventsQuery.whereExists("BuildingName");
-		eventsQuery.setLimit(1000);
 		eventsQuery.findInBackground(new FindCallback<EventObject>() {
 
 			@Override
@@ -433,12 +430,7 @@ public class MainActivity extends Activity {
 		});
 	}
 
-
-
-
-
 	private void mapTypeListeners() {
-
 
 		normalMapFAB.setOnClickListener(new OnClickListener() {
 			@Override
