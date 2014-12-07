@@ -8,6 +8,9 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,19 +28,22 @@ public class EventListActivity extends Activity{
 	private FloatingActionButton fabButton;
 	CardListAdapter mAdapter;
 	ListView lv;
+	AlertDialog.Builder delete_builder;
+	View view = null;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		//create list layout file
 		setContentView(R.layout.activity_list);
-
+		delete_builder = new AlertDialog.Builder(this);
 
 		setupFAB();
 
 
 		//Setting up list view
 		lv = (ListView)findViewById(R.id.event_list);
+		view = getLayoutInflater().inflate(R.layout.dialog_delete_confirmation, null);
 
 		Intent intent = getIntent();
 
@@ -57,19 +63,6 @@ public class EventListActivity extends Activity{
 			getAllEventsInBuilding(buildingName);
 		}
 
-
-
-		//TODO = DEFINE ACTIONS FOR LIST VIEW 
-		lv.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				// TODO Auto-generated method stub
-
-				Toast.makeText(getApplicationContext(), "clicked item", Toast.LENGTH_LONG).show();
-			}
-		});
 	} 
 
 
@@ -117,6 +110,45 @@ public class EventListActivity extends Activity{
 				}
 			}
 		});	
+
+		//TODO = DEFINE ACTIONS FOR Deleting 
+		lv.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> adaptView, View view,
+					int position, long id) {
+
+				final int pos = position;
+				final AdapterView<?> pView = adaptView;
+
+				final EventObject x = (EventObject) pView.getItemAtPosition(pos);
+
+				delete_builder.setView(view).setTitle("Delete Event?")
+				.setPositiveButton("Delete!", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+						pView.removeViewAt(pos);
+						x.deleteInBackground();
+
+					}					
+				})
+
+				.setNegativeButton("Don't Delete!", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+						dialog.dismiss();	
+					}
+				})
+
+				.create()
+				.show();
+
+			}
+		});
 	}
 
 
