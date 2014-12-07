@@ -38,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.campuseventsapp.ListActivity"
+            android:name="com.example.campuseventsapp.card.EventListActivity"
             android:label="@string/title_list_activity" >
         </activity>
         <activity

@@ -5,12 +5,29 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import com.example.campuseventsapp.FloatingActionButton;
+import com.example.campuseventsapp.R;
+import com.example.campuseventsapp.card.EventListActivity;
+import com.example.campuseventsapp.card.EventObject;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.Parse;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -25,20 +42,6 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.Parse;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
 public class MainActivity extends Activity {
 
@@ -80,10 +83,10 @@ public class MainActivity extends Activity {
 		view = getLayoutInflater().inflate(R.layout.dialog_signin, null);
 		signInChangesView = getLayoutInflater().inflate(R.layout.dialog_changesignin, null);
 
-		// Check if network is connected
-		if (!isNetworkAvailable()) {
-			openNetworkDialog();
-		} else {
+		// Check if network is connected -- UNCOMMENT THIS SHIT FOR FINAL VERSION
+//		if (!isNetworkAvailable()) {
+//			openNetworkDialog();
+//		} else {
 
 			setupMap();
 			createAllFAB(); //creates all FAB objects - better performance
@@ -105,7 +108,7 @@ public class MainActivity extends Activity {
 			key2.setTextColor(Color.BLACK);
 			key3.setTextColor(Color.BLACK);
 
-		}
+	// NEED TO UNCOMMENT THIS FOR FINAL VERSION	}
 	}
 
 
@@ -244,7 +247,7 @@ public class MainActivity extends Activity {
 				// TODO (major) - open up list view with events from building specified in
 				// marker
 				String buildingName = marker.getTitle();
-				Intent intent = new Intent(MainActivity.this, ListActivity.class).putExtra(
+				Intent intent = new Intent(MainActivity.this, EventListActivity.class).putExtra(
 						context.getString(R.string.parse_building_name), buildingName);
 				startActivity(intent);
 			}
@@ -393,7 +396,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Toast.makeText(getApplicationContext(), "Implement List of ALL current events",
 						Toast.LENGTH_SHORT).show();
-				Intent intent = new Intent(MainActivity.this, ListActivity.class);
+				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 				startActivity(intent);
 			}
 		});
@@ -466,7 +469,37 @@ public class MainActivity extends Activity {
 		});
 	}
 
+	
+	/*
+	 * List View shortcut FAB
+	 */
+//	private void showListFAB() {
+//		
+//		listFAB = new FloatingActionButton.Builder(this)
+//
+//		.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
+//		.withButtonColor(Color.parseColor("#CBE86B")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+//		.withMargins(0, 0, 16, 156).create();
+//
+//		listFAB.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				Toast.makeText(getApplicationContext(), "Implement List of ALL current events",
+//						Toast.LENGTH_SHORT).show();
+//				Log.i(TAG, "about to enter EventsList Activity");
+//				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
+//				startActivity(intent);
+//			}
+//		});
+//	} 
+	
 
+	/*
+	 * Dialog that requires a sign in by the Admin
+	 * If password and username are valid, it replaces 
+	 * the sign in FAB with an admin account FAB 
+	 */
 	private void signInFABListener() {
 		Log.i(TAG, "Made it to the on click");
 

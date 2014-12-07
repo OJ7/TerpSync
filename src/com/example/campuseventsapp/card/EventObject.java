@@ -1,4 +1,4 @@
-package com.example.campuseventsapp;
+package com.example.campuseventsapp.card;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
