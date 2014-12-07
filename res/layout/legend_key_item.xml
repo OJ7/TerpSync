@@ -3,27 +3,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    
+
     <ImageView
         android:id="@+id/marker1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        
-        />
-    
+        android:src="@drawable/ic_action_place" 
+        android:background="#ff0000"/>
+
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/marker1"
+        android:text="   Hot Spot!!"
+        android:textSize="18sp" 
+        android:textStyle="bold"/>
+
     <ImageView
         android:id="@+id/marker2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        
-        />
-    
+        android:layout_below="@+id/marker1"
+        android:src="@drawable/ic_action_place" 
+         android:background="#ffa500"/>
+
+    <TextView
+        android:id="@+id/tv2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv1"
+        android:layout_toRightOf="@+id/marker2"
+        android:text="   3-6 Events"
+        android:textSize="18sp" 
+        android:textStyle="bold"/>
+
     <ImageView
         android:id="@+id/marker3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        
-        />
+        android:layout_below="@+id/marker2"
+        android:src="@drawable/ic_action_place" 
+        android:background="#ffef00"/>
+
+    <TextView
+        android:id="@+id/tv3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv2"
+        android:layout_toRightOf="@+id/marker3"
+        android:text="   Less than 3 Events"
+        android:textSize="18sp" 
+        android:textStyle="bold"/>
 
 </RelativeLayout>
