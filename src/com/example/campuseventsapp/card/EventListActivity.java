@@ -37,7 +37,7 @@ public class EventListActivity extends Activity{
 		//create list layout file
 		setContentView(R.layout.activity_list);
 		delete_builder = new AlertDialog.Builder(this);
-
+		
 		setupFAB();
 
 
@@ -216,7 +216,7 @@ public class EventListActivity extends Activity{
 				if (e == null) {
 
 					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card,events);
-					lv.setAdapter(mAdapter);	
+					lv.setAdapter(mAdapter);
 				}
 				else {
 					// object retrieval failed throw exception -- fail fast
