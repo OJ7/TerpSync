@@ -59,6 +59,7 @@ public class AddEventActivity extends Activity {
 
 		Intent intent = getIntent();
 		currentOrganization = intent.getStringExtra(this.getString(R.string.parse_admin_org_name));
+		Log.i(TAG, "Adding event as:" + currentOrganization);
 
 		eventObject = new EventObject();
 
