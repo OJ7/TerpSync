@@ -85,10 +85,33 @@ public class EventListActivity extends Activity{
 			@Override
 			public void done(List<EventObject> events, ParseException e) {
 				
-				 // events were successfully returned
+				 // all events were successfully returned
 				if (e == null) {
 				
-					// Set the adapter on the listView
+					//TODO OMID DO WORK HERE
+					/* create new ArrayList called FilterEvents
+					 * 
+					 * if (Intent.getExtra("eventListType").equals("Location"){
+					 *   // filter the list of EventObjects for the Location, adding all relevant
+					 *   // events to the FilterEvents arrayList
+					 * }
+					 * else if  (Intent.getExtra("eventListType").equals("adminPanel"){
+					 *   // filter the list of EventObjects for the currently LoggedIn User, adding all 
+					 *   // relevant events to the FilterEvents arrayList
+					 * }
+					 * else if (Intent.getExtra("eventListType").equals("CurrentDateEvents")){
+					 *  // filter the list of EventObjects based on the current date, adding all relevant
+					 *  // events to the FilterEvents arrayList
+					 * }
+					 * else {
+					 *  // return the entire list of EventObjects
+					 *  // add all events to filterEvents
+					 * }
+					 */
+					
+					//TODO: OMID when you have the filtered arraylist, replace the events argument
+					// for the CardListAdapter => two lines below this one 
+					// Set the adapter on the listView  
 					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card,events);
 					lv.setAdapter(mAdapter);	
 				}
