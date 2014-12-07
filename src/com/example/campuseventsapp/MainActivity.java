@@ -168,11 +168,7 @@ public class MainActivity extends Activity {
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
 	}
 
-<<<<<<< HEAD
 
-
-=======
->>>>>>> upstream/master
 	/**
 	 * TODO (minor) - Add documentation
 	 */
@@ -806,12 +802,10 @@ public class MainActivity extends Activity {
 	 *            Represents whether an event was added or deleted from the building. True if added,
 	 *            False if deleted.
 	 */
-<<<<<<< HEAD
-	private void addMarker(UMDBuildings building) {
-=======
+
 	private void updateMarker(UMDBuildings building, boolean add) {
 		
->>>>>>> upstream/master
+
 		Double lat = Double.parseDouble(building.getLat());
 		Double lon = Double.parseDouble(building.getLng());
 		LatLng latLng = new LatLng(lat, lon);
@@ -833,10 +827,7 @@ public class MainActivity extends Activity {
 			markers.add(marker);
 
 		} else { // Marker already on map
-<<<<<<< HEAD
-			String temp = marker.getSnippet();
-			numEvent = Integer.parseInt(temp.substring(temp.length() - 1)) + 1;
-=======
+
 			String temp = marker.getSnippet().replaceAll("\\D+", "");
 			if (add) {
 				numEvent = Integer.parseInt(temp) + 1;
@@ -844,7 +835,6 @@ public class MainActivity extends Activity {
 				numEvent = Integer.parseInt(temp) - 1;
 			}
 
->>>>>>> upstream/master
 		}
 
 		// Set marker color (or delete if no events)
