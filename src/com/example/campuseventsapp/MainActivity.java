@@ -77,11 +77,11 @@ public class MainActivity extends Activity {
 		setupMap();
 		setupFAB();
 		queryAndAddEventsFromParse();
-		
+
 		LayoutInflater inflater = getLayoutInflater();
 		View tview;
 		tview = inflater.inflate(R.layout.legend_key_item, null);
-		
+
 		getWindow().addContentView(	tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
 	} 
@@ -107,35 +107,36 @@ public class MainActivity extends Activity {
 			public void done(List<EventObject> arg0, ParseException arg1) {
 				for (EventObject x : arg0) {
 
-					/*
-					 * Check now if outdated, dont add, and remove from database
-					 */
-
-									
-
+					boolean oldEvent = false;
 					SimpleDateFormat format = new SimpleDateFormat("M/d/y", Locale.US);
 					try {
 						if (format.parse(x.getEndDate()).before(new Date())) {
 							Log.i(TAG, "The event " + x.getEventName() + " has passed");
+							oldEvent = true;
 						}
 					} catch (java.text.ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
-					
-					ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
-							.getQuery(UMDBuildings.class);
-					buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
-							x.getBuildingName());
-					buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
 
-						@Override
-						public void done(List<UMDBuildings> arg0, ParseException arg1) {
-							UMDBuildings building = arg0.get(0);
-							addMarker(building);
-						}
-					});
+					if (oldEvent) { //dont add to map and delete from database
+						
+						x.deleteInBackground();
+						
+					} else {
+						ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
+								.getQuery(UMDBuildings.class);
+						buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
+								x.getBuildingName());
+						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
+
+							@Override
+							public void done(List<UMDBuildings> arg0, ParseException arg1) {
+								UMDBuildings building = arg0.get(0);
+								addMarker(building);
+							}
+						});
+					}
 				}
 			}
 		});
