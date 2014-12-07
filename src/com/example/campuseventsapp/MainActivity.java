@@ -431,7 +431,7 @@ public class MainActivity extends Activity {
 							public void onClick(DialogInterface dialog, int which) {
 
 								final String UN = usernameView.getEditableText().toString()
-										.toLowerCase();
+										.toLowerCase().replaceAll("\\s","");
 								final String PW = passwordView.getEditableText().toString();
 
 								ParseQuery<AdminAccounts> query = ParseQuery
