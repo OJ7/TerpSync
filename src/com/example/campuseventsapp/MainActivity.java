@@ -181,6 +181,7 @@ public class MainActivity extends Activity {
 		Parse.initialize(this, this.getString(R.string.parse_app_id),
 				this.getString(R.string.parse_client_key));
 
+		
 		// Adding current events to map
 		// Check also if date is past and remove from database and don't add
 		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
@@ -188,8 +189,12 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void done(List<EventObject> arg0, ParseException arg1) {
+				int count = 1;
 				for (EventObject x : arg0) {
-
+					
+					Log.i(TAG, "count is " + count);
+					//Toast.makeText(getApplicationContext(), "count is " + count, Toast.LENGTH_LONG).show();
+					count++;
 					boolean oldEvent = false;
 					SimpleDateFormat format = new SimpleDateFormat("M/d/y", Locale.US);
 					try {
@@ -202,7 +207,7 @@ public class MainActivity extends Activity {
 					}
 
 					if (oldEvent) { // dont add to map and delete from database
-
+						Log.i(TAG, "Shouldnt be in here");
 						x.deleteInBackground();
 
 					} else {
@@ -391,9 +396,9 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(getApplicationContext(), "Implement List of ALL current events",
-						Toast.LENGTH_SHORT).show();
+				
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
+				intent.putExtra("ListType","ListFABList");
 				startActivity(intent);
 			}
 		});
@@ -847,5 +852,4 @@ public class MainActivity extends Activity {
 		marker.setSnippet("Events: " + numEvent);
 		marker.setIcon(BitmapDescriptorFactory.defaultMarker(markerColor));
 	}
-
 }

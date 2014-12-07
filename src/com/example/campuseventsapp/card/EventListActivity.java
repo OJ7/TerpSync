@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -49,22 +50,16 @@ public class EventListActivity extends Activity{
 		// Populate the cardList
 		getEvents(cardList);
 		
-		//Listener for the cards 
 		
 		//TODO = DEFINE ACTIONS FOR LIST VIEW 
-		lv.setOnItemSelectedListener(new OnItemSelectedListener(){
+		lv.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				// TODO Auto-generated method stub
-				Toast.makeText(getApplicationContext(), "Selected", Toast.LENGTH_SHORT).show();
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
 				// TODO Auto-generated method stub
 				
+				Toast.makeText(getApplicationContext(), "clicked item", Toast.LENGTH_LONG).show();
 			}
 			
 		});
@@ -112,6 +107,8 @@ public class EventListActivity extends Activity{
 					//TODO: OMID when you have the filtered arraylist, replace the events argument
 					// for the CardListAdapter => two lines below this one 
 					// Set the adapter on the listView  
+					
+					
 					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card,events);
 					lv.setAdapter(mAdapter);	
 				}
