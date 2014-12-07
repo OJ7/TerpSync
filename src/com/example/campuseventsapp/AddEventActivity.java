@@ -6,12 +6,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.campuseventsapp.R;
-import com.parse.FindCallback;
-import com.parse.ParseQuery;
-import com.parse.ParseException;
-import com.parse.SaveCallback;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -30,6 +24,11 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 public class AddEventActivity extends Activity {
 
@@ -285,9 +284,9 @@ public class AddEventActivity extends Activity {
 			myCalendar.set(Calendar.MINUTE, minute);
 			updateTimeLabel(startTimeTextView);
 			if (myCalendar.get(Calendar.AM_PM) == Calendar.AM) {
-				eventObject.setEndTime(String.format("%02d:%02d", hourOfDay, minute) + " AM");
+				eventObject.setStartTime(String.format("%02d:%02d", hourOfDay, minute) + " AM");
 			} else {
-				eventObject.setEndTime(String.format("%02d:%02d", hourOfDay, minute) + " PM");
+				eventObject.setStartTime(String.format("%02d:%02d", hourOfDay, minute) + " PM");
 			}
 
 		}

@@ -89,6 +89,7 @@ public class FloatingActionButton extends View {
 			animSetXY.setDuration(100);
 			animSetXY.start();
 			mHidden = true;
+			setClickable(false);
 		}
 	}
 
