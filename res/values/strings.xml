@@ -19,7 +19,7 @@
     <string name="search_text">Please type to search for building</string>
     <string name="search_text_textView">Please type to search for building:</string>
     <string name="add_event_description">Add description</string>
-    <string name="add_event_description_textView">Add description (optional):</string>
+    <string name="add_event_description_textView">Add description (optional)</string>
     <!-- Widget Labels. -->
     <string name="event_admission_fee">Admission</string>
     <string name="event_free">Free</string>
