@@ -55,7 +55,16 @@ public class EventListActivity extends Activity{
 
 		if (intent.getStringExtra("ListType") != null) {
 			getAllEvents();
-		}else {
+		} else if(intent.getStringExtra("SeeAll") != null){ 
+			String orgname = intent.getStringExtra("SeeAll");
+			getAllEventsForOrganization(orgname);
+		} else if(intent.getStringExtra("Delete") != null) {
+			String orgname = intent.getStringExtra("Delete");
+			getAllEventsForDelete(orgname);
+		} else if(intent.getStringExtra("Update") != null) {
+			String buildingName = intent.getStringExtra("Update");
+			getAllEventsForUpdate(buildingName);
+		} else {
 			String buildingName = intent.getStringExtra("MarkerList");
 			getAllEventsInBuilding(buildingName);
 		}
@@ -76,6 +85,75 @@ public class EventListActivity extends Activity{
 	} 
 
 
+	private void getAllEventsForUpdate(String name) {
+		// create the Parse Query object
+		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
+		eventsQuery.whereContains("OrganizationName", name);
+		// initiate a background thread, retrieve all Event Objects 
+		eventsQuery.findInBackground(new FindCallback<EventObject>() {
+			@Override
+			public void done(List<EventObject> events, ParseException e) {
+
+				// all events were successfully returned
+				if (e == null) {
+
+					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card,events);
+					lv.setAdapter(mAdapter);	
+				}
+				else {
+					// object retrieval failed throw exception -- fail fast
+					e.printStackTrace();
+				}
+			}
+		});	
+	}
+
+	private void getAllEventsForDelete(String name) {
+		// create the Parse Query object
+		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
+		eventsQuery.whereContains("OrganizationName", name);
+		// initiate a background thread, retrieve all Event Objects 
+		eventsQuery.findInBackground(new FindCallback<EventObject>() {
+			@Override
+			public void done(List<EventObject> events, ParseException e) {
+
+				// all events were successfully returned
+				if (e == null) {
+
+					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card,events);
+					lv.setAdapter(mAdapter);	
+				}
+				else {
+					// object retrieval failed throw exception -- fail fast
+					e.printStackTrace();
+				}
+			}
+		});	
+	}
+
+
+	private void getAllEventsForOrganization(String name) {
+		// create the Parse Query object
+		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
+		eventsQuery.whereContains("OrganizationName", name);
+		// initiate a background thread, retrieve all Event Objects 
+		eventsQuery.findInBackground(new FindCallback<EventObject>() {
+			@Override
+			public void done(List<EventObject> events, ParseException e) {
+
+				// all events were successfully returned
+				if (e == null) {
+
+					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card,events);
+					lv.setAdapter(mAdapter);	
+				}
+				else {
+					// object retrieval failed throw exception -- fail fast
+					e.printStackTrace();
+				}
+			}
+		});	
+	}
 
 	private void getAllEventsInBuilding(String name) {
 
