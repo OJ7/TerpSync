@@ -1,10 +1,13 @@
 package com.example.campuseventsapp.card;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.example.campuseventsapp.R;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +19,12 @@ public class CardListAdapter extends ArrayAdapter<EventObject>{
 	
 	//Context
 	Context mContext;
-	
+	ArrayList<EventObject> list;
 	//Constructor
 	public CardListAdapter(Context context, int resourceId, List<EventObject> item){
 		super(context, resourceId, item);
 		this.mContext = context;
+		this.list = (ArrayList<EventObject>) item;
 	}
 	
 	//View holder pattern for list adapter
@@ -64,6 +68,11 @@ public class CardListAdapter extends ArrayAdapter<EventObject>{
 		vh.organization.setText(currCard.getOrgName());
 		vh.location.setText(currCard.getBuildingName());
 		
+		// set background image
+		String resourceLocation = getBitMapLocation(currCard.getBuildingName());
+		
+		// TODO: YUSIK DO WORK HERE
+		
 		// display date
 		if (currCard.getStartDate().equals(currCard.getEndDate())){
 			vh.date.setText(currCard.getEndDate());
@@ -79,6 +88,18 @@ public class CardListAdapter extends ArrayAdapter<EventObject>{
 		
 		return convertView;
 		
+	}
+
+	// this will take in the building name and return the corresponding png file associated 
+	private String getBitMapLocation(String buildingName) {
+	
+		buildingName = buildingName.toLowerCase();
+		buildingName = buildingName.replaceAll("[.]", "");
+		buildingName = buildingName.replaceAll("\\s+", " ");
+		buildingName = buildingName.replaceAll("[^a-z0-9\\s]", " ");
+		buildingName = buildingName.replaceAll("\\s", "_");
+		
+		return buildingName;		
 	}
 
 }

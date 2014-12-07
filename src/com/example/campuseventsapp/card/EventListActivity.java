@@ -1,6 +1,7 @@
 package com.example.campuseventsapp.card;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import com.example.campuseventsapp.FloatingActionButton;
 import com.example.campuseventsapp.R;
@@ -16,6 +17,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -30,6 +32,8 @@ public class EventListActivity extends Activity{
 	ListView lv;
 	AlertDialog.Builder delete_builder;
 	View view = null;
+	boolean isDeleted = false;
+	String deletedBuildingName = "";
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -39,7 +43,6 @@ public class EventListActivity extends Activity{
 		delete_builder = new AlertDialog.Builder(this);
 		
 		setupFAB();
-
 
 		//Setting up list view
 		lv = (ListView)findViewById(R.id.event_list);
@@ -55,9 +58,6 @@ public class EventListActivity extends Activity{
 		} else if(intent.getStringExtra("Delete") != null) {
 			String orgname = intent.getStringExtra("Delete");
 			getAllEventsForDelete(orgname);
-		} else if(intent.getStringExtra("Update") != null) {
-			String buildingName = intent.getStringExtra("Update");
-			getAllEventsForUpdate(buildingName);
 		} else {
 			String buildingName = intent.getStringExtra("MarkerList");
 			getAllEventsInBuilding(buildingName);
@@ -65,29 +65,6 @@ public class EventListActivity extends Activity{
 
 	} 
 
-
-	private void getAllEventsForUpdate(String name) {
-		// create the Parse Query object
-		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
-		eventsQuery.whereContains("OrganizationName", name);
-		// initiate a background thread, retrieve all Event Objects 
-		eventsQuery.findInBackground(new FindCallback<EventObject>() {
-			@Override
-			public void done(List<EventObject> events, ParseException e) {
-
-				// all events were successfully returned
-				if (e == null) {
-
-					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card,events);
-					lv.setAdapter(mAdapter);	
-				}
-				else {
-					// object retrieval failed throw exception -- fail fast
-					e.printStackTrace();
-				}
-			}
-		});	
-	}
 
 	private void getAllEventsForDelete(String name) {
 		// create the Parse Query object
@@ -115,35 +92,44 @@ public class EventListActivity extends Activity{
 		lv.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> adaptView, View view,
+			public void onItemClick(AdapterView<?> adaptView, View v,
 					int position, long id) {
 
 				final int pos = position;
 				final AdapterView<?> pView = adaptView;
-
+				
 				final EventObject x = (EventObject) pView.getItemAtPosition(pos);
 
+				deletedBuildingName = x.getBuildingName();
 				delete_builder.setView(view).setTitle("Delete Event?")
 				.setPositiveButton("Delete!", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 
-						pView.removeViewAt(pos);
+						isDeleted = true;
+						
+						mAdapter.list.remove(pos);
+						mAdapter.notifyDataSetChanged();						
 						x.deleteInBackground();
-
-					}					
+						
+						((ViewGroup) view.getParent()).removeView(view);
+						dialog.cancel();
+						dialog.dismiss();
+						
+					}	
 				})
 
 				.setNegativeButton("Don't Delete!", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+
+						((ViewGroup) view.getParent()).removeView(view);
 						dialog.cancel();
 						dialog.dismiss();	
 					}
 				})
-
 				.create()
 				.show();
 
@@ -240,6 +226,10 @@ public class EventListActivity extends Activity{
 
 			@Override
 			public void onClick(View v) {
+				
+				if (isDeleted) {
+					setResult(Activity.RESULT_OK, new Intent().putExtra("buildName", deletedBuildingName ));
+				}
 				// end activity and return to previous actions
 				finish();
 
