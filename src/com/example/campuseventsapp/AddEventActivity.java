@@ -18,6 +18,8 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -62,7 +64,7 @@ public class AddEventActivity extends Activity {
 		setContentView(R.layout.activity_add_event);
 		ActionBar actionBar = getActionBar();
 		actionBar.setTitle("New Event");
-
+		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
 		Intent intent = getIntent();
 		currentOrganization = intent.getStringExtra(this.getString(R.string.parse_admin_org_name));
 		Log.i(TAG, "Adding event as:" + currentOrganization);
