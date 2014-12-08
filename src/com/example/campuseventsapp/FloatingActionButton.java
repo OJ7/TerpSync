@@ -68,7 +68,7 @@ public class FloatingActionButton extends View {
 		canvas.drawBitmap(mBitmap, (getWidth() - mBitmap.getWidth()) / 2,
 				(getHeight() - mBitmap.getHeight()) / 2, mDrawablePaint);
 	}
-
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_UP) {
