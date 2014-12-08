@@ -155,31 +155,6 @@ public class MainActivity extends Activity {
 		.withButtonColor(Color.parseColor("#00A0B0"))
 		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 
-		// List FAB
-		listFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
-		.withButtonColor(Color.parseColor("#CBE86B"))
-		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
-
-
-		// Normal Map FAB
-		normalMapFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-		.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-		.withMargins(0, 0, 86, 86).create();
-
-
-		// Hybrid Map FAB
-		hybridMapFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
-		.withButtonColor(Color.parseColor("#C7F464"))
-		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 156, 86).create();
-
-
-		listFAB.hideFloatingActionButton();
-		normalMapFAB.hideFloatingActionButton();
-		hybridMapFAB.hideFloatingActionButton();
-
 		mainFABListener();
 		locationButtonListener();
 
@@ -280,6 +255,14 @@ public class MainActivity extends Activity {
 
 		locationButton.hideFloatingActionButton();
 
+
+		// List FAB
+		listFAB = new FloatingActionButton.Builder(this)
+		.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
+		.withButtonColor(Color.parseColor("#CBE86B"))
+		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
+
+		listFAB.hideFloatingActionButton();
 		listFAB.showFloatingActionButton();
 		listFABListener();
 
@@ -324,7 +307,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				String[] arr = { "Add Event", "Delete An Event", "See All Current Events",
+				String[] arr = { "Add Event", "Delete An Event", "My Organization's Events",
 						"Change PW/UN", "Log Out" };
 
 				list_builder.setTitle("Please select an Option")
@@ -558,8 +541,6 @@ public class MainActivity extends Activity {
 							R.drawable.ic_action_cancel));
 					Toast.makeText(getApplicationContext(), "Show Menu", Toast.LENGTH_SHORT).show();
 					mapTypeToggle = 1;
-					normalMapFAB.showFloatingActionButton();
-					hybridMapFAB.showFloatingActionButton();
 					mapTypeListeners(); // set up listeners
 
 				} else {
@@ -580,6 +561,26 @@ public class MainActivity extends Activity {
 
 
 	private void mapTypeListeners() {
+
+		// Normal Map FAB
+		normalMapFAB = new FloatingActionButton.Builder(this)
+		.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
+		.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+		.withMargins(0, 0, 86, 86).create();
+
+
+		// Hybrid Map FAB
+		hybridMapFAB = new FloatingActionButton.Builder(this)
+		.withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
+		.withButtonColor(Color.parseColor("#C7F464"))
+		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 156, 86).create();
+
+
+		normalMapFAB.hideFloatingActionButton();
+		hybridMapFAB.hideFloatingActionButton();
+
+		normalMapFAB.showFloatingActionButton();
+		hybridMapFAB.showFloatingActionButton();
 
 		normalMapFAB.setOnClickListener(new OnClickListener() {
 			@Override
