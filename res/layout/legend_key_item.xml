@@ -54,7 +54,7 @@
                 android:paddingLeft="8dp"
                 android:text="3-6 Events"
                 android:textColor="#ffa500"
-                android:textSize="14dp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
         </TableRow>
