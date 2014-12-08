@@ -3,9 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="3dp"
-    android:background="@+drawable/rounded_corners"
+    android:paddingTop="0.5dp"
+    android:paddingLeft="0.5dp"
+    android:paddingRight="3dp"
+    android:paddingBottom="3dp"
+    android:background="#000000"
     android:id="@+id/card">
+    <!-- android:background="@+drawable/rounded_corners"-->
     
        <RelativeLayout
            android:layout_width="fill_parent"
