@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 import com.example.campuseventsapp.R;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class CardListAdapter extends ArrayAdapter<EventObject>{
@@ -36,6 +39,7 @@ public class CardListAdapter extends ArrayAdapter<EventObject>{
 		TextView date;
 		TextView time;
 		LinearLayout card;
+		RelativeLayout cardBackground;
 	}
 	
 	public View getView(int position, View convertView, ViewGroup parent){
@@ -56,6 +60,7 @@ public class CardListAdapter extends ArrayAdapter<EventObject>{
 			vh.location = (TextView)convertView.findViewById(R.id.card_location);
 			vh.date = (TextView)convertView.findViewById(R.id.card_date);
 			vh.time = (TextView)convertView.findViewById(R.id.card_time);
+			vh.cardBackground = (RelativeLayout) convertView.findViewById(R.id.cardBackground);
 						
 			convertView.setTag(vh);
 			
@@ -71,7 +76,18 @@ public class CardListAdapter extends ArrayAdapter<EventObject>{
 		
 		// set background image
 		String resourceLocation = getBitMapLocation(currCard.getBuildingName());
-		vh.card.setBackground(mContext.getResources().getDrawable(mContext.getResources().getIdentifier(resourceLocation, "drawable", mContext.getPackageName())));
+		//System.out.println(resourceLocation);
+
+		Drawable mapImage = mContext.getResources().getDrawable(mContext.getResources().getIdentifier(resourceLocation, "drawable", mContext.getPackageName()));
+		
+		if(mapImage == null){
+			//Set to default picture
+			vh.cardBackground.setBackground(mContext.getResources().getDrawable(R.drawable.adele_h_stamp_student_union_building));
+			//vh.card.setBackground(mContext.getResources().getDrawable(R.drawable.adele_h_stamp_student_union_building));
+		}else{
+			vh.cardBackground.setBackground(mapImage);
+			//vh.card.setBackground(mContext.getResources().getDrawable(mContext.getResources().getIdentifier(resourceLocation, "drawable", mContext.getPackageName())));
+		}
 		
 		// display date
 		if (currCard.getStartDate().equals(currCard.getEndDate())){
