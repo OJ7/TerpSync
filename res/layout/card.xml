@@ -3,12 +3,20 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="2dp" 
-    android:background="#ff888888"
+    android:paddingTop="0.5dp"
+    android:paddingLeft="0.5dp"
+    android:paddingRight="3dp"
+    android:paddingBottom="3dp"
+    android:background="#000000"
     android:id="@+id/card">
+    <!-- android:background="@+drawable/rounded_corners"-->
+    
        <RelativeLayout
            android:layout_width="fill_parent"
-           android:layout_height="150dp">
+           android:layout_height="150dp"
+		   android:id="@+id/cardBackground"
+           >
+         
 	       <TextView
 	        android:id="@+id/card_event_title"
 	        android:layout_width="wrap_content"
@@ -61,6 +69,7 @@
 	        android:background="#7f000000"
 	        android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:textStyle="bold"
+	        android:textColor="#ffffff"
 	        android:typeface="sans" />
 	           
 	    <TextView
@@ -70,10 +79,12 @@
 	        android:text=""
 	        android:background="#7f000000"
 	        android:textStyle="bold"
+	        android:textColor="#ffffff"
         	android:layout_toRightOf="@+id/card_date"
         	android:layout_alignParentBottom="true"
         	android:paddingLeft="10dp"
         	android:paddingRight="2dp"
 	        android:textAppearance="?android:attr/textAppearanceSmall" />
+
 	</RelativeLayout>
 </LinearLayout>
