@@ -230,7 +230,9 @@ public class EventListActivity extends Activity{
 			public void onClick(View v) {
 				
 				if (isDeleted) {
-					setResult(Activity.RESULT_OK, new Intent().putExtra("buildName", deletedBuildingName ));
+					setResult(Activity.RESULT_OK, new Intent().putExtra("deleteBuildingName", deletedBuildingName ));
+				} else {
+					setResult(Activity.RESULT_OK);
 				}
 				// end activity and return to previous actions
 				finish();
