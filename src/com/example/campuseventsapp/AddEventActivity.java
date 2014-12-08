@@ -241,7 +241,7 @@ public class AddEventActivity extends Activity {
 						@Override
 						public void done(ParseException arg0) {
 							setResult(Activity.RESULT_OK,
-									new Intent().putExtra("eventID", eventObject.getObjectId()));
+									new Intent().putExtra("addBuildingName", eventObject.getBuildingName()));
 							finish();
 						}
 					});
