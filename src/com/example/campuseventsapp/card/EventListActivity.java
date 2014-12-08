@@ -41,7 +41,7 @@ public class EventListActivity extends Activity{
 		//create list layout file
 		setContentView(R.layout.activity_list);
 		delete_builder = new AlertDialog.Builder(this);
-
+		
 		setupFAB();
 
 		//Setting up list view
@@ -97,24 +97,26 @@ public class EventListActivity extends Activity{
 
 				final int pos = position;
 				final AdapterView<?> pView = adaptView;
+				
 				final EventObject x = (EventObject) pView.getItemAtPosition(pos);
 
 				deletedBuildingName = x.getBuildingName();
 				delete_builder.setView(view).setTitle("Delete Event?")
 				.setPositiveButton("Delete!", new DialogInterface.OnClickListener() {
+
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 
 						isDeleted = true;
-
+						
 						mAdapter.list.remove(pos);
 						mAdapter.notifyDataSetChanged();						
 						x.deleteInBackground();
-
+						
 						((ViewGroup) view.getParent()).removeView(view);
 						dialog.cancel();
 						dialog.dismiss();
-
+						
 					}	
 				})
 
@@ -224,14 +226,11 @@ public class EventListActivity extends Activity{
 
 			@Override
 			public void onClick(View v) {
-
+				
 				if (isDeleted) {
-					setResult(Activity.RESULT_OK, new Intent().putExtra("deleteBuildingName", deletedBuildingName ));
-				} else {
-					setResult(Activity.RESULT_OK);
+					setResult(Activity.RESULT_OK, new Intent().putExtra("buildName", deletedBuildingName ));
 				}
 				// end activity and return to previous actions
-				
 				finish();
 
 			}
