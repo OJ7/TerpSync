@@ -1,10 +1,10 @@
-package com.example.campuseventsapp.card;
+package com.terpsync.card;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.example.campuseventsapp.R;
+import com.terpsync.R;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

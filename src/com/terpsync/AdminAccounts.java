@@ -1,4 +1,4 @@
-package com.example.campuseventsapp;
+package com.terpsync;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;

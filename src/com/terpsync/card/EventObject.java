@@ -1,4 +1,4 @@
-package com.example.campuseventsapp.card;
+package com.terpsync.card;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;

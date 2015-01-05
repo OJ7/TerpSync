@@ -1,4 +1,4 @@
-package com.example.campuseventsapp;
+package com.terpsync;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -6,10 +6,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.campuseventsapp.FloatingActionButton;
-import com.example.campuseventsapp.R;
-import com.example.campuseventsapp.card.EventListActivity;
-import com.example.campuseventsapp.card.EventObject;
+import com.terpsync.FloatingActionButton;
+import com.terpsync.R;
+import com.terpsync.card.EventListActivity;
+import com.terpsync.card.EventObject;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;

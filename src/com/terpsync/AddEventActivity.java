@@ -1,4 +1,4 @@
-package com.example.campuseventsapp;
+package com.terpsync;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,8 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.campuseventsapp.R;
-import com.example.campuseventsapp.card.EventObject;
+import com.terpsync.R;
+import com.terpsync.card.EventObject;
 import com.parse.FindCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseException;

@@ -1,10 +1,11 @@
-package com.example.campuseventsapp.card;
+package com.terpsync.card;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import com.example.campuseventsapp.FloatingActionButton;
-import com.example.campuseventsapp.R;
+
+import com.terpsync.FloatingActionButton;
+import com.terpsync.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
