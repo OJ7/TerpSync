@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,8 +39,8 @@ public class CardListAdapter extends ArrayAdapter<EventObject>{
 		TextView location;
 		TextView date;
 		TextView time;
-		LinearLayout card;
-		RelativeLayout cardBackground;
+		RelativeLayout card;
+		ImageView cardBackGround;
 	}
 	
 	public View getView(int position, View convertView, ViewGroup parent){
@@ -54,13 +55,13 @@ public class CardListAdapter extends ArrayAdapter<EventObject>{
 			//This is first time setting up the layout
 			convertView = inflater.inflate(R.layout.card, null);
 			vh = new ViewHolder();
-			vh.card = (LinearLayout) convertView.findViewById(R.id.card);
+			vh.card = (RelativeLayout) convertView.findViewById(R.id.card);
 			vh.event_title = (TextView)convertView.findViewById(R.id.card_event_title);
 			vh.organization = (TextView)convertView.findViewById(R.id.card_organization);
 			vh.location = (TextView)convertView.findViewById(R.id.card_location);
 			vh.date = (TextView)convertView.findViewById(R.id.card_date);
 			vh.time = (TextView)convertView.findViewById(R.id.card_time);
-			vh.cardBackground = (RelativeLayout) convertView.findViewById(R.id.cardBackground);
+			vh.cardBackGround = (ImageView) convertView.findViewById(R.id.cardBackground);
 						
 			convertView.setTag(vh);
 			
@@ -82,10 +83,10 @@ public class CardListAdapter extends ArrayAdapter<EventObject>{
 		
 		if(mapImage == null){
 			//Set to default picture
-			vh.cardBackground.setBackground(mContext.getResources().getDrawable(R.drawable.adele_h_stamp_student_union_building));
+			vh.cardBackGround.setBackground(mContext.getResources().getDrawable(R.drawable.adele_h_stamp_student_union_building));
 			//vh.card.setBackground(mContext.getResources().getDrawable(R.drawable.adele_h_stamp_student_union_building));
 		}else{
-			vh.cardBackground.setBackground(mapImage);
+			vh.cardBackGround.setBackground(mapImage);
 			//vh.card.setBackground(mContext.getResources().getDrawable(mContext.getResources().getIdentifier(resourceLocation, "drawable", mContext.getPackageName())));
 		}
 		
