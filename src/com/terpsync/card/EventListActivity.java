@@ -1,7 +1,6 @@
 package com.terpsync.card;
 
 import java.util.List;
-
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.parse.FindCallback;
@@ -31,6 +30,7 @@ public class EventListActivity extends Activity {
 	View view = null;
 	boolean isDeleted = false;
 	String deletedBuildingName = "";
+	String filterType, filterName;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,38 +40,38 @@ public class EventListActivity extends Activity {
 		action_builder = new AlertDialog.Builder(this);
 		delete_builder = new AlertDialog.Builder(this);
 
+		// Determine filter options
+		Intent intent = getIntent();
+		filterType = intent.getStringExtra("FilterType");
+		filterName = intent.getStringExtra(filterType);
+
+		// Setting up UI
 		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
 		setupFAB();
 
 		// Setting up list view
 		lv = (ListView) findViewById(R.id.event_list);
-		
-		Intent intent = getIntent();
 
-		// ListTypes:
-		// - My Org's Events
-		// - All Events (Filter list by building or org, date/time?)
-		// - Building's Events
+		determineFilter();
 
-		// Add On-Click Listeners for Cards
-		// - if click on card, expand cards (show detailed view w/button to edit/delete)
-		// - if click on org, show profile page for org
-		// - if click on building, show filtered events by building
+	}
 
-		String filterType = intent.getStringExtra("FilterType"), filterName = intent
-				.getStringExtra(filterType);
-
+	/**
+	 * TODO - add documentation
+	 */
+	private void determineFilter(){
 		if (filterType.equals("All")) { // Un-filtered, all events
 			getEventsAndCreateList(filterType, "");
 		} else if (filterType.equals("OrganizationName")) { // Filter by organization name
 			getEventsAndCreateList(filterType, filterName);
-			setDeleteDialog();
+			setActionDialog();
 		} else if (filterType.equals("BuildingName")) { // Filter by building name
 			getEventsAndCreateList(filterType, filterName);
 		}
 
 	}
-
+	
+	
 	/**
 	 * This method gets all the events (either filtered or un-filtered) from the Parse database and
 	 * adds them to the CardListAdapater to display.
@@ -104,6 +104,11 @@ public class EventListActivity extends Activity {
 				}
 			}
 		});
+		
+		// TODO - Add On-Click Listeners for Cards
+				// - if click on card, expand cards (show detailed view w/button to edit/delete)
+				// - if click on org, show profile page for org
+				// - if click on building, show filtered events by building
 	}
 
 	/**
@@ -111,7 +116,7 @@ public class EventListActivity extends Activity {
 	 */
 	// TODO - change this so it only adds dialog to current user's events
 	// TODO - fix bug when tapping outside dialog box and tapping on event again
-	private void setDeleteDialog() {
+	private void setActionDialog() {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -143,7 +148,8 @@ public class EventListActivity extends Activity {
 								case 1: // Delete Event
 									deletedBuildingName = x.getBuildingName();
 									AlertDialog deleteDialog = delete_builder
-											.setTitle("Delete Event? (Warning: this cannot be undone!)")
+											.setTitle(
+													"Delete Event? (Warning: this cannot be undone!)")
 											.setPositiveButton("Delete",
 													new DialogInterface.OnClickListener() {
 
@@ -203,8 +209,8 @@ public class EventListActivity extends Activity {
 			}
 		});
 
-		// Create another FAB Button for filtering
-		// When clicked, popup shows to filter by building name, org name, etc
+		// TODO - Create another FAB Button for filtering (when showing all buildings)
+		// TODO - When clicked, popup shows to filter by building name, org name, etc
 	}
 
 }
