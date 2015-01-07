@@ -16,9 +16,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -27,7 +27,7 @@ public class EventListActivity extends Activity {
 	private FloatingActionButton fabButton;
 	CardListAdapter mAdapter;
 	ListView lv;
-	AlertDialog.Builder delete_builder;
+	AlertDialog.Builder action_builder, delete_builder;
 	View view = null;
 	boolean isDeleted = false;
 	String deletedBuildingName = "";
@@ -37,6 +37,7 @@ public class EventListActivity extends Activity {
 
 		// create list layout file
 		setContentView(R.layout.activity_list);
+		action_builder = new AlertDialog.Builder(this);
 		delete_builder = new AlertDialog.Builder(this);
 
 		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
@@ -58,14 +59,15 @@ public class EventListActivity extends Activity {
 		// - if click on org, show profile page for org
 		// - if click on building, show filtered events by building
 
-		String filterType = intent.getStringExtra("FilterType"), filterName = intent.getStringExtra(filterType);
+		String filterType = intent.getStringExtra("FilterType"), filterName = intent
+				.getStringExtra(filterType);
 
 		if (filterType.equals("All")) { // Un-filtered, all events
 			getEventsAndCreateList(filterType, "");
 		} else if (filterType.equals("OrganizationName")) { // Filter by organization name
 			getEventsAndCreateList(filterType, filterName);
-			setDeleteDialog(); 
-		} else if (filterType.equals("BuildingName")){ // Filter by building name
+			setDeleteDialog();
+		} else if (filterType.equals("BuildingName")) { // Filter by building name
 			getEventsAndCreateList(filterType, filterName);
 		}
 
@@ -121,37 +123,59 @@ public class EventListActivity extends Activity {
 
 				final EventObject x = (EventObject) pView.getItemAtPosition(pos);
 
-				deletedBuildingName = x.getBuildingName();
-				delete_builder.setView(view).setTitle("Delete Event?")
-						.setPositiveButton("Delete!", new DialogInterface.OnClickListener() {
+				// Event Action Dialog
+
+				String[] arr = { "Edit Event", "Delete Event" };
+
+				// create alert dialog
+				AlertDialog actionDialog = action_builder.setTitle("Please select an option")
+						.setItems(arr, new DialogInterface.OnClickListener() {
 
 							@Override
-							public void onClick(DialogInterface dialog, int which) {
+							public void onClick(DialogInterface dialog, int item) {
 
-								isDeleted = true;
+								switch (item) {
 
-								mAdapter.list.remove(pos);
-								mAdapter.notifyDataSetChanged();
-								x.deleteInBackground();
+								case 0: // Edit Event
+									Toast.makeText(getBaseContext(), "Implement Editing Event",
+											Toast.LENGTH_LONG).show();
+									break;
 
-								((ViewGroup) view.getParent()).removeView(view);
-								dialog.cancel();
-								dialog.dismiss();
+								case 1: // Delete Event
+									// Delete Dialog
+									deletedBuildingName = x.getBuildingName();
+									AlertDialog deleteDialog = delete_builder
+											.setView(view)
+											.setTitle("Delete Event?")
+											.setPositiveButton("Delete!",
+													new DialogInterface.OnClickListener() {
 
+														@Override
+														public void onClick(DialogInterface dialog,
+																int which) {
+															isDeleted = true;
+															mAdapter.list.remove(pos);
+															mAdapter.notifyDataSetChanged();
+															x.deleteInBackground();
+														}
+													})
+											.setNegativeButton("Cancel",
+													new DialogInterface.OnClickListener() {
+														@Override
+														public void onClick(DialogInterface dialog,
+																int which) {
+															dialog.cancel();
+														}
+													}).create();
+									deleteDialog.show();
+									break;
+
+								default:
+									break;
+								}
 							}
-						})
-
-						.setNegativeButton("Don't Delete!", new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-
-								((ViewGroup) view.getParent()).removeView(view);
-								dialog.cancel();
-								dialog.dismiss();
-							}
-						}).create().show();
-
+						}).create();
+				actionDialog.show();
 			}
 		});
 	}
