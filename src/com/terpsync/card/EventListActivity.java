@@ -142,12 +142,10 @@ public class EventListActivity extends Activity {
 									break;
 
 								case 1: // Delete Event
-									// Delete Dialog
 									deletedBuildingName = x.getBuildingName();
 									AlertDialog deleteDialog = delete_builder
-											.setView(view)
-											.setTitle("Delete Event?")
-											.setPositiveButton("Delete!",
+											.setTitle("Delete Event? (Warning: this cannot be undone!)")
+											.setPositiveButton("Delete",
 													new DialogInterface.OnClickListener() {
 
 														@Override
