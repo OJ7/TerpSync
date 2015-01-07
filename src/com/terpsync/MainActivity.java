@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
 
 	// Global variables for FAB
 	private FloatingActionButton fabButton, mapFAB, normalMapFAB, hybridMapFAB, listFAB, signInFAB,
-	adminFAB, locationButton;
+			adminFAB, locationButton;
 	private int expandFAB = 0; // 0 = collapsed, 1 = expanded
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
 	private int mapTypeToggle = 0, adminToggle = 0;
@@ -90,7 +90,7 @@ public class MainActivity extends Activity {
 		view = getLayoutInflater().inflate(R.layout.dialog_signin, null);
 		signInChangesView = getLayoutInflater().inflate(R.layout.dialog_changesignin, null);
 
-		// Check if network is connected --
+		// Check if network is connected
 		if (!isNetworkAvailable()) {
 			openNetworkDialog();
 		} else {
@@ -101,11 +101,12 @@ public class MainActivity extends Activity {
 
 			createMainMenu(); // creates all FAB objects - better performance
 
-
 			// adds the legend to the corner of the map
 			View tview = getLayoutInflater().inflate(R.layout.legend_key_item, null);
-			getWindow().addContentView(tview,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT));
+			getWindow().addContentView(
+					tview,
+					new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+							ViewGroup.LayoutParams.WRAP_CONTENT));
 			key1 = (TextView) findViewById(R.id.tv1);
 			key2 = (TextView) findViewById(R.id.tv2);
 			key3 = (TextView) findViewById(R.id.tv3);
@@ -142,18 +143,17 @@ public class MainActivity extends Activity {
 
 	private void createMainMenu() {
 
-
 		// Main FAB
 		fabButton = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
-		.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-		.withMargins(0, 0, 16, 16).create();
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
+				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withMargins(0, 0, 16, 16).create();
 
 		// location FAB
 		locationButton = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-		.withButtonColor(Color.parseColor("#00A0B0"))
-		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
+				.withButtonColor(Color.parseColor("#00A0B0"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 
 		mainFABListener();
 		locationButtonListener();
@@ -182,7 +182,6 @@ public class MainActivity extends Activity {
 		});
 	}
 
-
 	private void contractFABMenu() {
 
 		listFAB.hideFloatingActionButton();
@@ -207,17 +206,17 @@ public class MainActivity extends Activity {
 		if (locToggle == 0) {
 			// location FAB
 			locationButton = new FloatingActionButton.Builder(this)
-			.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-			.withButtonColor(Color.parseColor("#00A0B0"))
-			.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
+					.withButtonColor(Color.parseColor("#00A0B0"))
+					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 
 		} else {
 
 			// location FAB
 			locationButton = new FloatingActionButton.Builder(this)
-			.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-			.withButtonColor(Color.parseColor("#BD1550"))
-			.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
+					.withButtonColor(Color.parseColor("#BD1550"))
+					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 
 		}
 		locationButton.hideFloatingActionButton();
@@ -250,17 +249,15 @@ public class MainActivity extends Activity {
 		});
 	}
 
-
 	private void expandFABMenu() {
 
 		locationButton.hideFloatingActionButton();
 
-
 		// List FAB
 		listFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
-		.withButtonColor(Color.parseColor("#CBE86B"))
-		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
+				.withButtonColor(Color.parseColor("#CBE86B"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
 
 		listFAB.hideFloatingActionButton();
 		listFAB.showFloatingActionButton();
@@ -268,13 +265,12 @@ public class MainActivity extends Activity {
 
 		// Map Options FAB
 		mapFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_map))
-		.withButtonColor(Color.parseColor("#EDC951"))
-		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+				.withDrawable(getResources().getDrawable(R.drawable.ic_map))
+				.withButtonColor(Color.parseColor("#EDC951"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 		mapFAB.hideFloatingActionButton();
 		mapFAB.showFloatingActionButton();
 		mapFABListener();
-
 
 		if (adminToggle == 0) {
 
@@ -286,7 +282,6 @@ public class MainActivity extends Activity {
 		}
 	}
 
-
 	/**
 	 * Admin panel FAB
 	 * 
@@ -294,11 +289,11 @@ public class MainActivity extends Activity {
 	 */
 	private void adminFABListener() {
 
-		//Admin FAB
+		// Admin FAB
 		adminFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
-		.withButtonColor(Color.parseColor("#53777A"))
-		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
+				.withButtonColor(Color.parseColor("#53777A"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
 
 		adminFAB.hideFloatingActionButton();
 		adminFAB.showFloatingActionButton();
@@ -307,119 +302,111 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				String[] arr = { "Add Event", "Delete An Event", "My Organization's Events",
-						"Change PW/UN", "Log Out" };
+				String[] arr = { "Add Event", currentOrganization + "'s Events", "Change PW/UN",
+						"Log Out" };
 
 				list_builder.setTitle("Please select an Option")
-				.setItems(arr, new DialogInterface.OnClickListener() {
+						.setItems(arr, new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+							@Override
+							public void onClick(DialogInterface dialog, int item) {
 
-						switch (which) { // which is the index of which item in list is
-						// clicked
-						case 0:
-							startActivityForResult(new Intent(MainActivity.this,
-									AddEventActivity.class).putExtra(
+								switch (item) {
+								case 0: // Add Event
+									startActivityForResult(new Intent(MainActivity.this,
+											AddEventActivity.class).putExtra(
 											context.getString(R.string.parse_admin_org_name),
 											currentOrganization), 0);
-							break;
-						case 1: // delete
+									break;
+								case 1: // Organization's Events
+									Intent intent = new Intent(MainActivity.this,
+											EventListActivity.class);
+									intent.putExtra("OrganizationName", currentOrganization);
+									startActivity(intent);
+									break;
+								case 2: // Change PW/UN
 
-							startActivityForResult(new Intent(MainActivity.this,
-									EventListActivity.class).putExtra("Delete",
-											currentOrganization), 0);
+									newUNView = (EditText) signInChangesView
+											.findViewById(R.id.newUsername);
+									newPWView = (EditText) signInChangesView
+											.findViewById(R.id.newPassword);
 
-							break;
-						case 2: // see all for club
-							Intent intent = new Intent(MainActivity.this,
-									EventListActivity.class);
-							intent.putExtra("SeeAll", currentOrganization);
-							startActivity(intent);
-							break;
-						case 3: // User selected change PW/UN
+									builder.setView(signInChangesView)
+											.setTitle("Update Account Info")
+											.setCancelable(false)
+											.setPositiveButton("Change!",
+													new DialogInterface.OnClickListener() {
 
-							newUNView = (EditText) signInChangesView
-							.findViewById(R.id.newUsername);
-							newPWView = (EditText) signInChangesView
-									.findViewById(R.id.newPassword);
+														@Override
+														public void onClick(DialogInterface dialog,
+																int which) {
 
-							builder.setView(signInChangesView)
-							.setTitle("Update Account Info")
-							.setCancelable(false)
-							.setPositiveButton("Change!",
-									new DialogInterface.OnClickListener() {
+															final String newPW = newPWView
+																	.getEditableText().toString();
+															final String newUN = newUNView
+																	.getEditableText().toString();
 
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
+															ParseQuery<AdminAccounts> query = ParseQuery
+																	.getQuery(AdminAccounts.class);
+															query.whereContains("username",
+																	currentUser);
+															query.findInBackground(new FindCallback<AdminAccounts>() {
 
-									final String newPW = newPWView
-											.getEditableText().toString();
-									final String newUN = newUNView
-											.getEditableText().toString();
+																@Override
+																public void done(
+																		List<AdminAccounts> arg0,
+																		ParseException arg1) {
+																	arg0.get(0).setUsername(newUN);
+																	arg0.get(0).setPassword(newPW);
+																	arg0.get(0).saveInBackground();
+																}
+															});
 
-									ParseQuery<AdminAccounts> query = ParseQuery
-											.getQuery(AdminAccounts.class);
-									query.whereContains("username",
-											currentUser);
-									query.findInBackground(new FindCallback<AdminAccounts>() {
+															((ViewGroup) signInChangesView
+																	.getParent())
+																	.removeView(signInChangesView);
+															dialog.cancel();
+															dialog.dismiss();
+														}
+													})
 
-										@Override
-										public void done(
-												List<AdminAccounts> arg0,
-												ParseException arg1) {
-											arg0.get(0).setUsername(newUN);
-											arg0.get(0).setPassword(newPW);
-											arg0.get(0).saveInBackground();
-										}
-									});
+											.setNegativeButton("Cancel",
+													new DialogInterface.OnClickListener() {
 
-									((ViewGroup) signInChangesView
-											.getParent())
-											.removeView(signInChangesView);
-									dialog.cancel();
-									dialog.dismiss();
+														@Override
+														public void onClick(DialogInterface dialog,
+																int which) {
+															((ViewGroup) signInChangesView
+																	.getParent())
+																	.removeView(signInChangesView);
+															dialog.cancel();
+															dialog.dismiss();
+														}
+													});
+
+									final AlertDialog alertDialog = builder.create();
+									alertDialog.show();
+									currentUser = newUNView.getEditableText().toString();
+									newUNView.setText("");
+									newPWView.setText("");
+									break;
+
+								case 3: // Log out
+									currentUser = "";
+									currentOrganization = "";
+									adminFAB.hideFloatingActionButton();
+									adminToggle = 0;
+
+									signInFABListener();
+									Toast.makeText(getBaseContext(), "Logged out Successfully :]",
+											Toast.LENGTH_LONG).show();
+
+									break;
+								default:
+									break;
 								}
-							})
-
-							.setNegativeButton("Cancel",
-									new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									((ViewGroup) signInChangesView
-											.getParent())
-											.removeView(signInChangesView);
-									dialog.cancel();
-									dialog.dismiss();
-								}
-							});
-
-							final AlertDialog alertDialog = builder.create();
-							alertDialog.show();
-							currentUser = newUNView.getEditableText().toString();
-							newUNView.setText("");
-							newPWView.setText("");
-							break;
-
-						case 4: // Log out
-							currentUser = "";
-							currentOrganization = "";
-							adminFAB.hideFloatingActionButton();
-							adminToggle = 0;
-
-							signInFABListener();
-							Toast.makeText(getBaseContext(), "Logged out Successfully :]",
-									Toast.LENGTH_LONG).show();
-
-							break;
-						default:
-							break;
-						}
-					}
-				}).create().show();
+							}
+						}).create().show();
 			}
 		});
 	}
@@ -432,13 +419,12 @@ public class MainActivity extends Activity {
 
 		// Sign in FAB
 		signInFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_gear_50))
-		.withButtonColor(Color.parseColor("#FA6900"))
-		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
+				.withDrawable(getResources().getDrawable(R.drawable.ic_gear_50))
+				.withButtonColor(Color.parseColor("#FA6900"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
 
 		signInFAB.hideFloatingActionButton();
 		signInFAB.showFloatingActionButton();
-
 
 		signInFAB.setOnClickListener(new OnClickListener() {
 
@@ -448,79 +434,79 @@ public class MainActivity extends Activity {
 				passwordView = (EditText) view.findViewById(R.id.password);
 
 				builder.setView(view).setTitle("Enter your Username and Password.")
-				.setCancelable(false)
-				.setPositiveButton("Sign in", new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-
-						final String UN = usernameView.getEditableText().toString()
-								.toLowerCase().replaceAll("\\s", "");
-						final String PW = passwordView.getEditableText().toString();
-
-						ParseQuery<AdminAccounts> query = ParseQuery
-								.getQuery(AdminAccounts.class);
-						query.whereExists("username");
-						query.setLimit(100);
-						query.findInBackground(new FindCallback<AdminAccounts>() {
+						.setCancelable(false)
+						.setPositiveButton("Sign in", new DialogInterface.OnClickListener() {
 
 							@Override
-							public void done(List<AdminAccounts> arg0, ParseException arg1) {
+							public void onClick(DialogInterface dialog, int which) {
 
-								if (arg1 != null) {
-									Toast.makeText(getApplicationContext(),
-											"Invalid Password or Username",
-											Toast.LENGTH_LONG).show();
-								} else {
-									boolean flag = false;
-									for (AdminAccounts x : arg0) {
-										if (x.getUsername().equals(UN)
-												&& x.getPassword().equals(PW)) {
-											currentUser = x.getUsername();
-											currentOrganization = x.getOrganizatonName();
-											signInFAB.hideFloatingActionButton();
-											adminToggle = 1;
+								final String UN = usernameView.getEditableText().toString()
+										.toLowerCase().replaceAll("\\s", "");
+								final String PW = passwordView.getEditableText().toString();
 
-											// adds the new settings floating button to the
-											// screen where the original button was
-											adminFABListener();
-											flag = true;
-											break;
+								ParseQuery<AdminAccounts> query = ParseQuery
+										.getQuery(AdminAccounts.class);
+								query.whereExists("username");
+								query.setLimit(100);
+								query.findInBackground(new FindCallback<AdminAccounts>() {
+
+									@Override
+									public void done(List<AdminAccounts> arg0, ParseException arg1) {
+
+										if (arg1 != null) {
+											Toast.makeText(getApplicationContext(),
+													"Invalid Password or Username",
+													Toast.LENGTH_LONG).show();
+										} else {
+											boolean flag = false;
+											for (AdminAccounts x : arg0) {
+												if (x.getUsername().equals(UN)
+														&& x.getPassword().equals(PW)) {
+													currentUser = x.getUsername();
+													currentOrganization = x.getOrganizatonName();
+													signInFAB.hideFloatingActionButton();
+													adminToggle = 1;
+
+													// adds the new settings floating button to the
+													// screen where the original button was
+													adminFABListener();
+													flag = true;
+													break;
+												}
+											}
+											if (!flag) {
+												Toast.makeText(getApplicationContext(),
+														"Invalid Password or Username",
+														Toast.LENGTH_LONG).show();
+											} else {
+												Toast.makeText(getApplicationContext(),
+														"Logged In Successfully :]",
+														Toast.LENGTH_LONG).show();
+											}
 										}
-									}
-									if (!flag) {
-										Toast.makeText(getApplicationContext(),
-												"Invalid Password or Username",
-												Toast.LENGTH_LONG).show();
-									} else {
-										Toast.makeText(getApplicationContext(), "Logged In Successfully :]",
-												Toast.LENGTH_LONG).show();
-									}
-								}
 
+									}
+								});
+								usernameView.setText("");
+								passwordView.setText("");
+								((ViewGroup) view.getParent()).removeView(view);
+								dialog.cancel();
+								dialog.dismiss();
 
 							}
+						})
+
+						.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								usernameView.setText("");
+								passwordView.setText("");
+								((ViewGroup) view.getParent()).removeView(view);
+								dialog.cancel();
+								dialog.dismiss();
+							}
 						});
-						usernameView.setText("");
-						passwordView.setText("");
-						((ViewGroup) view.getParent()).removeView(view);
-						dialog.cancel();
-						dialog.dismiss();
-
-					}
-				})
-
-				.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						usernameView.setText("");
-						passwordView.setText("");
-						((ViewGroup) view.getParent()).removeView(view);
-						dialog.cancel();
-						dialog.dismiss();
-					}
-				});
 
 				final AlertDialog alertDialog = builder.create();
 				alertDialog.show();
@@ -558,23 +544,19 @@ public class MainActivity extends Activity {
 
 	}
 
-
-
 	private void mapTypeListeners() {
 
 		// Normal Map FAB
 		normalMapFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-		.withButtonColor(Color.parseColor("#00A0B0")).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-		.withMargins(0, 0, 86, 86).create();
-
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
+				.withButtonColor(Color.parseColor("#00A0B0"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 86, 86).create();
 
 		// Hybrid Map FAB
 		hybridMapFAB = new FloatingActionButton.Builder(this)
-		.withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
-		.withButtonColor(Color.parseColor("#C7F464"))
-		.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 156, 86).create();
-
+				.withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
+				.withButtonColor(Color.parseColor("#C7F464"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 156, 86).create();
 
 		normalMapFAB.hideFloatingActionButton();
 		hybridMapFAB.hideFloatingActionButton();
@@ -610,7 +592,6 @@ public class MainActivity extends Activity {
 
 	}
 
-
 	private void listFABListener() {
 
 		listFAB.setOnClickListener(new OnClickListener() {
@@ -619,8 +600,9 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
-				intent.putExtra("ListType", "ListFABList");
-				Toast.makeText(getApplicationContext(), "List Of All Current Events!", Toast.LENGTH_LONG).show();
+				intent.putExtra("FilterType", "All");
+				Toast.makeText(getApplicationContext(), "List Of All Current Events!",
+						Toast.LENGTH_LONG).show();
 				startActivity(intent);
 			}
 		});
@@ -642,17 +624,13 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onInfoWindowClick(Marker marker) {
-				// TODO (major) - open up list view with events from building specified in
-				// marker
 				String buildingName = marker.getTitle();
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
-				intent.putExtra("MarkerList", buildingName);
+				intent.putExtra("BuildingName", buildingName);
 				startActivity(intent);
 			}
 		});
 	}
-
-
 
 	/**
 	 * TODO (minor) - Add documentation
@@ -675,8 +653,6 @@ public class MainActivity extends Activity {
 				for (EventObject x : arg0) {
 
 					Log.i(TAG, "count is " + count);
-					// Toast.makeText(getApplicationContext(), "count is " + count,
-					// Toast.LENGTH_LONG).show();
 					count++;
 					boolean oldEvent = false;
 					SimpleDateFormat format = new SimpleDateFormat("M/d/y", Locale.US);
@@ -713,7 +689,6 @@ public class MainActivity extends Activity {
 		});
 
 	}
-
 
 	/**
 	 * Centers map on current location. If current location can not be resolved, it defaults to UMD
@@ -789,7 +764,7 @@ public class MainActivity extends Activity {
 
 			if (resultIntent.getStringExtra("addBuildingName") != null) {
 
-				buildingName = resultIntent.getStringExtra("addBuildingName");			
+				buildingName = resultIntent.getStringExtra("addBuildingName");
 
 				ParseQuery<UMDBuildings> buildingsQuery = ParseQuery.getQuery(UMDBuildings.class);
 				buildingsQuery.whereEqualTo("name", buildingName);
@@ -799,12 +774,13 @@ public class MainActivity extends Activity {
 					public void done(List<UMDBuildings> arg0, ParseException arg1) {
 						UMDBuildings building = arg0.get(0);
 						updateMarker(building, true);
-						Toast.makeText(getApplicationContext(), "Added event to map", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getApplicationContext(), "Added event to map",
+								Toast.LENGTH_SHORT).show();
 					}
 				});
 			} else if (resultIntent.getStringExtra("deleteBuildingName") != null) {
 
-				buildingName= resultIntent.getStringExtra("deleteBuildingName"); 
+				buildingName = resultIntent.getStringExtra("deleteBuildingName");
 
 				ParseQuery<UMDBuildings> buildingsQuery2 = ParseQuery.getQuery(UMDBuildings.class);
 				buildingsQuery2.whereEqualTo("name", buildingName);
@@ -814,7 +790,8 @@ public class MainActivity extends Activity {
 					public void done(List<UMDBuildings> arg0, ParseException arg1) {
 						UMDBuildings building = arg0.get(0);
 						updateMarker(building, false);
-						Toast.makeText(getApplicationContext(), "Remove marker from map",Toast.LENGTH_SHORT).show();
+						Toast.makeText(getApplicationContext(), "Remove marker from map",
+								Toast.LENGTH_SHORT).show();
 					}
 				});
 			} else {
