@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.card.EventListActivity;
@@ -23,13 +22,13 @@ import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -50,16 +49,17 @@ public class MainActivity extends Activity {
 	private static final String TAG = "Campus-App";
 	public static final String PREFS_NAME = "MyPrefsFile";
 	private Context context;
-	String buildingNameQuery;
+
+	// Global variables for Current User (if logged in)
 	String currentUser = "";
 	String currentOrganization = "";
 
 	// Global variables for FAB
-	private FloatingActionButton fabButton, mapFAB, normalMapFAB, hybridMapFAB, listFAB, signInFAB,
-			adminFAB, locationButton;
-	private int expandFAB = 0; // 0 = collapsed, 1 = expanded
+	private FloatingActionButton mainMenuFAB, mapMenuFAB, normalMapFAB, hybridMapFAB, listFAB,
+			signInFAB, adminFAB, locationFAB;
+	private boolean menuExpanded = false, mapMenuExpanded = false;
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
-	private int mapTypeToggle = 0, adminToggle = 0;
+	private boolean adminSignedIn = false;
 
 	// Global variables for Map
 	private GoogleMap mMap;
@@ -93,153 +93,147 @@ public class MainActivity extends Activity {
 		if (!isNetworkAvailable()) {
 			openNetworkDialog();
 		} else {
-
 			setupMap();
-
 			queryAndAddEventsFromParse(); // fills map with current events from database
-
-			createMainMenu(); // creates all FAB objects - better performance
-
-			// adds the legend to the corner of the map
-			View tview = getLayoutInflater().inflate(R.layout.legend_key_item, null);
-			getWindow().addContentView(
-					tview,
-					new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-							ViewGroup.LayoutParams.WRAP_CONTENT));
-			key1 = (TextView) findViewById(R.id.tv1);
-			key2 = (TextView) findViewById(R.id.tv2);
-			key3 = (TextView) findViewById(R.id.tv3);
-
-			key1.setTextColor(Color.BLACK);
-			key2.setTextColor(Color.BLACK);
-			key3.setTextColor(Color.BLACK);
-
-			// Restore preferences
+			createInitialFAB(); // creates all FAB objects - better performance
 			restorePreferences();
-
 		}
 	}
 
+	/**
+	 * Restores information if the user was previously logged in.
+	 */
 	private void restorePreferences() {
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		adminToggle = settings.getInt("adminToggle", adminToggle);
+		adminSignedIn = settings.getBoolean("adminToggle", adminSignedIn);
 		currentUser = settings.getString("currentUser", currentUser);
 		currentOrganization = settings.getString("currentOrganization", currentOrganization);
 	}
 
+	/**
+	 * Saves information about the current user (if logged in) for persistent use.
+	 */
 	private void savePreferences() {
-		// We need an Editor object to make preference changes.
-		// All objects are from android.context.Context
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putInt("adminToggle", adminToggle);
+		editor.putBoolean("adminToggle", adminSignedIn);
 		editor.putString("currentUser", currentUser);
 		editor.putString("currentOrganization", currentOrganization);
-
-		// Commit the edits!
 		editor.commit();
 	}
 
-	private void createMainMenu() {
-
-		// Main FAB
-		fabButton = new FloatingActionButton.Builder(this)
+	/**
+	 * Creates two Floating Action Buttons (FAB): menu and location.
+	 */
+	private void createInitialFAB() {
+		// Main Menu FAB
+		mainMenuFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
 				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
+		menuFABListener();
 
-		// location FAB
-		locationButton = new FloatingActionButton.Builder(this)
+		// Location FAB
+		locationFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 				.withButtonColor(Color.parseColor("#00A0B0"))
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
-
-		mainFABListener();
 		locationButtonListener();
-
 	}
 
-	private void mainFABListener() {
-
-		fabButton.setOnClickListener(new OnClickListener() {
-
+	/**
+	 * Handles clicks on the menuFAB, either expanding or collapsing the menu.
+	 */
+	private void menuFABListener() {
+		mainMenuFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
-				if (expandFAB == 0) { // expand menu now
-					expandFAB = 1;
+				if (!menuExpanded) { // Expand Menu
+					menuExpanded = true;
 					expandFABMenu();
-					fabButton.setFloatingActionButtonDrawable(getResources().getDrawable(
+					mainMenuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
 							R.drawable.ic_action_cancel));
-				} else {
-					expandFAB = 0;
-					contractFABMenu();
-					fabButton.setFloatingActionButtonDrawable(getResources().getDrawable(
+				} else { // Collapse Menu
+					menuExpanded = false;
+					collapseFABMenu();
+					mainMenuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
 							R.drawable.ic_action_star));
 				}
 			}
 		});
 	}
 
-	private void contractFABMenu() {
+	/**
+	 * Expands the menu to show the following: mapMenuFAB, listFAB, signInFAB/adminFAB
+	 */
+	private void expandFABMenu() {
+		locationFAB.hideFloatingActionButton();
+		mapFABListener();
+		listFABListener();
+		if (!adminSignedIn) {
+			signInFABListener();
+		} else {
+			adminFABListener();
+		}
+	}
 
+	/**
+	 * Collapses the menu to revert back to initial FAB layout
+	 */
+	private void collapseFABMenu() {
 		listFAB.hideFloatingActionButton();
 
-		if (adminToggle == 1) {
+		if (adminSignedIn) {
 			adminFAB.hideFloatingActionButton();
 		} else {
 			signInFAB.hideFloatingActionButton();
 		}
 
-		if (mapTypeToggle == 1) {
-			mapFAB.hideFloatingActionButton();
+		if (mapMenuExpanded) {
 			hybridMapFAB.hideFloatingActionButton();
 			normalMapFAB.hideFloatingActionButton();
-			mapFAB.setFloatingActionButtonDrawable(getResources().getDrawable(R.drawable.ic_map));
-			mapTypeToggle = 0;
-		} else {
-			mapFAB.hideFloatingActionButton();
-
+			mapMenuFAB.setFloatingActionButtonDrawable(getResources()
+					.getDrawable(R.drawable.ic_map));
+			mapMenuExpanded = false;
 		}
+		mapMenuFAB.hideFloatingActionButton();
 
+		locationButtonListener();
+	}
+
+	/**
+	 * TODO - add documentation
+	 */
+	private void locationButtonListener() {
 		if (locToggle == 0) {
-			// location FAB
-			locationButton = new FloatingActionButton.Builder(this)
+			locationFAB = new FloatingActionButton.Builder(this)
 					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 					.withButtonColor(Color.parseColor("#00A0B0"))
 					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
-
 		} else {
-
-			// location FAB
-			locationButton = new FloatingActionButton.Builder(this)
+			locationFAB = new FloatingActionButton.Builder(this)
 					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 					.withButtonColor(Color.parseColor("#BD1550"))
 					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
-
 		}
-		locationButton.hideFloatingActionButton();
-		locationButton.showFloatingActionButton();
-		locationButtonListener();
 
-	}
+		locationFAB.hideFloatingActionButton();
+		locationFAB.showFloatingActionButton();
 
-	private void locationButtonListener() {
-
-		locationButton.setOnClickListener(new OnClickListener() {
+		locationFAB.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 
 				if (locToggle == 0) {
 					locToggle = 1;
-					locationButton.setFloatingActionButtonColor(Color.parseColor("#BD1550"));
+					locationFAB.setFloatingActionButtonColor(Color.parseColor("#BD1550"));
 					centerMapOnMyLocation();
 					Toast.makeText(getApplicationContext(), "Centering map on current location",
 							Toast.LENGTH_SHORT).show();
 				} else {
 					locToggle = 0;
-					locationButton.setFloatingActionButtonColor(Color.parseColor("#00A0B0"));
+					locationFAB.setFloatingActionButtonColor(Color.parseColor("#00A0B0"));
 					centerMapOnCampus();
 					Toast.makeText(getApplicationContext(), "Centering map on campus",
 							Toast.LENGTH_SHORT).show();
@@ -248,40 +242,8 @@ public class MainActivity extends Activity {
 		});
 	}
 
-	private void expandFABMenu() {
-
-		locationButton.hideFloatingActionButton();
-
-		// List FAB
-		listFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
-				.withButtonColor(Color.parseColor("#CBE86B"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
-
-		listFAB.hideFloatingActionButton();
-		listFAB.showFloatingActionButton();
-		listFABListener();
-
-		// Map Options FAB
-		mapFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_map))
-				.withButtonColor(Color.parseColor("#EDC951"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
-		mapFAB.hideFloatingActionButton();
-		mapFAB.showFloatingActionButton();
-		mapFABListener();
-
-		if (adminToggle == 0) {
-
-			signInFABListener();
-
-		} else {
-
-			adminFABListener();
-		}
-	}
-
 	/**
+	 * TODO - updated documentation
 	 * Admin panel FAB
 	 * 
 	 * This FAB creates a dialog with a list of all options an Admin can perform.
@@ -395,7 +357,7 @@ public class MainActivity extends Activity {
 									currentUser = "";
 									currentOrganization = "";
 									adminFAB.hideFloatingActionButton();
-									adminToggle = 0;
+									adminSignedIn = false;
 
 									signInFABListener();
 									Toast.makeText(getBaseContext(), "Logged out Successfully :)",
@@ -411,7 +373,8 @@ public class MainActivity extends Activity {
 		});
 	}
 
-	/*
+	/**
+	 * TODO - update documentation
 	 * Dialog that requires a sign in by the Admin If password and username are valid, it replaces
 	 * the sign in FAB with an admin account FAB
 	 */
@@ -465,7 +428,7 @@ public class MainActivity extends Activity {
 													currentUser = x.getUsername();
 													currentOrganization = x.getOrganizatonName();
 													signInFAB.hideFloatingActionButton();
-													adminToggle = 1;
+													adminSignedIn = true;
 
 													// adds the new settings floating button to the
 													// screen where the original button was
@@ -514,36 +477,43 @@ public class MainActivity extends Activity {
 		});
 	}
 
+	/**
+	 * TODO - add documentation
+	 */
 	private void mapFABListener() {
+		mapMenuFAB = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_map))
+				.withButtonColor(Color.parseColor("#EDC951"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+		mapMenuFAB.hideFloatingActionButton();
+		mapMenuFAB.showFloatingActionButton();
 
-		// Show maptype FAB menu
-		mapFAB.setOnClickListener(new OnClickListener() {
+		mapMenuFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
-				if (mapTypeToggle == 0) {
-
-					mapFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+				if (!mapMenuExpanded) {
+					mapMenuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
 							R.drawable.ic_action_cancel));
 					Toast.makeText(getApplicationContext(), "Show Menu", Toast.LENGTH_SHORT).show();
-					mapTypeToggle = 1;
+					mapMenuExpanded = true;
 					mapTypeListeners(); // set up listeners
 
 				} else {
-
-					mapFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+					mapMenuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
 							R.drawable.ic_map));
 					Toast.makeText(getApplicationContext(), "Hide Menu", Toast.LENGTH_SHORT).show();
-					mapTypeToggle = 0;
+					mapMenuExpanded = false;
 					normalMapFAB.hideFloatingActionButton();
 					hybridMapFAB.hideFloatingActionButton();
 
 				}
 			}
 		});
-
 	}
 
+	/**
+	 * TODO - add documentation
+	 */
 	private void mapTypeListeners() {
 
 		// Normal Map FAB
@@ -583,7 +553,7 @@ public class MainActivity extends Activity {
 			public void onClick(View arg0) {
 				mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 				key1.setTextColor(Color.RED);
-				key2.setTextColor(Color.rgb(255, 102, 0));
+				key2.setTextColor(Color.rgb(255, 102, 0)); // ORANGE
 				key3.setTextColor(Color.YELLOW);
 
 				Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_SHORT).show();
@@ -592,13 +562,20 @@ public class MainActivity extends Activity {
 
 	}
 
+	/**
+	 * TODO - add documentation
+	 */
 	private void listFABListener() {
+		listFAB = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
+				.withButtonColor(Color.parseColor("#CBE86B"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
+		listFAB.hideFloatingActionButton();
+		listFAB.showFloatingActionButton();
 
 		listFAB.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 				intent.putExtra("FilterType", "All");
 				Toast.makeText(getApplicationContext(), "List Of All Current Events!",
@@ -609,6 +586,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
+	 * TODO - update documentation
 	 * Sets up the Map to center location on UMD campus and add markers to all buildings
 	 */
 	private void setupMap() {
@@ -631,10 +609,20 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+
+		// Adds the legend to the corner of the map
+		View tview = getLayoutInflater().inflate(R.layout.legend_key_item, null);
+		getWindow().addContentView(
+				tview,
+				new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+						ViewGroup.LayoutParams.WRAP_CONTENT));
+		((TextView) findViewById(R.id.tv1)).setTextColor(Color.BLACK); // Can't these be set in XML?
+		((TextView) findViewById(R.id.tv2)).setTextColor(Color.BLACK);
+		((TextView) findViewById(R.id.tv3)).setTextColor(Color.BLACK);
 	}
 
 	/**
-	 * TODO (minor) - Add documentation
+	 * TODO - Add documentation
 	 */
 	private void queryAndAddEventsFromParse() {
 		ParseObject.registerSubclass(UMDBuildings.class);
@@ -692,6 +680,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
+	 * TODO - update documentation
 	 * Centers map on current location. If current location can not be resolved, it defaults to UMD
 	 * location.
 	 */
@@ -707,7 +696,8 @@ public class MainActivity extends Activity {
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
 	}
 
-	/*
+	/**
+	 * TODO - update documentation
 	 * Centers the view of the map on center of the campus
 	 */
 	private void centerMapOnCampus() {
@@ -715,6 +705,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
+	 * TODO - update documentation
 	 * Checks if network is available
 	 * 
 	 * @return true if available, false otherwise
@@ -725,6 +716,9 @@ public class MainActivity extends Activity {
 		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
 
+	/**
+	 * TODO - add documentation
+	 */
 	private void openNetworkDialog() {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
 
@@ -754,7 +748,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * 
+	 * TODO - update documentation
 	 * @param requestCode
 	 *            If this is 0, then this is a result from returning from add event activity with
 	 *            the event object that needs to be added to the markers on the map.
@@ -804,6 +798,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
+	 * TODO - update documentation
 	 * Places a marker on the building specified. The marker pop-up shows the name of the building
 	 * and the number of events happening there. If the marker already exists, this method updates
 	 * the number of events. The color of the marker is related to the number of events: (1-2 =
@@ -815,7 +810,6 @@ public class MainActivity extends Activity {
 	 *            Represents whether an event was added or deleted from the building. True if added,
 	 *            False if deleted.
 	 */
-
 	private void updateMarker(UMDBuildings building, boolean add) {
 
 		Double lat = Double.parseDouble(building.getLat());
@@ -885,5 +879,4 @@ public class MainActivity extends Activity {
 		super.onStop();
 		savePreferences();
 	}
-
 }
