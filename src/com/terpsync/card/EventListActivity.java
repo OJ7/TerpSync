@@ -45,8 +45,7 @@ public class EventListActivity extends Activity {
 
 		// Setting up list view
 		lv = (ListView) findViewById(R.id.event_list);
-		view = getLayoutInflater().inflate(R.layout.dialog_delete_confirmation, null);
-
+		
 		Intent intent = getIntent();
 
 		// ListTypes:
