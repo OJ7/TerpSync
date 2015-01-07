@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -321,6 +320,7 @@ public class MainActivity extends Activity {
 								case 1: // Organization's Events
 									Intent intent = new Intent(MainActivity.this,
 											EventListActivity.class);
+									intent.putExtra("FilterType", "OrganizationName");
 									intent.putExtra("OrganizationName", currentOrganization);
 									startActivity(intent);
 									break;
@@ -626,6 +626,7 @@ public class MainActivity extends Activity {
 			public void onInfoWindowClick(Marker marker) {
 				String buildingName = marker.getTitle();
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
+				intent.putExtra("FilterType", "BuildingName");
 				intent.putExtra("BuildingName", buildingName);
 				startActivity(intent);
 			}

@@ -1,6 +1,5 @@
 package com.terpsync.card;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.terpsync.FloatingActionButton;
@@ -10,7 +9,6 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -23,7 +21,6 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class EventListActivity extends Activity {
 
@@ -61,16 +58,14 @@ public class EventListActivity extends Activity {
 		// - if click on org, show profile page for org
 		// - if click on building, show filtered events by building
 
-		String filterType = intent.getStringExtra("FilterType"), filterName;
+		String filterType = intent.getStringExtra("FilterType"), filterName = intent.getStringExtra(filterType);
 
 		if (filterType.equals("All")) { // Un-filtered, all events
 			getEventsAndCreateList(filterType, "");
 		} else if (filterType.equals("OrganizationName")) { // Filter by organization name
-			filterName = intent.getStringExtra("organization");
 			getEventsAndCreateList(filterType, filterName);
-			setDeleteDialog(); // TODO - change this so it only adds dialog to current user's events
+			setDeleteDialog(); 
 		} else if (filterType.equals("BuildingName")){ // Filter by building name
-			filterName = intent.getStringExtra("MarkerList");
 			getEventsAndCreateList(filterType, filterName);
 		}
 
@@ -113,6 +108,8 @@ public class EventListActivity extends Activity {
 	/**
 	 * TODO - add documentation
 	 */
+	// TODO - change this so it only adds dialog to current user's events
+	// TODO - fix bug when tapping outside dialog box and tapping on event again
 	private void setDeleteDialog() {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 
