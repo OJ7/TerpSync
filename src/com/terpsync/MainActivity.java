@@ -334,7 +334,7 @@ public class MainActivity extends Activity {
 									builder.setView(signInChangesView)
 											.setTitle("Update Account Info")
 											.setCancelable(false)
-											.setPositiveButton("Change!",
+											.setPositiveButton("Change",
 													new DialogInterface.OnClickListener() {
 
 														@Override
@@ -398,7 +398,7 @@ public class MainActivity extends Activity {
 									adminToggle = 0;
 
 									signInFABListener();
-									Toast.makeText(getBaseContext(), "Logged out Successfully :]",
+									Toast.makeText(getBaseContext(), "Logged out Successfully :)",
 											Toast.LENGTH_LONG).show();
 
 									break;
@@ -480,7 +480,7 @@ public class MainActivity extends Activity {
 														Toast.LENGTH_LONG).show();
 											} else {
 												Toast.makeText(getApplicationContext(),
-														"Logged In Successfully :]",
+														"Logged In Successfully :)",
 														Toast.LENGTH_LONG).show();
 											}
 										}
@@ -747,6 +747,8 @@ public class MainActivity extends Activity {
 		});
 
 		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.setCanceledOnTouchOutside(false); // doesn't allow using the app without getting
+														// past dialog box
 		// show alert
 		alertDialog.show();
 	}
