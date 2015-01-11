@@ -7,8 +7,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+
 import com.terpsync.R;
-import com.terpsync.card.EventObject;
+import com.terpsync.parse.EventObject;
+import com.terpsync.parse.ParseConstants;
+import com.terpsync.parse.UMDBuildings;
 import com.parse.FindCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
@@ -61,7 +64,7 @@ public class AddEventActivity extends Activity {
 		actionBar.setTitle("New Event");
 		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
 		Intent intent = getIntent();
-		currentOrganization = intent.getStringExtra(this.getString(R.string.parse_admin_org_name));
+		currentOrganization = intent.getStringExtra(ParseConstants.admin_org_name);
 		Log.i(TAG, "Adding event as:" + currentOrganization);
 
 		eventObject = new EventObject();
@@ -75,8 +78,10 @@ public class AddEventActivity extends Activity {
 
 	} // end of onCreate
 
+	/**
+	 * TODO - update documentation Get references to all the views
+	 */
 	private void cacheWidgets() {
-		// Get references to all the views
 		orgNameTextView = (TextView) findViewById(R.id.studentOrgName);
 		eventNameEditText = (EditText) findViewById(R.id.eventTitle);
 		startDateTextView = (TextView) findViewById(R.id.eventStartDate);
@@ -91,13 +96,11 @@ public class AddEventActivity extends Activity {
 		costEditText = (EditText) findViewById(R.id.eventCost);
 		saveButton = (Button) findViewById(R.id.save_event_button);
 		dollarSignTextView = (TextView) findViewById(R.id.eventCost_textView);
-
 	}
 
 	/**
-	 * 
-	 * This method initializes a Query that populates the AutoCompleteTextView with all the
-	 * Buildings on Campus in a background thread.
+	 * TODO - update documentation This method initializes a Query that populates the
+	 * AutoCompleteTextView with all the Buildings on Campus in a background thread.
 	 */
 	private void queryAndFillAutoCompleteView() {
 		ParseQuery<UMDBuildings> query = ParseQuery.getQuery(UMDBuildings.class);
@@ -124,6 +127,9 @@ public class AddEventActivity extends Activity {
 
 	}
 
+	/**
+	 * TODO - Add documentation
+	 */
 	private void setViewListeners() {
 		// RadioGroup Listeners
 		admissionRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -180,9 +186,9 @@ public class AddEventActivity extends Activity {
 	}
 
 	/**
-	 * The Save Button listener will check to make sure if all the users input is correct before
-	 * adding the new event to the database. If any fields are invalid it will display toast
-	 * messages to the user.
+	 * TODO - update documentation The Save Button listener will check to make sure if all the users
+	 * input is correct before adding the new event to the database. If any fields are invalid it
+	 * will display toast messages to the user.
 	 * 
 	 * It will then query the GPS coordinates based on the building selected by the user and include
 	 * that in the events information for easy data base retrieval when adding a marker in
@@ -237,8 +243,10 @@ public class AddEventActivity extends Activity {
 
 						@Override
 						public void done(ParseException arg0) {
-							setResult(Activity.RESULT_OK,
-									new Intent().putExtra("addBuildingName", eventObject.getBuildingName()));
+							setResult(
+									Activity.RESULT_OK,
+									new Intent().putExtra("addBuildingName",
+											eventObject.getBuildingName()));
 							finish();
 						}
 					});
@@ -250,9 +258,9 @@ public class AddEventActivity extends Activity {
 	}
 
 	// TODO (minor) - manage default behavior for date/time
-	/*
-	 * If startDate or startTime not set, default to current day and current time rounded up to
-	 * nearest hour.
+	/**
+	 * TODO - update documentation If startDate or startTime not set, default to current day and
+	 * current time rounded up to nearest hour.
 	 * 
 	 * If endDate or endTime not set, default to one hour past startDate/Time If endDate/Time
 	 * changed to before startDate/Time, change to difference in shift in endDate/Time
@@ -277,6 +285,9 @@ public class AddEventActivity extends Activity {
 		}
 	};
 
+	/**
+	 * TODO - Add documentation
+	 */
 	DatePickerDialog.OnDateSetListener endDatePicker = new DatePickerDialog.OnDateSetListener() {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -297,6 +308,9 @@ public class AddEventActivity extends Activity {
 		}
 	};
 
+	/**
+	 * TODO - Add documentation
+	 */
 	TimePickerDialog.OnTimeSetListener startTimePicker = new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -316,6 +330,9 @@ public class AddEventActivity extends Activity {
 		}
 	};
 
+	/**
+	 * TODO - Add documentation
+	 */
 	TimePickerDialog.OnTimeSetListener endTimePicker = new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -336,7 +353,7 @@ public class AddEventActivity extends Activity {
 	};
 
 	/**
-	 * Updates the associated Date TextView
+	 * TODO - update documentation Updates the associated Date TextView
 	 * 
 	 * @param tv
 	 *            The TextView (either starting date or ending date) to be updated
@@ -348,7 +365,7 @@ public class AddEventActivity extends Activity {
 	}
 
 	/**
-	 * Updates the associated Time TextView
+	 * TODO - update documentation Updates the associated Time TextView
 	 * 
 	 * @param tv
 	 *            The TextView (either starting time or ending time) to be updated

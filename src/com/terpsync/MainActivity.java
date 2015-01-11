@@ -4,11 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.card.EventListActivity;
-import com.terpsync.card.EventObject;
+import com.terpsync.parse.AdminAccounts;
+import com.terpsync.parse.EventObject;
+import com.terpsync.parse.ParseConstants;
+import com.terpsync.parse.UMDBuildings;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -28,7 +30,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -46,20 +47,21 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-	private static final String TAG = "Campus-App";
+	private static final String TAG = "MainActivity";
 	public static final String PREFS_NAME = "MyPrefsFile";
-	private Context context;
 
-	// Global variables for Current User (if logged in)
-	String currentUser = "";
-	String currentOrganization = "";
+	// Global variable strings used for preferences
+	private final String adminTogglePref = "adminToggle", currentUserPref = "currentUser",
+			currentOrgPref = "currentOrganization";
+
+	// Global variables for Current User (if signed in)
+	String currentUser = "", currentOrganization = "";
 
 	// Global variables for FAB
-	private FloatingActionButton mainMenuFAB, mapMenuFAB, normalMapFAB, hybridMapFAB, listFAB,
-			signInFAB, adminFAB, locationFAB;
-	private boolean menuExpanded = false, mapMenuExpanded = false;
+	private FloatingActionButton menuFAB, locationFAB, mapTypeFAB, listFAB, signInFAB, adminFAB;
+	private boolean menuExpanded = false, adminSignedIn = false;
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
-	private boolean adminSignedIn = false;
+	private int mapToggle = 0; // 0 = normal map, 1 = hybrid map
 
 	// Global variables for Map
 	private GoogleMap mMap;
@@ -69,27 +71,23 @@ public class MainActivity extends Activity {
 	TextView key1, key2, key3;
 
 	// Global variables for Dialog
-	AlertDialog.Builder builder, list_builder;
-	EditText usernameView;
-	EditText passwordView;
-	EditText newUNView, newPWView;
-	View view = null;
-	View signInChangesView = null;
+	AlertDialog.Builder signInBuilder, adminOptionsListBuilder;
+	EditText usernameView, passwordView, newUNView, newPWView, newPWConfirmView;
+	View signInView = null, changeSignInView = null;
+	String[] adminOptions = { "Add Event", "My Events", "Change PW/UN", "Sign Out" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
-		context = this;
 
-		builder = new AlertDialog.Builder(this); // get the context
-		list_builder = new AlertDialog.Builder(this);
-		view = getLayoutInflater().inflate(R.layout.dialog_signin, null);
-		signInChangesView = getLayoutInflater().inflate(R.layout.dialog_changesignin, null);
+		setupViewsAndCacheWidgets();
+		key1 = ((TextView) findViewById(R.id.tv1));
+		key2 = ((TextView) findViewById(R.id.tv2));
+		key3 = ((TextView) findViewById(R.id.tv3));
 
-		// Check if network is connected
+		// Check if network is connected before setting up app
 		if (!isNetworkAvailable()) {
 			openNetworkDialog();
 		} else {
@@ -101,24 +99,24 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Restores information if the user was previously logged in.
+	 * Restores information if the user was previously signed in.
 	 */
 	private void restorePreferences() {
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		adminSignedIn = settings.getBoolean("adminToggle", adminSignedIn);
-		currentUser = settings.getString("currentUser", currentUser);
-		currentOrganization = settings.getString("currentOrganization", currentOrganization);
+		adminSignedIn = settings.getBoolean(adminTogglePref, adminSignedIn);
+		currentUser = settings.getString(currentUserPref, currentUser);
+		currentOrganization = settings.getString(currentOrgPref, currentOrganization);
 	}
 
 	/**
-	 * Saves information about the current user (if logged in) for persistent use.
+	 * Saves information about the current user (if signed in) for persistent use.
 	 */
 	private void savePreferences() {
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putBoolean("adminToggle", adminSignedIn);
-		editor.putString("currentUser", currentUser);
-		editor.putString("currentOrganization", currentOrganization);
+		editor.putBoolean(adminTogglePref, adminSignedIn);
+		editor.putString(currentUserPref, currentUser);
+		editor.putString(currentOrgPref, currentOrganization);
 		editor.commit();
 	}
 
@@ -126,37 +124,32 @@ public class MainActivity extends Activity {
 	 * Creates two Floating Action Buttons (FAB): menu and location.
 	 */
 	private void createInitialFAB() {
-		// Main Menu FAB
-		mainMenuFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
-				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 16).create();
 		menuFABListener();
-
-		// Location FAB
-		locationFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-				.withButtonColor(Color.parseColor("#00A0B0"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
-		locationButtonListener();
+		locationFABListener();
 	}
 
 	/**
-	 * Handles clicks on the menuFAB, either expanding or collapsing the menu.
+	 * Creates menuFAB and handles clicks on it: either expanding or collapsing the menu.
 	 */
 	private void menuFABListener() {
-		mainMenuFAB.setOnClickListener(new OnClickListener() {
+		// Setting up FAB
+		menuFAB = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
+				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withMargins(0, 0, 16, 16).create();
+		// Attaching onClickListener
+		menuFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (!menuExpanded) { // Expand Menu
 					menuExpanded = true;
 					expandFABMenu();
-					mainMenuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+					menuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
 							R.drawable.ic_action_cancel));
 				} else { // Collapse Menu
 					menuExpanded = false;
 					collapseFABMenu();
-					mainMenuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+					menuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
 							R.drawable.ic_action_star));
 				}
 			}
@@ -164,11 +157,140 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Expands the menu to show the following: mapMenuFAB, listFAB, signInFAB/adminFAB
+	 * Creates locationFAB and handles clicks on it: either centering on campus or current location.
+	 */
+	private void locationFABListener() {
+		// Setting up the appropriate FAB
+		if (locToggle == 0) {
+			locationFAB = new FloatingActionButton.Builder(this)
+					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
+					.withButtonColor(Color.parseColor("#00A0B0"))
+					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+		} else {
+			locationFAB = new FloatingActionButton.Builder(this)
+					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
+					.withButtonColor(Color.parseColor("#BD1550"))
+					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+		}
+		locationFAB.hideFloatingActionButton();
+		locationFAB.showFloatingActionButton();
+
+		// Attaching onClickListener
+		locationFAB.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (locToggle == 0) { // Centering map on current location
+					locToggle = 1;
+					locationFAB.setFloatingActionButtonColor(Color.parseColor("#BD1550"));
+					centerMapOnMyLocation();
+				} else { // Centering map on campus
+					locToggle = 0;
+					locationFAB.setFloatingActionButtonColor(Color.parseColor("#00A0B0"));
+					centerMapOnCampus();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Creates mapTypeFAB and handles click on it: changing map type to either normal or hybrid
+	 */
+	private void mapTypeFABListener() {
+		// Setting up FAB
+		if (mapToggle == 0) { // Normal Map
+			mapTypeFAB = new FloatingActionButton.Builder(this)
+					.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
+					.withButtonColor(Color.parseColor("#00A0B0"))
+					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+		} else { // Hybrid Map
+			mapTypeFAB = new FloatingActionButton.Builder(this)
+					.withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
+					.withButtonColor(Color.parseColor("#C7F464"))
+					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+		}
+		mapTypeFAB.hideFloatingActionButton();
+		mapTypeFAB.showFloatingActionButton();
+
+		// Attaching onClickListener
+		mapTypeFAB.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				toggleMapType();
+			}
+		});
+	}
+
+	/**
+	 * Creates listFAB and handles click on it: opens up list of all events
+	 */
+	private void listFABListener() {
+		// Setting up FAB
+		listFAB = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
+				.withButtonColor(Color.parseColor("#CBE86B"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
+		listFAB.hideFloatingActionButton();
+		listFAB.showFloatingActionButton();
+
+		// Attaching onClickListener
+		listFAB.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
+				intent.putExtra("FilterType", "All");
+				startActivity(intent);
+			}
+		});
+	}
+
+	/**
+	 * Creates signInFAB and handles click on it: opens a dialog for signing in.
+	 */
+	private void signInFABListener() {
+		// Setting up FAB
+		signInFAB = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_gear_50))
+				.withButtonColor(Color.parseColor("#FA6900"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
+		signInFAB.hideFloatingActionButton();
+		signInFAB.showFloatingActionButton();
+
+		// Attaching onClickListener
+		signInFAB.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showSignInView();
+			}
+		});
+	}
+
+	/**
+	 * Creates adminFAB and handles click on it: opens a dialog menu with options for Admin Panel.
+	 */
+	private void adminFABListener() {
+		// Setting up FAB
+		adminFAB = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
+				.withButtonColor(Color.parseColor("#53777A"))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
+		adminFAB.hideFloatingActionButton();
+		adminFAB.showFloatingActionButton();
+
+		// Attaching onClickListener
+		adminFAB.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showAdminPanel();
+			}
+		});
+	}
+
+	/**
+	 * Expands the menu to show the following: mapTypeFAB, listFAB, signInFAB/adminFAB
 	 */
 	private void expandFABMenu() {
 		locationFAB.hideFloatingActionButton();
-		mapFABListener();
+		mapTypeFABListener();
 		listFABListener();
 		if (!adminSignedIn) {
 			signInFABListener();
@@ -181,425 +303,285 @@ public class MainActivity extends Activity {
 	 * Collapses the menu to revert back to initial FAB layout
 	 */
 	private void collapseFABMenu() {
+		mapTypeFAB.hideFloatingActionButton();
 		listFAB.hideFloatingActionButton();
-
 		if (adminSignedIn) {
 			adminFAB.hideFloatingActionButton();
 		} else {
 			signInFAB.hideFloatingActionButton();
 		}
-
-		if (mapMenuExpanded) {
-			hybridMapFAB.hideFloatingActionButton();
-			normalMapFAB.hideFloatingActionButton();
-			mapMenuFAB.setFloatingActionButtonDrawable(getResources()
-					.getDrawable(R.drawable.ic_map));
-			mapMenuExpanded = false;
-		}
-		mapMenuFAB.hideFloatingActionButton();
-
-		locationButtonListener();
+		locationFABListener();
 	}
 
 	/**
-	 * TODO - add documentation
+	 * Toggles the map type between normal and hybrid. Also updates the key legend to display better
+	 * with each map type.
 	 */
-	private void locationButtonListener() {
-		if (locToggle == 0) {
-			locationFAB = new FloatingActionButton.Builder(this)
-					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-					.withButtonColor(Color.parseColor("#00A0B0"))
-					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
-		} else {
-			locationFAB = new FloatingActionButton.Builder(this)
-					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
-					.withButtonColor(Color.parseColor("#BD1550"))
-					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+	private void toggleMapType() {
+		if (mapToggle == 0) { // Change Map Type to Hybrid
+			mapToggle = 1;
+			// Changing FAB icon and color
+			mapTypeFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+					R.drawable.ic_satellite));
+			mapTypeFAB.setFloatingActionButtonColor(Color.parseColor("#C7F464"));
+			// Changing map type
+			mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+			// Updating Key Legend
+			key1.setTextColor(Color.RED);
+			key2.setTextColor(Color.rgb(255, 102, 0)); // ORANGE
+			key3.setTextColor(Color.YELLOW);
+			Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_SHORT).show();
+		} else { // Change Map Type to Normal
+			mapToggle = 0;
+			// Changing FAB icon and color
+			mapTypeFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+					R.drawable.ic_action_map));
+			mapTypeFAB.setFloatingActionButtonColor(Color.parseColor("#00A0B0"));
+			// Changing map type
+			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+			// Updating Key Legend
+			key1.setTextColor(Color.BLACK);
+			key2.setTextColor(Color.BLACK);
+			key3.setTextColor(Color.BLACK);
+			Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT).show();
 		}
-
-		locationFAB.hideFloatingActionButton();
-		locationFAB.showFloatingActionButton();
-
-		locationFAB.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				if (locToggle == 0) {
-					locToggle = 1;
-					locationFAB.setFloatingActionButtonColor(Color.parseColor("#BD1550"));
-					centerMapOnMyLocation();
-					Toast.makeText(getApplicationContext(), "Centering map on current location",
-							Toast.LENGTH_SHORT).show();
-				} else {
-					locToggle = 0;
-					locationFAB.setFloatingActionButtonColor(Color.parseColor("#00A0B0"));
-					centerMapOnCampus();
-					Toast.makeText(getApplicationContext(), "Centering map on campus",
-							Toast.LENGTH_SHORT).show();
-				}
-			}
-		});
 	}
 
 	/**
-	 * TODO - updated documentation
-	 * Admin panel FAB
+	 * Creates a dialog box to sign-in to an Admin account.
+	 */
+	private void showSignInView() {
+		signInBuilder.setView(signInView).setTitle("Enter Your Username and Password")
+				.setCancelable(false)
+				.setPositiveButton("Sign in", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int item) {
+						attemptSignIn();
+						resetSignInDialog();
+					}
+				}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int item) {
+						resetSignInDialog();
+						dialog.dismiss();
+					}
+				}).create().show();
+	}
+
+	/**
+	 * Creates a dialog menu with options to add events, see current user's events, change
+	 * username/password, or sign out.
+	 */
+	private void showAdminPanel() {
+		adminOptionsListBuilder.setTitle("Admin Panel")
+				.setItems(adminOptions, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int item) {
+						switch (item) {
+						case 0: // Add Event
+							startActivityForResult(new Intent(MainActivity.this,
+									AddEventActivity.class).putExtra(ParseConstants.admin_org_name,
+									currentOrganization), 0);
+							break;
+						case 1: // My Events
+							showMyEventsList();
+							break;
+						case 2: // Change PW/UN
+							showChangeSignInView();
+							break;
+						case 3: // Sign out
+							signOutAdmin();
+							break;
+						default:
+							break;
+						}
+					}
+				}).create().show();
+	}
+
+	/**
+	 * Starts a new EventListActivity filtered to show events from current user
+	 */
+	private void showMyEventsList() {
+		Intent intent = new Intent(MainActivity.this, EventListActivity.class);
+		intent.putExtra("FilterType", ParseConstants.event_org_name);
+		intent.putExtra(ParseConstants.event_org_name, currentOrganization);
+		startActivity(intent);
+	}
+
+	/**
+	 * Creates a dialog box to change username and/or password.
+	 */
+	private void showChangeSignInView() {
+		signInBuilder.setView(changeSignInView).setTitle("Update Account Info")
+				.setCancelable(false)
+				.setPositiveButton("Change", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int item) {
+						attemptChangeSignIn();
+						resetChangeSignInDialog();
+					}
+				}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int item) {
+						resetChangeSignInDialog();
+						dialog.dismiss();
+					}
+				}).create().show();
+	}
+
+	/**
+	 * Attempts to sign in using the username and password specified in the sign in dialog box.
+	 * NOTE: Should only be called from the sign in dialog box.
 	 * 
-	 * This FAB creates a dialog with a list of all options an Admin can perform.
+	 * @return true if sign in is successful, false otherwise.
 	 */
-	private void adminFABListener() {
+	private boolean attemptSignIn() {
+		final String UN = usernameView.getEditableText().toString().toLowerCase()
+				.replaceAll("\\s", "");
+		final String PW = passwordView.getEditableText().toString();
 
-		// Admin FAB
-		adminFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
-				.withButtonColor(Color.parseColor("#53777A"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
-
-		adminFAB.hideFloatingActionButton();
-		adminFAB.showFloatingActionButton();
-
-		adminFAB.setOnClickListener(new OnClickListener() {
-
+		ParseQuery<AdminAccounts> query = ParseQuery.getQuery(AdminAccounts.class);
+		query.whereExists(ParseConstants.admin_username);
+		query.setLimit(100);
+		query.findInBackground(new FindCallback<AdminAccounts>() {
 			@Override
-			public void onClick(View v) {
-				String[] arr = { "Add Event", currentOrganization + "'s Events", "Change PW/UN",
-						"Log Out" };
-
-				list_builder.setTitle("Please select an Option")
-						.setItems(arr, new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog, int item) {
-
-								switch (item) {
-								case 0: // Add Event
-									startActivityForResult(new Intent(MainActivity.this,
-											AddEventActivity.class).putExtra(
-											context.getString(R.string.parse_admin_org_name),
-											currentOrganization), 0);
-									break;
-								case 1: // Organization's Events
-									Intent intent = new Intent(MainActivity.this,
-											EventListActivity.class);
-									intent.putExtra("FilterType", "OrganizationName");
-									intent.putExtra("OrganizationName", currentOrganization);
-									startActivity(intent);
-									break;
-								case 2: // Change PW/UN
-
-									newUNView = (EditText) signInChangesView
-											.findViewById(R.id.newUsername);
-									newPWView = (EditText) signInChangesView
-											.findViewById(R.id.newPassword);
-
-									builder.setView(signInChangesView)
-											.setTitle("Update Account Info")
-											.setCancelable(false)
-											.setPositiveButton("Change",
-													new DialogInterface.OnClickListener() {
-
-														@Override
-														public void onClick(DialogInterface dialog,
-																int which) {
-
-															final String newPW = newPWView
-																	.getEditableText().toString();
-															final String newUN = newUNView
-																	.getEditableText().toString();
-
-															ParseQuery<AdminAccounts> query = ParseQuery
-																	.getQuery(AdminAccounts.class);
-															query.whereContains("username",
-																	currentUser);
-															query.findInBackground(new FindCallback<AdminAccounts>() {
-
-																@Override
-																public void done(
-																		List<AdminAccounts> arg0,
-																		ParseException arg1) {
-																	arg0.get(0).setUsername(newUN);
-																	arg0.get(0).setPassword(newPW);
-																	arg0.get(0).saveInBackground();
-																}
-															});
-
-															((ViewGroup) signInChangesView
-																	.getParent())
-																	.removeView(signInChangesView);
-															dialog.cancel();
-															dialog.dismiss();
-														}
-													})
-
-											.setNegativeButton("Cancel",
-													new DialogInterface.OnClickListener() {
-
-														@Override
-														public void onClick(DialogInterface dialog,
-																int which) {
-															((ViewGroup) signInChangesView
-																	.getParent())
-																	.removeView(signInChangesView);
-															dialog.cancel();
-															dialog.dismiss();
-														}
-													});
-
-									final AlertDialog alertDialog = builder.create();
-									alertDialog.show();
-									currentUser = newUNView.getEditableText().toString();
-									newUNView.setText("");
-									newPWView.setText("");
-									break;
-
-								case 3: // Log out
-									currentUser = "";
-									currentOrganization = "";
-									adminFAB.hideFloatingActionButton();
-									adminSignedIn = false;
-
-									signInFABListener();
-									Toast.makeText(getBaseContext(), "Logged out Successfully :)",
-											Toast.LENGTH_LONG).show();
-
-									break;
-								default:
-									break;
-								}
-							}
-						}).create().show();
-			}
-		});
-	}
-
-	/**
-	 * TODO - update documentation
-	 * Dialog that requires a sign in by the Admin If password and username are valid, it replaces
-	 * the sign in FAB with an admin account FAB
-	 */
-	private void signInFABListener() {
-
-		// Sign in FAB
-		signInFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_gear_50))
-				.withButtonColor(Color.parseColor("#FA6900"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
-
-		signInFAB.hideFloatingActionButton();
-		signInFAB.showFloatingActionButton();
-
-		signInFAB.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				usernameView = (EditText) view.findViewById(R.id.username);
-				passwordView = (EditText) view.findViewById(R.id.password);
-
-				builder.setView(view).setTitle("Enter your Username and Password.")
-						.setCancelable(false)
-						.setPositiveButton("Sign in", new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-
-								final String UN = usernameView.getEditableText().toString()
-										.toLowerCase().replaceAll("\\s", "");
-								final String PW = passwordView.getEditableText().toString();
-
-								ParseQuery<AdminAccounts> query = ParseQuery
-										.getQuery(AdminAccounts.class);
-								query.whereExists("username");
-								query.setLimit(100);
-								query.findInBackground(new FindCallback<AdminAccounts>() {
-
-									@Override
-									public void done(List<AdminAccounts> arg0, ParseException arg1) {
-
-										if (arg1 != null) {
-											Toast.makeText(getApplicationContext(),
-													"Invalid Password or Username",
-													Toast.LENGTH_LONG).show();
-										} else {
-											boolean flag = false;
-											for (AdminAccounts x : arg0) {
-												if (x.getUsername().equals(UN)
-														&& x.getPassword().equals(PW)) {
-													currentUser = x.getUsername();
-													currentOrganization = x.getOrganizatonName();
-													signInFAB.hideFloatingActionButton();
-													adminSignedIn = true;
-
-													// adds the new settings floating button to the
-													// screen where the original button was
-													adminFABListener();
-													flag = true;
-													break;
-												}
-											}
-											if (!flag) {
-												Toast.makeText(getApplicationContext(),
-														"Invalid Password or Username",
-														Toast.LENGTH_LONG).show();
-											} else {
-												Toast.makeText(getApplicationContext(),
-														"Logged In Successfully :)",
-														Toast.LENGTH_LONG).show();
-											}
-										}
-
-									}
-								});
-								usernameView.setText("");
-								passwordView.setText("");
-								((ViewGroup) view.getParent()).removeView(view);
-								dialog.cancel();
-								dialog.dismiss();
-
-							}
-						})
-
-						.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								usernameView.setText("");
-								passwordView.setText("");
-								((ViewGroup) view.getParent()).removeView(view);
-								dialog.cancel();
-								dialog.dismiss();
-							}
-						});
-
-				final AlertDialog alertDialog = builder.create();
-				alertDialog.show();
-			}
-		});
-	}
-
-	/**
-	 * TODO - add documentation
-	 */
-	private void mapFABListener() {
-		mapMenuFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_map))
-				.withButtonColor(Color.parseColor("#EDC951"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
-		mapMenuFAB.hideFloatingActionButton();
-		mapMenuFAB.showFloatingActionButton();
-
-		mapMenuFAB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (!mapMenuExpanded) {
-					mapMenuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
-							R.drawable.ic_action_cancel));
-					Toast.makeText(getApplicationContext(), "Show Menu", Toast.LENGTH_SHORT).show();
-					mapMenuExpanded = true;
-					mapTypeListeners(); // set up listeners
-
+			public void done(List<AdminAccounts> arg0, ParseException arg1) {
+				if (arg1 != null) {
+					Toast.makeText(getApplicationContext(), "Invalid username or password",
+							Toast.LENGTH_SHORT).show();
 				} else {
-					mapMenuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
-							R.drawable.ic_map));
-					Toast.makeText(getApplicationContext(), "Hide Menu", Toast.LENGTH_SHORT).show();
-					mapMenuExpanded = false;
-					normalMapFAB.hideFloatingActionButton();
-					hybridMapFAB.hideFloatingActionButton();
-
+					for (AdminAccounts x : arg0) {
+						if (x.getUsername().equals(UN) && x.getPassword().equals(PW)) {
+							currentUser = x.getUsername();
+							currentOrganization = x.getOrganizatonName();
+							adminSignedIn = true;
+							// Replacing signInFAB
+							signInFAB.hideFloatingActionButton();
+							adminFABListener();
+							break;
+						}
+					}
+					if (adminSignedIn) {
+						Toast.makeText(getApplicationContext(), "Signed in successfully :)",
+								Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(getApplicationContext(), "Invalid username or password",
+								Toast.LENGTH_SHORT).show();
+					}
 				}
 			}
 		});
+		return adminSignedIn;
 	}
 
 	/**
-	 * TODO - add documentation
+	 * Attempts to change username and/or password (depending on what is specified). If username
+	 * already exists and/or passwords do not match, the changes will not be made.
+	 * 
+	 * Requirements: Usernames and passwords must be at least three characters in length.
+	 * 
+	 * @return true if changed successfully, false otherwise.
 	 */
-	private void mapTypeListeners() {
+	private boolean attemptChangeSignIn() {
+		final String newUN = newUNView.getEditableText().toString();
+		final String newPW = newPWView.getEditableText().toString();
+		final String newPWConfirm = newPWConfirmView.getEditableText().toString();
 
-		// Normal Map FAB
-		normalMapFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-				.withButtonColor(Color.parseColor("#00A0B0"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 86, 86).create();
-
-		// Hybrid Map FAB
-		hybridMapFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
-				.withButtonColor(Color.parseColor("#C7F464"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 156, 86).create();
-
-		normalMapFAB.hideFloatingActionButton();
-		hybridMapFAB.hideFloatingActionButton();
-
-		normalMapFAB.showFloatingActionButton();
-		hybridMapFAB.showFloatingActionButton();
-
-		normalMapFAB.setOnClickListener(new OnClickListener() {
+		/**
+		 * TODO - fix bugs relating to changing username/password
+		 * 
+		 * Confirm passwords (and not blank)
+		 * 
+		 * Confirm username works (and not blank)
+		 * 
+		 * ...etc.
+		 */
+		ParseQuery<AdminAccounts> query = ParseQuery.getQuery(AdminAccounts.class);
+		query.whereContains(ParseConstants.admin_username, currentUser);
+		query.findInBackground(new FindCallback<AdminAccounts>() {
 			@Override
-			public void onClick(View v) {
-				// Show normal map
-				mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-				key1.setTextColor(Color.BLACK);
-				key2.setTextColor(Color.BLACK);
-				key3.setTextColor(Color.BLACK);
-				Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT).show();
+			public void done(List<AdminAccounts> arg0, ParseException arg1) {
+				arg0.get(0).setUsername(newUN);
+				arg0.get(0).setPassword(newPW);
+				arg0.get(0).saveInBackground();
+				currentUser = newUNView.getEditableText().toString();
 			}
 		});
-
-		hybridMapFAB.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-				key1.setTextColor(Color.RED);
-				key2.setTextColor(Color.rgb(255, 102, 0)); // ORANGE
-				key3.setTextColor(Color.YELLOW);
-
-				Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_SHORT).show();
-			}
-		});
-
+		return true;
 	}
 
 	/**
-	 * TODO - add documentation
+	 * Resets the sign in dialog to clear text and remove from view
 	 */
-	private void listFABListener() {
-		listFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
-				.withButtonColor(Color.parseColor("#CBE86B"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
-		listFAB.hideFloatingActionButton();
-		listFAB.showFloatingActionButton();
-
-		listFAB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
-				intent.putExtra("FilterType", "All");
-				Toast.makeText(getApplicationContext(), "List Of All Current Events!",
-						Toast.LENGTH_LONG).show();
-				startActivity(intent);
-			}
-		});
+	private void resetSignInDialog() {
+		usernameView.getText().clear();
+		passwordView.getText().clear();
+		((ViewGroup) signInView.getParent()).removeView(signInView);
 	}
 
 	/**
-	 * TODO - update documentation
-	 * Sets up the Map to center location on UMD campus and add markers to all buildings
+	 * Resets the change sign in dialog to clear text and remove from view
+	 */
+	private void resetChangeSignInDialog() {
+		newUNView.getText().clear();
+		newPWView.getText().clear();
+		newPWConfirmView.getText().clear();
+		((ViewGroup) changeSignInView.getParent()).removeView(changeSignInView);
+	}
+
+	/**
+	 * Signs out the current user and resets the FABs appropriately
+	 */
+	private void signOutAdmin() {
+		currentUser = "";
+		currentOrganization = "";
+		adminSignedIn = false;
+		// Replaces adminFAB with signInFAB
+		adminFAB.hideFloatingActionButton();
+		signInFABListener();
+		Toast.makeText(getBaseContext(), "Signed out successfully :)", Toast.LENGTH_SHORT).show();
+	}
+
+	/**
+	 * Gets context for all dialogs builders, inflates all views, and gets all needed references to
+	 * views.
+	 */
+	private void setupViewsAndCacheWidgets() {
+		signInBuilder = new AlertDialog.Builder(this);
+		adminOptionsListBuilder = new AlertDialog.Builder(this);
+		signInView = getLayoutInflater().inflate(R.layout.dialog_signin, null);
+		changeSignInView = getLayoutInflater().inflate(R.layout.dialog_changesignin, null);
+
+		usernameView = (EditText) signInView.findViewById(R.id.username);
+		passwordView = (EditText) signInView.findViewById(R.id.password);
+		newUNView = (EditText) changeSignInView.findViewById(R.id.newUsername);
+		newPWView = (EditText) changeSignInView.findViewById(R.id.newPassword);
+		newPWConfirmView = (EditText) changeSignInView.findViewById(R.id.newPasswordConfirm);
+
+		View tview = getLayoutInflater().inflate(R.layout.legend_key_item, null);
+		getWindow().addContentView(
+				tview,
+				new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+						ViewGroup.LayoutParams.WRAP_CONTENT));
+		key1 = ((TextView) findViewById(R.id.tv1));
+		key2 = ((TextView) findViewById(R.id.tv2));
+		key3 = ((TextView) findViewById(R.id.tv3));
+	}
+
+	/**
+	 * Sets up the map, centers location on UMD campus and adds markers to all buildings with
+	 * events. Also handles clicks on marker windows: opens up list of events filtered by building.
 	 */
 	private void setupMap() {
 		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-
 		centerMapOnCampus();
 		mMap.getUiSettings().setZoomControlsEnabled(false);
 		mMap.getUiSettings().setMyLocationButtonEnabled(false);
 		mMap.setMyLocationEnabled(true);
 		mMap.getMyLocation();
-
+		// attaching onClickListeners for all marker windows
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
-
 			@Override
 			public void onInfoWindowClick(Marker marker) {
 				String buildingName = marker.getTitle();
@@ -609,20 +591,15 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-
-		// Adds the legend to the corner of the map
-		View tview = getLayoutInflater().inflate(R.layout.legend_key_item, null);
-		getWindow().addContentView(
-				tview,
-				new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-						ViewGroup.LayoutParams.WRAP_CONTENT));
-		((TextView) findViewById(R.id.tv1)).setTextColor(Color.BLACK); // Can't these be set in XML?
-		((TextView) findViewById(R.id.tv2)).setTextColor(Color.BLACK);
-		((TextView) findViewById(R.id.tv3)).setTextColor(Color.BLACK);
+		// Initially sets the colors used with normal map
+		key1.setTextColor(Color.BLACK);
+		key2.setTextColor(Color.BLACK);
+		key3.setTextColor(Color.BLACK);
 	}
 
 	/**
-	 * TODO - Add documentation
+	 * Gets all events from database and either adds event to map or deletes from database if the
+	 * event has passed.
 	 */
 	private void queryAndAddEventsFromParse() {
 		ParseObject.registerSubclass(UMDBuildings.class);
@@ -630,21 +607,17 @@ public class MainActivity extends Activity {
 		ParseObject.registerSubclass(AdminAccounts.class);
 		Parse.initialize(this, this.getString(R.string.parse_app_id),
 				this.getString(R.string.parse_client_key));
-
 		// Adding current events to map
-		// Check also if date is past and remove from database and don't add
 		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
 		eventsQuery.findInBackground(new FindCallback<EventObject>() {
-
 			@Override
 			public void done(List<EventObject> arg0, ParseException arg1) {
 				int count = 1;
 				for (EventObject x : arg0) {
-
-					Log.i(TAG, "count is " + count);
-					count++;
+					Log.i(TAG, "Event number  is " + count++);
+					// Checking if date has passed
 					boolean oldEvent = false;
-					SimpleDateFormat format = new SimpleDateFormat("M/d/y", Locale.US);
+					SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
 					try {
 						if (format.parse(x.getEndDate()).before(new Date())) {
 							Log.i(TAG, "The event " + x.getEventName() + " has passed");
@@ -653,18 +626,15 @@ public class MainActivity extends Activity {
 					} catch (java.text.ParseException e) {
 						e.printStackTrace();
 					}
-
-					if (oldEvent) { // dont add to map and delete from database
-						Log.i(TAG, "Shouldnt be in here");
+					if (oldEvent) { // deleting from database
 						x.deleteInBackground();
 
-					} else {
+					} else { // adding to map
 						ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
 								.getQuery(UMDBuildings.class);
-						buildingsQuery.whereEqualTo(getString(R.string.parse_building_name),
+						buildingsQuery.whereEqualTo(ParseConstants.building_name,
 								x.getBuildingName());
 						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
-
 							@Override
 							public void done(List<UMDBuildings> arg0, ParseException arg1) {
 								UMDBuildings building = arg0.get(0);
@@ -673,176 +643,50 @@ public class MainActivity extends Activity {
 						});
 					}
 				}
-
 			}
 		});
-
 	}
 
 	/**
-	 * TODO - update documentation
-	 * Centers map on current location. If current location can not be resolved, it defaults to UMD
-	 * location.
-	 */
-	private void centerMapOnMyLocation() {
-
-		mMap.setMyLocationEnabled(true);
-
-		Location location = mMap.getMyLocation();
-
-		if (location != null) {
-			myLocation = new LatLng(location.getLatitude(), location.getLongitude());
-		}
-		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
-	}
-
-	/**
-	 * TODO - update documentation
-	 * Centers the view of the map on center of the campus
-	 */
-	private void centerMapOnCampus() {
-		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(UMD, 14));
-	}
-
-	/**
-	 * TODO - update documentation
-	 * Checks if network is available
-	 * 
-	 * @return true if available, false otherwise
-	 */
-	private boolean isNetworkAvailable() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-	}
-
-	/**
-	 * TODO - add documentation
-	 */
-	private void openNetworkDialog() {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-
-		alertDialogBuilder.setMessage("Network not available");
-		// set positive button: Yes message
-		alertDialogBuilder.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				// reopens network dialog if not available
-				if (!isNetworkAvailable()) {
-					openNetworkDialog();
-				}
-			}
-		});
-		// set neutral button: Exit the app message
-		alertDialogBuilder.setNeutralButton("Exit app", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				// exit the app and go to the HOME
-				MainActivity.this.finish();
-			}
-		});
-
-		AlertDialog alertDialog = alertDialogBuilder.create();
-		alertDialog.setCanceledOnTouchOutside(false); // doesn't allow using the app without getting
-														// past dialog box
-		// show alert
-		alertDialog.show();
-	}
-
-	/**
-	 * TODO - update documentation
-	 * @param requestCode
-	 *            If this is 0, then this is a result from returning from add event activity with
-	 *            the event object that needs to be added to the markers on the map.
-	 */
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
-		String buildingName;
-
-		if (requestCode == 0 && resultCode == Activity.RESULT_OK && resultIntent != null) {
-
-			if (resultIntent.getStringExtra("addBuildingName") != null) {
-
-				buildingName = resultIntent.getStringExtra("addBuildingName");
-
-				ParseQuery<UMDBuildings> buildingsQuery = ParseQuery.getQuery(UMDBuildings.class);
-				buildingsQuery.whereEqualTo("name", buildingName);
-				buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
-
-					@Override
-					public void done(List<UMDBuildings> arg0, ParseException arg1) {
-						UMDBuildings building = arg0.get(0);
-						updateMarker(building, true);
-						Toast.makeText(getApplicationContext(), "Added event to map",
-								Toast.LENGTH_SHORT).show();
-					}
-				});
-			} else if (resultIntent.getStringExtra("deleteBuildingName") != null) {
-
-				buildingName = resultIntent.getStringExtra("deleteBuildingName");
-
-				ParseQuery<UMDBuildings> buildingsQuery2 = ParseQuery.getQuery(UMDBuildings.class);
-				buildingsQuery2.whereEqualTo("name", buildingName);
-				buildingsQuery2.findInBackground(new FindCallback<UMDBuildings>() {
-
-					@Override
-					public void done(List<UMDBuildings> arg0, ParseException arg1) {
-						UMDBuildings building = arg0.get(0);
-						updateMarker(building, false);
-						Toast.makeText(getApplicationContext(), "Remove marker from map",
-								Toast.LENGTH_SHORT).show();
-					}
-				});
-			} else {
-
-			}
-		}
-	}
-
-	/**
-	 * TODO - update documentation
-	 * Places a marker on the building specified. The marker pop-up shows the name of the building
+	 * Places a marker on the building specified. The marker window shows the name of the building
 	 * and the number of events happening there. If the marker already exists, this method updates
-	 * the number of events. The color of the marker is related to the number of events: (1-2 =
-	 * YELLOW, 3-5 = ORANGE, 6+ = RED)
+	 * the number of events.
+	 * 
+	 * The color of the marker is related to the number of events:
+	 * 
+	 * (1-2 = YELLOW, 3-5 = ORANGE, 6+ = RED)
 	 * 
 	 * @param building
-	 *            The location to place/update marker at
-	 * @param add
+	 *            The location to place/update marker at.
+	 * @param added
 	 *            Represents whether an event was added or deleted from the building. True if added,
 	 *            False if deleted.
 	 */
-	private void updateMarker(UMDBuildings building, boolean add) {
-
+	private void updateMarker(UMDBuildings building, boolean added) {
 		Double lat = Double.parseDouble(building.getLat());
 		Double lon = Double.parseDouble(building.getLng());
 		LatLng latLng = new LatLng(lat, lon);
 		String name = String.valueOf(building.getName());
 		Marker marker = null;
 		int numEvent;
-
 		// Check if marker already exists
 		for (Marker m : markers) {
-			if (m.getTitle().equals(name)) {
+			if (m.getTitle().equals(name))
 				marker = m;
-			}
 		}
-
 		// Adding marker to map (or updating event count if already exists)
 		if (marker == null) { // Marker not already on map
 			numEvent = 1;
 			marker = mMap.addMarker(new MarkerOptions().position(latLng).title(name));
 			markers.add(marker);
-
 		} else { // Marker already on map
-
-			String temp = marker.getSnippet().replaceAll("\\D+", "");
-			if (add) {
-				numEvent = Integer.parseInt(temp) + 1;
+			int temp = Integer.parseInt(marker.getSnippet().replaceAll("\\D+", ""));
+			if (added) {
+				numEvent = temp++;
 			} else {
-				numEvent = Integer.parseInt(temp) - 1;
+				numEvent = temp--;
 			}
-
 		}
-
 		// Set marker color (or delete if no events)
 		if (numEvent > 0) {
 			// Getting marker color based on number of events
@@ -859,7 +703,109 @@ public class MainActivity extends Activity {
 		} else {
 			marker.remove();
 		}
+	}
 
+	/**
+	 * Centers map on current location. If current location can not be resolved, it defaults to UMD
+	 * location.
+	 */
+	private void centerMapOnMyLocation() {
+		mMap.setMyLocationEnabled(true);
+		Location location = mMap.getMyLocation();
+		if (location != null) {
+			myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+		}
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
+
+		Toast.makeText(getApplicationContext(), "Centering map on current location",
+				Toast.LENGTH_SHORT).show();
+	}
+
+	/**
+	 * Centers map on center of campus.
+	 */
+	private void centerMapOnCampus() {
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(UMD, 14));
+		Toast.makeText(getApplicationContext(), "Centering map on campus", Toast.LENGTH_SHORT)
+				.show();
+	}
+
+	/**
+	 * Checks if network is available.
+	 * 
+	 * @return true if available, false otherwise
+	 */
+	private boolean isNetworkAvailable() {
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	}
+
+	/**
+	 * Creates a dialog box displaying message saying network not available. Clicking retry checks
+	 * for network again until available.
+	 */
+	private void openNetworkDialog() {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this)
+				.setMessage("Network not available")
+				.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						if (!isNetworkAvailable()) {
+							openNetworkDialog();
+						}
+					}
+				}).setNegativeButton("Exit app", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						MainActivity.this.finish();
+					}
+				}).setCancelable(false);
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+	}
+
+	/**
+	 * TODO - update documentation
+	 * 
+	 * @param requestCode
+	 *            If this is 0, then this is a result from returning from add event activity with
+	 *            the event object that needs to be added to the markers on the map.
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
+		String buildingName;
+		if (requestCode == 0 && resultCode == Activity.RESULT_OK && resultIntent != null) {
+			if (resultIntent.getStringExtra("addBuildingName") != null) {
+				buildingName = resultIntent.getStringExtra("addBuildingName");
+				ParseQuery<UMDBuildings> buildingsQuery = ParseQuery.getQuery(UMDBuildings.class);
+				buildingsQuery.whereEqualTo(ParseConstants.building_name, buildingName);
+				buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
+					@Override
+					public void done(List<UMDBuildings> arg0, ParseException arg1) {
+						UMDBuildings building = arg0.get(0);
+						updateMarker(building, true);
+						Toast.makeText(getApplicationContext(), "Added event to map",
+								Toast.LENGTH_SHORT).show();
+					}
+				});
+			} else if (resultIntent.getStringExtra("deleteBuildingName") != null) {
+				// TODO - handle the case where multiple events are deleted
+
+				buildingName = resultIntent.getStringExtra("deleteBuildingName");
+				ParseQuery<UMDBuildings> buildingsQuery2 = ParseQuery.getQuery(UMDBuildings.class);
+				buildingsQuery2.whereEqualTo(ParseConstants.building_name, buildingName);
+				buildingsQuery2.findInBackground(new FindCallback<UMDBuildings>() {
+					@Override
+					public void done(List<UMDBuildings> arg0, ParseException arg1) {
+						UMDBuildings building = arg0.get(0);
+						updateMarker(building, false);
+						Toast.makeText(getApplicationContext(), "Remove marker from map",
+								Toast.LENGTH_SHORT).show();
+					}
+				});
+			} else {
+
+			}
+		}
 	}
 
 	@Override

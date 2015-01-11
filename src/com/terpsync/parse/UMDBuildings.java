@@ -1,4 +1,4 @@
-package com.terpsync;
+package com.terpsync.parse;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
@@ -19,14 +19,14 @@ public class UMDBuildings extends ParseObject {
 	}
 
 	public String getBuildNum() {
-		return getString("Number");
+		return getNumber("number").toString();
 	}
 
 	public String getLat() {
-		return getString("latitude");
+		return getNumber("latitude").toString();
 	}
 
 	public String getLng() {
-		return getString("longitude");
+		return getNumber("longitude").toString();
 	}
 }

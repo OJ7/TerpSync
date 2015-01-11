@@ -1,4 +1,4 @@
-package com.terpsync.card;
+package com.terpsync.parse;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;

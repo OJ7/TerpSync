@@ -1,8 +1,10 @@
 package com.terpsync.card;
 
 import java.util.List;
+
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
+import com.terpsync.parse.EventObject;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -53,13 +55,12 @@ public class EventListActivity extends Activity {
 		lv = (ListView) findViewById(R.id.event_list);
 
 		determineFilter();
-
 	}
 
 	/**
 	 * TODO - add documentation
 	 */
-	private void determineFilter(){
+	private void determineFilter() {
 		if (filterType.equals("All")) { // Un-filtered, all events
 			getEventsAndCreateList(filterType, "");
 		} else if (filterType.equals("OrganizationName")) { // Filter by organization name
@@ -70,8 +71,7 @@ public class EventListActivity extends Activity {
 		}
 
 	}
-	
-	
+
 	/**
 	 * This method gets all the events (either filtered or un-filtered) from the Parse database and
 	 * adds them to the CardListAdapater to display.
@@ -104,11 +104,11 @@ public class EventListActivity extends Activity {
 				}
 			}
 		});
-		
+
 		// TODO - Add On-Click Listeners for Cards
-				// - if click on card, expand cards (show detailed view w/button to edit/delete)
-				// - if click on org, show profile page for org
-				// - if click on building, show filtered events by building
+		// - if click on card, expand cards (show detailed view w/button to edit/delete)
+		// - if click on org, show profile page for org
+		// - if click on building, show filtered events by building
 	}
 
 	/**
