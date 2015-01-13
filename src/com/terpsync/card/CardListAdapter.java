@@ -50,8 +50,26 @@ public class CardListAdapter extends ArrayAdapter<EventObject> {
 	 * Updates and displays information on the card associated with the event
 	 */
 	public View getView(int position, View convertView, ViewGroup parent) {
-		ViewHolder vh = setupViewHolder(convertView); // ViewHolder object
+		ViewHolder vh; // ViewHolder object
 		EventObject currCard = getItem(position); // Get current card
+
+		// Gets the tag for the reusable View if available. Otherwise, sets up the ViewHolder.
+		if (convertView == null) { // first time setting up the layout
+			LayoutInflater inflater = (LayoutInflater) mContext
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			vh = new ViewHolder();
+			convertView = inflater.inflate(R.layout.card, null);
+			vh.card = (RelativeLayout) convertView.findViewById(R.id.card);
+			vh.event_title = (TextView) convertView.findViewById(R.id.card_event_title);
+			vh.organization = (TextView) convertView.findViewById(R.id.card_organization);
+			vh.location = (TextView) convertView.findViewById(R.id.card_location);
+			vh.date = (TextView) convertView.findViewById(R.id.card_date);
+			vh.time = (TextView) convertView.findViewById(R.id.card_time);
+			vh.cardBackGround = (ImageView) convertView.findViewById(R.id.cardBackground);
+			convertView.setTag(vh);
+		} else { // view already exists, just get the tag
+			vh = (ViewHolder) convertView.getTag();
+		}
 
 		// Set the title, organization, and location
 		vh.event_title.setText(currCard.getEventName());
@@ -81,35 +99,6 @@ public class CardListAdapter extends ArrayAdapter<EventObject> {
 		// TODO - Animation is coming soon
 
 		return convertView;
-	}
-
-	/**
-	 * Gets the tag for the reusable View if available. Otherwise, sets up the ViewHolder.
-	 * 
-	 * @param convertView
-	 *            The old view to reuse, if possible.
-	 * @return either a new ViewHolder or the one from the reusable View.
-	 */
-	private ViewHolder setupViewHolder(View convertView) {
-		ViewHolder vh;
-		LayoutInflater inflater = (LayoutInflater) mContext
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-		if (convertView == null) { // first time setting up the layout
-			convertView = inflater.inflate(R.layout.card, null);
-			vh = new ViewHolder();
-			vh.card = (RelativeLayout) convertView.findViewById(R.id.card);
-			vh.event_title = (TextView) convertView.findViewById(R.id.card_event_title);
-			vh.organization = (TextView) convertView.findViewById(R.id.card_organization);
-			vh.location = (TextView) convertView.findViewById(R.id.card_location);
-			vh.date = (TextView) convertView.findViewById(R.id.card_date);
-			vh.time = (TextView) convertView.findViewById(R.id.card_time);
-			vh.cardBackGround = (ImageView) convertView.findViewById(R.id.cardBackground);
-			convertView.setTag(vh);
-		} else { // view already exists, just get the tag
-			vh = (ViewHolder) convertView.getTag();
-		}
-		return vh;
 	}
 
 	/**
