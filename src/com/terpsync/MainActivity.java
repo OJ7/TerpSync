@@ -74,7 +74,7 @@ public class MainActivity extends Activity {
 	AlertDialog.Builder signInBuilder, adminOptionsListBuilder;
 	EditText usernameView, passwordView, newUNView, newPWView, newPWConfirmView;
 	View signInView = null, changeSignInView = null;
-	String[] adminOptions = { "Add Event", "My Events", "Change PW/UN", "Sign Out" };
+	String[] adminOptions = { "Add Event", "Manage My Events", "Change Username/Password", "Sign Out" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
