@@ -33,8 +33,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
             android:hint="@+string/enter_event_name"
-            android:maxLines="1"
+            android:imeOptions="actionNext"
             android:paddingBottom="8dp"
+            android:singleLine="true"
             android:textColor="#FFFAF0"
             android:textColorHint="#A9A9A9" >
 
@@ -155,8 +156,9 @@
                 android:layout_height="wrap_content"
                 android:completionThreshold="1"
                 android:hint="@string/search_text"
-                android:maxLines="2"
+                android:imeOptions="actionNext"
                 android:paddingBottom="8dp"
+                android:singleLine="true"
                 android:textColor="#FFFAF0"
                 android:textColorHint="#A9A9A9" />
         </LinearLayout>
@@ -284,7 +286,6 @@
                     android:textColor="#FFFAF0"
                     android:textColorHint="#A9A9A9"
                     android:visibility="invisible" />
-
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
