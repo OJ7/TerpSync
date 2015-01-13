@@ -682,9 +682,9 @@ public class MainActivity extends Activity {
 		} else { // Marker already on map
 			int temp = Integer.parseInt(marker.getSnippet().replaceAll("\\D+", ""));
 			if (added) {
-				numEvent = temp++;
+				numEvent = ++temp;
 			} else {
-				numEvent = temp--;
+				numEvent = --temp;
 			}
 		}
 		// Set marker color (or delete if no events)
