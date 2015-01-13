@@ -27,40 +27,38 @@ public class EventListActivity extends Activity {
 
 	private FloatingActionButton fabButton;
 	CardListAdapter mAdapter;
-	ListView lv;
+	ListView lv; // List for all the event cards
 	AlertDialog.Builder action_builder, delete_builder;
 	View view = null;
 	boolean isDeleted = false;
 	String deletedBuildingName = "";
 	String filterType, filterName;
+	String[] actionOptions = { "Edit Event", "Delete Event" };
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// create list layout file
 		setContentView(R.layout.activity_list);
 		action_builder = new AlertDialog.Builder(this);
 		delete_builder = new AlertDialog.Builder(this);
-
+		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
+		lv = (ListView) findViewById(R.id.event_list);
+		
 		// Determine filter options
 		Intent intent = getIntent();
 		filterType = intent.getStringExtra("FilterType");
 		filterName = intent.getStringExtra(filterType);
 
-		// Setting up UI
-		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
 		setupFAB();
-
-		// Setting up list view
-		lv = (ListView) findViewById(R.id.event_list);
-
-		determineFilter();
+		determineFilterAndCreateList();
 	}
 
 	/**
-	 * TODO - add documentation
+	 * Decides how to initially filter the list and creates it.
+	 * 
+	 * List can be filtered by: Organization, Building, or None.
 	 */
-	private void determineFilter() {
+	private void determineFilterAndCreateList() {
 		if (filterType.equals("All")) { // Un-filtered, all events
 			getEventsAndCreateList(filterType, "");
 		} else if (filterType.equals("OrganizationName")) { // Filter by organization name
@@ -69,7 +67,6 @@ public class EventListActivity extends Activity {
 		} else if (filterType.equals("BuildingName")) { // Filter by building name
 			getEventsAndCreateList(filterType, filterName);
 		}
-
 	}
 
 	/**
@@ -112,34 +109,23 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * TODO - add documentation
+	 * Creates a dialog box to allow the following actions on an event: edit and delete
 	 */
-	// TODO - change this so it only adds dialog to current user's events
-	// TODO - fix bug when tapping outside dialog box and tapping on event again
 	private void setActionDialog() {
+		// TODO - change this so it only adds dialog to current user's events
 		lv.setOnItemClickListener(new OnItemClickListener() {
-
 			@Override
 			public void onItemClick(AdapterView<?> adaptView, View v, int position, long id) {
-
 				final int pos = position;
 				final AdapterView<?> pView = adaptView;
-
 				final EventObject x = (EventObject) pView.getItemAtPosition(pos);
 
-				// Event Action Dialog
-
-				String[] arr = { "Edit Event", "Delete Event" };
-
-				// create alert dialog
-				AlertDialog actionDialog = action_builder.setTitle("Please select an option")
-						.setItems(arr, new DialogInterface.OnClickListener() {
-
+				// Create alert dialog
+				action_builder.setTitle("Please select an option")
+						.setItems(actionOptions, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int item) {
-
 								switch (item) {
-
 								case 0: // Edit Event
 									Toast.makeText(getBaseContext(), "Implement Editing Event",
 											Toast.LENGTH_LONG).show();
@@ -147,7 +133,7 @@ public class EventListActivity extends Activity {
 
 								case 1: // Delete Event
 									deletedBuildingName = x.getBuildingName();
-									AlertDialog deleteDialog = delete_builder
+									delete_builder
 											.setTitle(
 													"Delete Event? (Warning: this cannot be undone!)")
 											.setPositiveButton("Delete",
@@ -169,23 +155,20 @@ public class EventListActivity extends Activity {
 																int which) {
 															dialog.cancel();
 														}
-													}).create();
-									deleteDialog.show();
+													}).create().show();
 									break;
 
 								default:
 									break;
 								}
 							}
-						}).create();
-				actionDialog.show();
+						}).create().show();
 			}
 		});
 	}
 
 	/**
-	 * Sets up the Floating Action Button the List Screen If the list is not already filtered,
-	 * another FAB will appear to allow filtering events.
+	 * Sets up the Floating Action Buttons on the List Screen.
 	 */
 	private void setupFAB() {
 		fabButton = new FloatingActionButton.Builder(this)
@@ -193,23 +176,19 @@ public class EventListActivity extends Activity {
 				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
 		fabButton.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-
 				if (isDeleted) {
 					setResult(Activity.RESULT_OK,
 							new Intent().putExtra("deleteBuildingName", deletedBuildingName));
 				} else {
 					setResult(Activity.RESULT_OK);
 				}
-				// end activity and return to previous actions
 				finish();
-
 			}
 		});
 
-		// TODO - Create another FAB Button for filtering (when showing all buildings)
+		// TODO - Create another FAB Button for filtering
 		// TODO - When clicked, popup shows to filter by building name, org name, etc
 	}
 
