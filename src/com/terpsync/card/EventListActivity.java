@@ -5,6 +5,7 @@ import java.util.List;
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.parse.EventObject;
+import com.terpsync.parse.ParseConstants;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -25,12 +26,13 @@ import android.widget.ListView;
 
 public class EventListActivity extends Activity {
 
-	private FloatingActionButton fabButton;
+	private FloatingActionButton returnFAB, filterFAB, buildingFAB, orgFAB, priceFAB;
 	CardListAdapter mAdapter;
 	ListView lv; // List for all the event cards
 	AlertDialog.Builder action_builder, delete_builder;
 	View view = null;
-	boolean isDeleted = false;
+	boolean isDeleted = false, filterMenuOpen = false, orgFiltered = false,
+			buildingFiltered = false, priceFiltered = false;
 	String deletedBuildingName = "";
 	String filterType, filterName;
 	String[] actionOptions = { "Edit Event", "Delete Event" };
@@ -43,7 +45,7 @@ public class EventListActivity extends Activity {
 		delete_builder = new AlertDialog.Builder(this);
 		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
 		lv = (ListView) findViewById(R.id.event_list);
-		
+
 		// Determine filter options
 		Intent intent = getIntent();
 		filterType = intent.getStringExtra("FilterType");
@@ -61,10 +63,11 @@ public class EventListActivity extends Activity {
 	private void determineFilterAndCreateList() {
 		if (filterType.equals("All")) { // Un-filtered, all events
 			getEventsAndCreateList(filterType, "");
-		} else if (filterType.equals("OrganizationName")) { // Filter by organization name
+		} else if (filterType.equals(ParseConstants.event_org_name)) { // Filter by organization
+																		// name
 			getEventsAndCreateList(filterType, filterName);
 			setActionDialog();
-		} else if (filterType.equals("BuildingName")) { // Filter by building name
+		} else if (filterType.equals(ParseConstants.event_location)) { // Filter by building name
 			getEventsAndCreateList(filterType, filterName);
 		}
 	}
@@ -171,11 +174,11 @@ public class EventListActivity extends Activity {
 	 * Sets up the Floating Action Buttons on the List Screen.
 	 */
 	private void setupFAB() {
-		fabButton = new FloatingActionButton.Builder(this)
+		returnFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_undo))
 				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
-		fabButton.setOnClickListener(new OnClickListener() {
+		returnFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (isDeleted) {
@@ -188,8 +191,173 @@ public class EventListActivity extends Activity {
 			}
 		});
 
-		// TODO - Create another FAB Button for filtering
-		// TODO - When clicked, popup shows to filter by building name, org name, etc
+		filterFAB = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_filter))
+				.withButtonColor(Color.BLUE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
+				.withMargins(0, 0, 16, 86).create();
+
+		filterFAB.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO - When clicked, popup shows to filter by building name, org name, etc
+				if (filterMenuOpen) {
+					closeFilterMenu();
+				} else {
+					openFilterMenu();
+				}
+				filterMenuOpen = !filterMenuOpen;
+			}
+		});
+
+	}
+
+	/**
+	 * TODO - add doc
+	 */
+	private void openFilterMenu() {
+		buildingFABListener();
+		orgFABListener();
+		priceFABListner();
+	}
+
+	/**
+	 * TODO - add doc
+	 */
+	private void closeFilterMenu() {
+		buildingFAB.hideFloatingActionButton();
+		orgFAB.hideFloatingActionButton();
+		priceFAB.hideFloatingActionButton();
+	}
+
+	/**
+	 * TODO - add doc
+	 */
+	private void buildingFABListener() {
+		buildingFAB = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_building))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 226, 86).create();
+		setBuildingFABState();
+		buildingFAB.hideFloatingActionButton();
+		buildingFAB.showFloatingActionButton();
+
+		buildingFAB.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO - filter by organization
+				if (buildingFiltered) {
+					// TODO - unfilter
+
+				} else {
+					// TODO - implement filter
+					
+				}
+				buildingFiltered = !buildingFiltered;
+				setBuildingFABState();
+			}
+		});
+	}
+
+	/**
+	 * TODO - add doc
+	 */
+	private void orgFABListener() {
+		orgFAB = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_crowd))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 156, 86).create();
+		setOrgFABState();
+		orgFAB.hideFloatingActionButton();
+		orgFAB.showFloatingActionButton();
+
+		orgFAB.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO - filter by org
+				if (orgFiltered) {
+					// TODO - unfilter
+
+				} else {
+					// TODO - implement filter
+					
+				}
+				orgFiltered = !orgFiltered;
+				setOrgFABState();
+			}
+		});
+
+	}
+
+	/**
+	 * TODO - add doc
+	 */
+	private void priceFABListner() {
+		priceFAB = new FloatingActionButton.Builder(this)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_paid))
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 86, 86).create();
+		setPriceFABState();
+		priceFAB.hideFloatingActionButton();
+		priceFAB.showFloatingActionButton();
+
+		priceFAB.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO - filter by price
+				if (priceFiltered) {
+					// TODO - unfilter
+
+				} else {
+					// TODO - implement filter
+
+				}
+				priceFiltered = !priceFiltered;
+				setPriceFABState();
+			}
+		});
+	}
+
+	/**
+	 * Sets the color of buildingFAB to indicate state. 
+	 * 
+	 * Colored = Filtered, Gray = Unfiltered
+	 */
+
+	private void setBuildingFABState() {
+		if (buildingFiltered) {
+			buildingFAB.setFloatingActionButtonColor(Color.CYAN);
+		} else {
+			buildingFAB.setFloatingActionButtonColor(Color.GRAY);
+		}
+	}
+
+	/**
+	 * Sets the color of orgFAB to indicate state. 
+	 * 
+	 * Colored = Filtered, Gray = Unfiltered
+	 */
+
+	private void setOrgFABState() {
+		if (orgFiltered) {
+			orgFAB.setFloatingActionButtonColor(Color.YELLOW);
+		} else {
+			orgFAB.setFloatingActionButtonColor(Color.GRAY);
+		}
+	}
+
+	/**
+	 * Sets the color of priceFAB to indicate state. 
+	 * 
+	 * Colored = Filtered, Gray = Unfiltered
+	 */
+	private void setPriceFABState() {
+		// TODO - change so this has three states: unfiltered, free, paid
+		if (priceFiltered) {
+			priceFAB.setFloatingActionButtonColor(Color.GREEN);
+			priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+					R.drawable.ic_action_free));
+		} else {
+			priceFAB.setFloatingActionButtonColor(Color.GRAY);
+			priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+					R.drawable.ic_action_paid));
+		}
 	}
 
 }
