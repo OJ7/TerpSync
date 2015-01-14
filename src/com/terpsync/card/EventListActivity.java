@@ -171,9 +171,17 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * Sets up the Floating Action Buttons on the List Screen.
+	 * Sets up the following Floating Action Buttons: returnFAB and filterFAB.
 	 */
 	private void setupFAB() {
+		returnFABListener();
+		filterFABListener();
+	}
+
+	/**
+	 * Creates returnFAB and handles clicks on it: _____________
+	 */
+	private void returnFABListener() {
 		returnFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_undo))
 				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
@@ -190,16 +198,19 @@ public class EventListActivity extends Activity {
 				finish();
 			}
 		});
+	}
 
+	/**
+	 * Creates filterFAB and handles clicks on it: ___________
+	 */
+	private void filterFABListener() {
 		filterFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_filter))
 				.withButtonColor(Color.BLUE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 86).create();
-
 		filterFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO - When clicked, popup shows to filter by building name, org name, etc
 				if (filterMenuOpen) {
 					closeFilterMenu();
 				} else {
@@ -212,7 +223,7 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * TODO - add doc
+	 * Expands the filter menu showing filter type buttons: buildingFAB, orgFAB, priceFAB
 	 */
 	private void openFilterMenu() {
 		buildingFABListener();
@@ -221,7 +232,7 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * TODO - add doc
+	 * Collapses the filter menu by hiding the filter type buttons
 	 */
 	private void closeFilterMenu() {
 		buildingFAB.hideFloatingActionButton();
@@ -230,7 +241,8 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * TODO - add doc
+	 * Creates buildingFAB and handles click on it: either showing a popup to choose building to
+	 * filter by or unfiltering the list (if filtered)
 	 */
 	private void buildingFABListener() {
 		buildingFAB = new FloatingActionButton.Builder(this)
@@ -243,13 +255,12 @@ public class EventListActivity extends Activity {
 		buildingFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO - filter by organization
 				if (buildingFiltered) {
 					// TODO - unfilter
 
 				} else {
 					// TODO - implement filter
-					
+
 				}
 				buildingFiltered = !buildingFiltered;
 				setBuildingFABState();
@@ -258,7 +269,8 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * TODO - add doc
+	 * Creates orgFAB and handles click on it: either showing a popup to choose organization to
+	 * filter by or unfiltering the list (if filtered)
 	 */
 	private void orgFABListener() {
 		orgFAB = new FloatingActionButton.Builder(this)
@@ -271,13 +283,12 @@ public class EventListActivity extends Activity {
 		orgFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO - filter by org
 				if (orgFiltered) {
 					// TODO - unfilter
 
 				} else {
 					// TODO - implement filter
-					
+
 				}
 				orgFiltered = !orgFiltered;
 				setOrgFABState();
@@ -287,7 +298,7 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * TODO - add doc
+	 * Creates priceFAB and handles click on it: toggles between free, paid, or all events
 	 */
 	private void priceFABListner() {
 		priceFAB = new FloatingActionButton.Builder(this)
@@ -300,7 +311,6 @@ public class EventListActivity extends Activity {
 		priceFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO - filter by price
 				if (priceFiltered) {
 					// TODO - unfilter
 
@@ -315,7 +325,7 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * Sets the color of buildingFAB to indicate state. 
+	 * Sets the color of buildingFAB to indicate state.
 	 * 
 	 * Colored = Filtered, Gray = Unfiltered
 	 */
@@ -329,7 +339,7 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * Sets the color of orgFAB to indicate state. 
+	 * Sets the color of orgFAB to indicate state.
 	 * 
 	 * Colored = Filtered, Gray = Unfiltered
 	 */
@@ -343,7 +353,7 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * Sets the color of priceFAB to indicate state. 
+	 * Sets the color of priceFAB to indicate state.
 	 * 
 	 * Colored = Filtered, Gray = Unfiltered
 	 */
