@@ -160,28 +160,28 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 					for (EventObject eventObject : mEventsList) {
 						switch (i) {
 						case 0: // filter by building
-							Log.i(TAG, "Filtering by Building: " + filterName);
+							//Log.i(TAG, "Filtering by Building: " + filterName);
 							if (eventObject.getBuildingName().equals(filterName)) {
 								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}
 							break;
 						case 1: // filter by organization
-							Log.i(TAG, "Filtering by Organization: " + filterName);
+							//Log.i(TAG, "Filtering by Organization: " + filterName);
 							if (eventObject.getOrgName().equals(filterName)) {
 								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}
 							break;
 						case 2: // filter by free
-							Log.i(TAG, "Filtering by Free Events");
+							//Log.i(TAG, "Filtering by Free Events");
 							if (eventObject.getAdmission().equals(filterName)) {
 								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}
 							break;
 						case 3: // filter by paid
-							Log.i(TAG, "Filtering by Paid Events");
+							//Log.i(TAG, "Filtering by Paid Events");
 							if (!eventObject.getAdmission().equals(filterName)) {
 								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
@@ -213,6 +213,22 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 			}
 		};
 		return myFilter;
+	}
+
+	public ArrayList<String> getValuesFromFields(String field) {
+		ArrayList<String> list = new ArrayList<String>();
+		for (EventObject x : mEventsList) {
+			if (field.equals("building")) {
+				if (!list.contains(x.getBuildingName())) {
+					list.add(x.getBuildingName());
+				}
+			} else { // field.equals("organization")
+				if (!list.contains(x.getOrgName())) {
+					list.add(x.getOrgName());
+				}
+			}
+		}
+		return list;
 	}
 
 	/**
