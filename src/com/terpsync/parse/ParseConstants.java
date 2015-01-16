@@ -12,6 +12,7 @@ public class ParseConstants {
 	public static final String event_start_time = "StartTime";
 	public static final String event_end_time = "EndTime";
 	public static final String event_admission = "Admission";
+	public static final String event_admission_free = "FREE";
 
 	// Strings used to access fields for UMDBuildings
 	public static final String building_name = "name";

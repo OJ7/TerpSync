@@ -1,11 +1,14 @@
 package com.terpsync.card;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.parse.EventObject;
 import com.terpsync.parse.ParseConstants;
+import com.google.android.gms.drive.internal.x;
+import com.google.android.gms.internal.ma;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -16,6 +19,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,13 +30,16 @@ import android.widget.ListView;
 
 public class EventListActivity extends Activity {
 
+	private static final String TAG = "EventListActivity";
 	private FloatingActionButton returnFAB, filterFAB, buildingFAB, orgFAB, priceFAB;
 	CardListAdapter mAdapter;
 	ListView lv; // List for all the event cards
+	List<EventObject> fullEventList, filteredEventList;
 	AlertDialog.Builder action_builder, delete_builder;
 	View view = null;
 	boolean isDeleted = false, filterMenuOpen = false, orgFiltered = false,
-			buildingFiltered = false, priceFiltered = false;
+			buildingFiltered = false;
+	int priceFiltered = 0; // 0 = All, 1 = Free, 2 = Paid
 	String deletedBuildingName = "";
 	String filterType, filterName;
 	String[] actionOptions = { "Edit Event", "Delete Event" };
@@ -66,9 +73,11 @@ public class EventListActivity extends Activity {
 		} else if (filterType.equals(ParseConstants.event_org_name)) { // Filter by organization
 																		// name
 			getEventsAndCreateList(filterType, filterName);
+			orgFiltered = true;
 			setActionDialog();
 		} else if (filterType.equals(ParseConstants.event_location)) { // Filter by building name
 			getEventsAndCreateList(filterType, filterName);
+			buildingFiltered = true;
 		}
 	}
 
@@ -86,17 +95,16 @@ public class EventListActivity extends Activity {
 	private void getEventsAndCreateList(String filterType, String filterName) {
 		// Create the Parse Query object
 		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
-
 		// Checks if events need to be filtered
 		if (!filterType.equals("All")) {
 			eventsQuery.whereContains(filterType, filterName);
 		}
-
 		// Initiate a background thread, retrieve all Event Objects
 		eventsQuery.findInBackground(new FindCallback<EventObject>() {
 			@Override
 			public void done(List<EventObject> events, ParseException e) {
 				if (e == null) { // All events were successfully returned
+					fullEventList = events;
 					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card, events);
 					lv.setAdapter(mAdapter);
 				} else { // object retrieval failed throw exception -- fail fast
@@ -104,6 +112,7 @@ public class EventListActivity extends Activity {
 				}
 			}
 		});
+		// filteredEventList = new ArrayList<EventObject>(fullEventList);
 
 		// TODO - Add On-Click Listeners for Cards
 		// - if click on card, expand cards (show detailed view w/button to edit/delete)
@@ -146,7 +155,7 @@ public class EventListActivity extends Activity {
 														public void onClick(DialogInterface dialog,
 																int which) {
 															isDeleted = true;
-															mAdapter.list.remove(pos);
+															mAdapter.mEventsList.remove(pos);
 															mAdapter.notifyDataSetChanged();
 															x.deleteInBackground();
 														}
@@ -238,6 +247,7 @@ public class EventListActivity extends Activity {
 		buildingFAB.hideFloatingActionButton();
 		orgFAB.hideFloatingActionButton();
 		priceFAB.hideFloatingActionButton();
+		updateAdapter();
 	}
 
 	/**
@@ -251,21 +261,23 @@ public class EventListActivity extends Activity {
 		setBuildingFABState();
 		buildingFAB.hideFloatingActionButton();
 		buildingFAB.showFloatingActionButton();
-
-		buildingFAB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (buildingFiltered) {
-					// TODO - unfilter
-
-				} else {
-					// TODO - implement filter
-
+		if (!filterType.equals(ParseConstants.event_location)) { // Don't allow clicks when
+																	// pre-filtered
+			buildingFAB.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (buildingFiltered) {
+						// TODO - unfilter
+						buildingFiltered = false;
+						refilterList();
+					} else {
+						buildingFiltered = true;
+						filterByBuilding();
+					}
+					setBuildingFABState();
 				}
-				buildingFiltered = !buildingFiltered;
-				setBuildingFABState();
-			}
-		});
+			});
+		}
 	}
 
 	/**
@@ -280,21 +292,23 @@ public class EventListActivity extends Activity {
 		orgFAB.hideFloatingActionButton();
 		orgFAB.showFloatingActionButton();
 
-		orgFAB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (orgFiltered) {
-					// TODO - unfilter
-
-				} else {
-					// TODO - implement filter
-
+		if (!filterType.equals(ParseConstants.event_org_name)) { // Don't allow clicks when
+																	// pre-filtered
+			orgFAB.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (orgFiltered) {
+						// TODO - unfilter
+						orgFiltered = false;
+						refilterList();
+					} else {
+						orgFiltered = true;
+						filterByOrganization();
+					}
+					setOrgFABState();
 				}
-				orgFiltered = !orgFiltered;
-				setOrgFABState();
-			}
-		});
-
+			});
+		}
 	}
 
 	/**
@@ -311,14 +325,23 @@ public class EventListActivity extends Activity {
 		priceFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (priceFiltered) {
-					// TODO - unfilter
-
-				} else {
+				switch (priceFiltered) {
+				case 0: // Filtering by free
 					// TODO - implement filter
-
+					priceFiltered++;
+					filterByPrice();
+					break;
+				case 1: // Filtering by paid
+					// TODO - implement filter
+					priceFiltered++;
+					filterByPrice();
+					break;
+				case 2: // Unfiltering
+					// TODO - unfilter
+					priceFiltered = 0;
+					refilterList();
+					break;
 				}
-				priceFiltered = !priceFiltered;
 				setPriceFABState();
 			}
 		});
@@ -359,15 +382,117 @@ public class EventListActivity extends Activity {
 	 */
 	private void setPriceFABState() {
 		// TODO - change so this has three states: unfiltered, free, paid
-		if (priceFiltered) {
-			priceFAB.setFloatingActionButtonColor(Color.GREEN);
-			priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
-					R.drawable.ic_action_free));
-		} else {
+		switch (priceFiltered) {
+		case 0: // All
 			priceFAB.setFloatingActionButtonColor(Color.GRAY);
 			priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
 					R.drawable.ic_action_paid));
+			break;
+		case 1: // Free
+			priceFAB.setFloatingActionButtonColor(Color.RED);
+			priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+					R.drawable.ic_action_free));
+			break;
+		case 2: // Paid
+			priceFAB.setFloatingActionButtonColor(Color.GREEN);
+			priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+					R.drawable.ic_action_paid));
+			break;
 		}
+	}
+
+	/**
+	 * Gets a list of all buildings in current events, allows user to choose building and filters
+	 * the filteredEventList by the building specified.
+	 */
+	private void filterByBuilding() {
+		// Get all buildings in list
+		// ArrayList<String> buildingList = getValuesFromFields("building");
+		// Create dialog box to choose building to filter
+
+		// filter filteredEventList
+		mAdapter.getFilter().filter("0.Adele H. Stamp Student Union Building");
+		updateAdapter();
+	}
+
+	/**
+	 * Gets a list of all organizations in current events, allows user to choose organization and
+	 * filters the filteredEventList by the organization specified.
+	 */
+	private void filterByOrganization() {
+		// Get all organizations in list
+		// ArrayList<String> orgList = getValuesFromFields("organization");
+		// Create dialog box to choose organization to filter
+
+		// filter filteredEventList
+		mAdapter.getFilter().filter("1.Club OJ");
+		updateAdapter();
+	}
+
+	private void filterByPrice() {
+		// filter by either free or paid (check priceFiltered)
+		if (priceFiltered == 1) {
+			mAdapter.getFilter().filter("2.FREE");
+		} else if (priceFiltered == 2) {
+			mAdapter.getFilter().filter("3.FREE");
+		}
+		updateAdapter();
+	}
+
+	/**
+	 * Finds all the values in the list of events for the specified field
+	 * 
+	 * @param field
+	 *            the field from which to get all the values from (either building or organization)
+	 * @return ArrayList of Strings of all the values in the specified field
+	 */
+	private ArrayList<String> getValuesFromFields(String field) {
+
+		ArrayList<String> list = new ArrayList<String>();
+		for (EventObject x : filteredEventList) {
+			if (field.equals("building")) {
+				if (!list.contains(x.getBuildingName())) {
+					list.add(x.getBuildingName());
+				}
+			} else { // field.equals("organization") //if (!list.contains(x.getOrgName())) {
+				list.add(x.getOrgName());
+			}
+		}
+		return list;
+
+	}
+
+	/**
+	 * Reverts the filteredEventList back to the fullEventList and attempts to re-filter the events
+	 * by the enabled filter types
+	 */
+	private void refilterList() {
+		resetAdapter();
+		if (!filterType.equals(ParseConstants.event_location) && buildingFiltered) {
+			filterByBuilding();
+		}
+		if (!filterType.equals(ParseConstants.event_org_name) && orgFiltered) {
+			filterByOrganization();
+		}
+		if (priceFiltered > 0) {
+			filterByPrice();
+		}
+		updateAdapter();
+	}
+
+	/**
+	 * Updates the CardListAdapter with the updated list of events
+	 */
+	private void updateAdapter() {
+		Log.i(TAG, "updating adapter");
+		mAdapter.notifyDataSetChanged();
+	}
+
+	/**
+	 * Resets the CardListAdapter to the un-filtered data list of events
+	 */
+	private void resetAdapter() {
+		mAdapter.resetData();
 	}
 
 }
