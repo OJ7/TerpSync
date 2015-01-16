@@ -8,6 +8,7 @@ import com.google.android.gms.internal.lo;
 import com.terpsync.R;
 import com.terpsync.parse.EventObject;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -58,7 +59,6 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 	 */
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder vh; // ViewHolder object
-		EventObject currCard = getItem(position); // Get current card
 
 		// Gets the tag for the reusable View if available. Otherwise, sets up the ViewHolder.
 		if (convertView == null) { // first time setting up the layout
@@ -77,6 +77,8 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 		} else { // view already exists, just get the tag
 			vh = (ViewHolder) convertView.getTag();
 		}
+
+		EventObject currCard = mEventsList.get(position); // Get current card
 
 		// Set the title, organization, and location
 		vh.event_title.setText(currCard.getEventName());
@@ -108,9 +110,20 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 		return convertView;
 	}
 
+	@Override
+	public int getCount() {
+		return this.mEventsList.size();
+	};
+
+	@Override
+	public EventObject getItem(final int position) {
+		return this.mEventsList.get(position);
+	}
+
 	/**
 	 * Takes in a building name and returns the corresponding resource name for the png file
 	 */
+	@SuppressLint("DefaultLocale")
 	private String getBitMapLocation(String buildingName) {
 		buildingName = buildingName.toLowerCase();
 		buildingName = buildingName.replaceAll("[.]", "");
@@ -211,7 +224,7 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 	public void updateData(List<EventObject> newList) {
 		this.mEventsList = (ArrayList<EventObject>) newList;
 	}
-	
+
 	/**
 	 * Resets the mEventsList to restore all orginal events from mOriginalEvents
 	 */
