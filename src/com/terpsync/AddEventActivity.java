@@ -2,11 +2,11 @@ package com.terpsync;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 
 import com.terpsync.R;
 import com.terpsync.parse.EventObject;
@@ -52,9 +52,7 @@ public class AddEventActivity extends Activity {
 	RadioButton freeButton, paidButton;
 	Button saveButton;
 	String currentOrganization;
-
-	// TODO - once AdminActivity created, change this class's parent Activity in
-	// AndroidManifest.xml
+	ArrayList<String> buildingNames;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +97,10 @@ public class AddEventActivity extends Activity {
 	}
 
 	/**
-	 * TODO - update documentation This method initializes a Query that populates the
-	 * AutoCompleteTextView with all the Buildings on Campus in a background thread.
+	 * TODO - update documentation
+	 * 
+	 * This method initializes a Query that populates the AutoCompleteTextView with all the
+	 * Buildings on Campus in a background thread.
 	 */
 	private void queryAndFillAutoCompleteView() {
 		ParseQuery<UMDBuildings> query = ParseQuery.getQuery(UMDBuildings.class);
@@ -110,7 +110,7 @@ public class AddEventActivity extends Activity {
 
 			@Override
 			public void done(List<UMDBuildings> arg0, ParseException arg1) {
-				ArrayList<String> buildingNames = new ArrayList<String>(arg0.size());
+				buildingNames = new ArrayList<String>(arg0.size());
 
 				for (UMDBuildings building : arg0) {
 					buildingNames.add(building.getName());
@@ -120,11 +120,54 @@ public class AddEventActivity extends Activity {
 				ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(AddEventActivity.this,
 						R.layout.list_item, buildingNames.toArray());
 
-				// Set the adapter for the AutoCompleteTextView
+				// Set the adapter for the AutoCompleteTextView and add Validator
 				eventLocationTextView.setAdapter(adapter);
+				eventLocationTextView.setValidator(new Validator());
+				eventLocationTextView.setOnFocusChangeListener(new FocusListener());
 			}
 		});
+	}
 
+	/**
+	 * Validator class used with the AutoCompleteTextView for eventLocationTextView. Verifies the
+	 * location string exists in buildingNames.
+	 * 
+	 * @author OJ
+	 * 
+	 */
+	class Validator implements AutoCompleteTextView.Validator {
+
+		@Override
+		public boolean isValid(CharSequence text) {
+			Log.v(TAG, "Checking if location field valid: " + text);
+			if (buildingNames.contains(text.toString())) {
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public CharSequence fixText(CharSequence invalidText) {
+			Log.v(TAG, "Clearing location field");
+			return "";
+		}
+	}
+
+	/**
+	 * Used with eventLocationTextView to validate the input in field after view focus is changed.
+	 * 
+	 * @author Gooner
+	 * 
+	 */
+	class FocusListener implements View.OnFocusChangeListener {
+		@Override
+		public void onFocusChange(View v, boolean hasFocus) {
+			Log.v(TAG, "Focus changed away from eventLocationTextView");
+			if (v.getId() == R.id.eventLocation && !hasFocus) {
+				Log.v(TAG, "Performing validation");
+				((AutoCompleteTextView) v).performValidation();
+			}
+		}
 	}
 
 	/**
@@ -186,9 +229,11 @@ public class AddEventActivity extends Activity {
 	}
 
 	/**
-	 * TODO - update documentation The Save Button listener will check to make sure if all the users
-	 * input is correct before adding the new event to the database. If any fields are invalid it
-	 * will display toast messages to the user.
+	 * TODO - update documentation
+	 * 
+	 * The Save Button listener will check to make sure if all the users input is correct before
+	 * adding the new event to the database. If any fields are invalid it will display toast
+	 * messages to the user.
 	 * 
 	 * It will then query the GPS coordinates based on the building selected by the user and include
 	 * that in the events information for easy data base retrieval when adding a marker in
@@ -215,7 +260,7 @@ public class AddEventActivity extends Activity {
 						|| (!paidButton.isChecked() && !freeButton.isChecked())) {
 
 					formFilled = false;
-					Toast.makeText(getApplicationContext(), "Please fill all fields",
+					Toast.makeText(getApplicationContext(), "Please fill all required fields",
 							Toast.LENGTH_LONG).show();
 
 				}
@@ -259,8 +304,10 @@ public class AddEventActivity extends Activity {
 
 	// TODO (minor) - manage default behavior for date/time
 	/**
-	 * TODO - update documentation If startDate or startTime not set, default to current day and
-	 * current time rounded up to nearest hour.
+	 * TODO - update documentation
+	 * 
+	 * If startDate or startTime not set, default to current day and current time rounded up to
+	 * nearest hour.
 	 * 
 	 * If endDate or endTime not set, default to one hour past startDate/Time If endDate/Time
 	 * changed to before startDate/Time, change to difference in shift in endDate/Time
@@ -353,7 +400,9 @@ public class AddEventActivity extends Activity {
 	};
 
 	/**
-	 * TODO - update documentation Updates the associated Date TextView
+	 * TODO - update documentation
+	 * 
+	 * Updates the associated Date TextView
 	 * 
 	 * @param tv
 	 *            The TextView (either starting date or ending date) to be updated
@@ -365,7 +414,9 @@ public class AddEventActivity extends Activity {
 	}
 
 	/**
-	 * TODO - update documentation Updates the associated Time TextView
+	 * TODO - update documentation
+	 * 
+	 * Updates the associated Time TextView
 	 * 
 	 * @param tv
 	 *            The TextView (either starting time or ending time) to be updated
