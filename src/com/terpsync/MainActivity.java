@@ -74,7 +74,8 @@ public class MainActivity extends Activity {
 	AlertDialog.Builder signInBuilder, adminOptionsListBuilder;
 	EditText usernameView, passwordView, newUNView, newPWView, newPWConfirmView;
 	View signInView = null, changeSignInView = null;
-	String[] adminOptions = { "Add Event", "Manage My Events", "Change Username/Password", "Sign Out" };
+	String[] adminOptions = { "Create an Event", "Manage My Events", "Change Username/Password",
+			"Sign Out" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -671,8 +672,10 @@ public class MainActivity extends Activity {
 		int numEvent;
 		// Check if marker already exists
 		for (Marker m : markers) {
-			if (m.getTitle().equals(name))
+			if (m.getTitle().equals(name)) {
 				marker = m;
+				break;
+			}
 		}
 		// Adding marker to map (or updating event count if already exists)
 		if (marker == null) { // Marker not already on map

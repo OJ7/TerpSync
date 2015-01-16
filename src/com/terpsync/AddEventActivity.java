@@ -79,7 +79,7 @@ public class AddEventActivity extends Activity {
 	} // end of onCreate
 
 	/**
-	 * TODO - update documentation Get references to all the views
+	 * Get references to all the views
 	 */
 	private void cacheWidgets() {
 		orgNameTextView = (TextView) findViewById(R.id.studentOrgName);
@@ -142,7 +142,7 @@ public class AddEventActivity extends Activity {
 					costEditText.setVisibility(View.INVISIBLE);
 					dollarSignTextView.setVisibility(View.INVISIBLE);
 				} else {
-					// This is has an admission fee
+					// This is paid event
 					costEditText.setVisibility(View.VISIBLE);
 					dollarSignTextView.setVisibility(View.VISIBLE);
 				}

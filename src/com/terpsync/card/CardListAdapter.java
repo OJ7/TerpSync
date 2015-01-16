@@ -226,7 +226,7 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 	}
 
 	/**
-	 * Resets the mEventsList to restore all orginal events from mOriginalEvents
+	 * Resets the mEventsList to restore all original events from mOriginalEvents
 	 */
 	public void resetData() {
 		mEventsList.clear();
