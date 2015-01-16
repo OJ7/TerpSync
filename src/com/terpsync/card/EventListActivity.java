@@ -96,6 +96,8 @@ public class EventListActivity extends Activity {
 	private void getEventsAndCreateList(String filterType, String filterName) {
 		// Create the Parse Query object
 		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
+		// Sort events by Start Date
+		eventsQuery.orderByAscending("StartDate");
 		// Checks if events need to be filtered
 		if (!filterType.equals("All")) {
 			eventsQuery.whereContains(filterType, filterName);
