@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.card.EventListActivity;
@@ -676,7 +678,7 @@ public class MainActivity extends Activity {
 					Log.i(TAG, "Event number  is " + count++);
 					// Checking if date has passed
 					boolean oldEvent = false;
-					SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+					SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 					try {
 						if (format.parse(x.getEndDate()).before(new Date())) {
 							Log.i(TAG, "The event " + x.getEventName() + " has passed");

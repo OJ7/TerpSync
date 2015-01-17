@@ -321,9 +321,11 @@ public class AddEventActivity extends Activity {
 			updateDateLabel(startDateTextView);
 			Date date = null;
 			try {
-				date = new SimpleDateFormat("MM/dd/yyyy").parse(String.format("%02d/%02d/%04d",
-						monthOfYear, dayOfMonth, year));
-				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+				date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).parse(String.format(
+						"%02d/%02d/%04d", monthOfYear + 1, dayOfMonth, year)); // Adding 1 to month
+																				// because it starts
+																				// at index 0
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 				eventObject.setStartDate(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
@@ -344,9 +346,11 @@ public class AddEventActivity extends Activity {
 			updateDateLabel(endDateTextView);
 			Date date = null;
 			try {
-				date = new SimpleDateFormat("MM/dd/yyyy").parse(String.format("%02d/%02d/%04d",
-						monthOfYear, dayOfMonth, year));
-				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+				date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).parse(String.format(
+						"%02d/%02d/%04d", monthOfYear + 1, dayOfMonth, year)); // Adding 1 to month
+																				// because it starts
+																				// at index 0
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 				eventObject.setEndDate(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
@@ -366,9 +370,9 @@ public class AddEventActivity extends Activity {
 			updateTimeLabel(startTimeTextView);
 			Date date = null;
 			try {
-				date = new SimpleDateFormat("hh:mm").parse(String.format("%02d:%02d", hourOfDay,
-						minute));
-				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+				date = new SimpleDateFormat("hh:mm", Locale.US).parse(String.format("%02d:%02d",
+						hourOfDay, minute));
+				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.US);
 				eventObject.setStartTime(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
@@ -388,9 +392,9 @@ public class AddEventActivity extends Activity {
 			updateTimeLabel(endTimeTextView);
 			Date date = null;
 			try {
-				date = new SimpleDateFormat("hh:mm").parse(String.format("%02d:%02d", hourOfDay,
-						minute));
-				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+				date = new SimpleDateFormat("hh:mm", Locale.US).parse(String.format("%02d:%02d",
+						hourOfDay, minute));
+				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.US);
 				eventObject.setEndTime(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
