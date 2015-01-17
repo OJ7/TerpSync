@@ -50,6 +50,9 @@ public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 	public static final String PREFS_NAME = "MyPrefsFile";
 
+	private final Object lock = new Object();
+	private Context context;
+
 	// Global variable strings used for preferences
 	private final String adminTogglePref = "adminToggle", currentUserPref = "currentUser",
 			currentOrgPref = "currentOrganization";
@@ -76,6 +79,7 @@ public class MainActivity extends Activity {
 	View signInView = null, changeSignInView = null;
 	String[] adminOptions = { "Create an Event", "Manage My Events", "Change Username/Password",
 			"Sign Out" };
+	boolean validChange = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -485,28 +489,81 @@ public class MainActivity extends Activity {
 	 * @return true if changed successfully, false otherwise.
 	 */
 	private boolean attemptChangeSignIn() {
-		final String newUN = newUNView.getEditableText().toString();
+		final String newUN = newUNView.getEditableText().toString().toLowerCase().trim();
 		final String newPW = newPWView.getEditableText().toString();
 		final String newPWConfirm = newPWConfirmView.getEditableText().toString();
 
-		/**
-		 * TODO - fix bugs relating to changing username/password
-		 * 
-		 * Confirm passwords (and not blank)
-		 * 
-		 * Confirm username works (and not blank)
-		 * 
-		 * ...etc.
-		 */
+		validChange = true;
+
 		ParseQuery<AdminAccounts> query = ParseQuery.getQuery(AdminAccounts.class);
-		query.whereContains(ParseConstants.admin_username, currentUser);
-		query.findInBackground(new FindCallback<AdminAccounts>() {
+
+		// confirm new username does not already exist
+		if (!newUN.equals(currentUser)) {
+			query.whereContains(ParseConstants.admin_username, newUN);
+			query.findInBackground(new FindCallback<AdminAccounts>() {
+				@Override
+				public void done(List<AdminAccounts> arg0, ParseException arg1) {
+					if (arg0 == null) {
+						Toast.makeText(getBaseContext(), "Username already exists",
+								Toast.LENGTH_SHORT).show();
+						synchronized (lock) {
+							validChange = false;
+						}
+					}
+				}
+			});
+
+		}
+		// confirm minimum number of characters in username and password
+		if (newUN.length() < 4) {
+			Toast.makeText(getBaseContext(), "Username must be at least 4 characters",
+					Toast.LENGTH_SHORT).show();
+			synchronized (lock) {
+				validChange = false;
+			}
+		}
+		if (newPW.length() < 4) {
+			Toast.makeText(getBaseContext(), "Password must be at least 4 characters",
+					Toast.LENGTH_SHORT).show();
+			synchronized (lock) {
+				validChange = false;
+			}
+		}
+		// confirm passwords match
+		else if (!newPW.equals(newPWConfirm)) {
+			Toast.makeText(getBaseContext(),
+					"Passwords do not match: [" + newPW + "] [" + newPWConfirm + "]",
+					Toast.LENGTH_SHORT).show();
+			synchronized (lock) {
+				validChange = false;
+			}
+		}
+
+		if (!validChange) // either username already exists, username/password is not enough
+							// characters, or passwords do not match
+			return false;
+
+		ParseQuery<AdminAccounts> query2 = ParseQuery.getQuery(AdminAccounts.class);
+		query2.whereContains(ParseConstants.admin_username, currentUser);
+		query2.findInBackground(new FindCallback<AdminAccounts>() {
 			@Override
 			public void done(List<AdminAccounts> arg0, ParseException arg1) {
-				arg0.get(0).setUsername(newUN);
-				arg0.get(0).setPassword(newPW);
-				arg0.get(0).saveInBackground();
-				currentUser = newUNView.getEditableText().toString();
+				if (arg0 == null || arg0.size() == 0) {
+					Toast.makeText(getBaseContext(),
+							"Error changing username/password. Try again after signing out and in.",
+							Toast.LENGTH_SHORT).show();
+				} else if (arg1 == null) {
+					arg0.get(0).setUsername(newUN);
+					arg0.get(0).setPassword(newPW);
+					arg0.get(0).saveInBackground();
+					currentUser = newUN;
+					Toast.makeText(
+							context,
+							"Username/Password changed successfully: [" + newUN + "]" + ":["
+									+ newPW + "]", Toast.LENGTH_SHORT).show();
+				} else { // object retrieval failed throw exception -- fail fast
+					arg1.printStackTrace();
+				}
 			}
 		});
 		return true;
@@ -549,6 +606,7 @@ public class MainActivity extends Activity {
 	 * views.
 	 */
 	private void setupViewsAndCacheWidgets() {
+		context = this;
 		signInBuilder = new AlertDialog.Builder(this);
 		adminOptionsListBuilder = new AlertDialog.Builder(this);
 		signInView = getLayoutInflater().inflate(R.layout.dialog_signin, null);
