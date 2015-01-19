@@ -551,7 +551,8 @@ public class MainActivity extends Activity {
 			@Override
 			public void done(List<AdminAccounts> arg0, ParseException arg1) {
 				if (arg0 == null || arg0.size() == 0) {
-					Toast.makeText(getBaseContext(),
+					Toast.makeText(
+							getBaseContext(),
 							"Error changing username/password. Try again after signing out and in.",
 							Toast.LENGTH_SHORT).show();
 				} else if (arg1 == null) {
@@ -850,21 +851,24 @@ public class MainActivity extends Activity {
 								Toast.LENGTH_SHORT).show();
 					}
 				});
-			} else if (resultIntent.getStringExtra("deleteBuildingName") != null) {
-				// TODO - handle the case where multiple events are deleted
+			} else if (resultIntent.getBooleanExtra("deletedEvent", false)) {
+				Log.i(TAG, "Event(s) deleted, rebuilding map markers");
+				queryAndAddEventsFromParse();
+				// Note: Instead of getting events to delete from map, just remaking the map.
+				// A lazy implementation, but gets around the bug for now.
 
-				buildingName = resultIntent.getStringExtra("deleteBuildingName");
-				ParseQuery<UMDBuildings> buildingsQuery2 = ParseQuery.getQuery(UMDBuildings.class);
-				buildingsQuery2.whereEqualTo(ParseConstants.building_name, buildingName);
-				buildingsQuery2.findInBackground(new FindCallback<UMDBuildings>() {
-					@Override
-					public void done(List<UMDBuildings> arg0, ParseException arg1) {
-						UMDBuildings building = arg0.get(0);
-						updateMarker(building, false);
-						Toast.makeText(getApplicationContext(), "Remove marker from map",
-								Toast.LENGTH_SHORT).show();
-					}
-				});
+				/*
+				 * buildingName = resultIntent.getStringExtra("deleteBuildingName");
+				 * ParseQuery<UMDBuildings> buildingsQuery2 =
+				 * ParseQuery.getQuery(UMDBuildings.class);
+				 * buildingsQuery2.whereEqualTo(ParseConstants.building_name, buildingName);
+				 * buildingsQuery2.findInBackground(new FindCallback<UMDBuildings>() {
+				 * 
+				 * @Override public void done(List<UMDBuildings> arg0, ParseException arg1) {
+				 * UMDBuildings building = arg0.get(0); updateMarker(building, false);
+				 * Toast.makeText(getApplicationContext(), "Remove marker from map",
+				 * Toast.LENGTH_SHORT).show(); } });
+				 */
 			} else {
 
 			}

@@ -200,12 +200,7 @@ public class EventListActivity extends Activity {
 		returnFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (isDeleted) {
-					setResult(Activity.RESULT_OK,
-							new Intent().putExtra("deleteBuildingName", deletedBuildingName));
-				} else {
-					setResult(Activity.RESULT_OK);
-				}
+				updateIntent();
 				finish();
 			}
 		});
@@ -504,6 +499,23 @@ public class EventListActivity extends Activity {
 	private void resetAdapter() {
 		Log.i(TAG, "resetting adapter");
 		mAdapter.resetData();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		updateIntent();
+	}
+
+	/**
+	 * Updates the result storing an intent if an event was deleted.
+	 */
+	private void updateIntent() {
+		if (isDeleted) {
+			setResult(Activity.RESULT_OK, new Intent().putExtra("deletedEvent", true));
+		} else {
+			setResult(Activity.RESULT_OK);
+		}
 	}
 
 }
