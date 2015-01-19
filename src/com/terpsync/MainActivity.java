@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.card.EventListActivity;
@@ -85,6 +84,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.i(TAG, "Entering onCreate()");
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
@@ -109,6 +109,7 @@ public class MainActivity extends Activity {
 	 * Restores information if the user was previously signed in.
 	 */
 	private void restorePreferences() {
+		Log.i(TAG, "Restoring preferences");
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		adminSignedIn = settings.getBoolean(adminTogglePref, adminSignedIn);
 		currentUser = settings.getString(currentUserPref, currentUser);
@@ -119,18 +120,23 @@ public class MainActivity extends Activity {
 	 * Saves information about the current user (if signed in) for persistent use.
 	 */
 	private void savePreferences() {
+		Log.i(TAG, "Saving preferences");
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean(adminTogglePref, adminSignedIn);
 		editor.putString(currentUserPref, currentUser);
 		editor.putString(currentOrgPref, currentOrganization);
-		editor.commit();
+		if (editor.commit())
+			Log.i(TAG, "Preferences saved successfully");
+		else
+			Log.i(TAG, "Preferences failed to save");
 	}
 
 	/**
 	 * Creates two Floating Action Buttons (FAB): menu and location.
 	 */
 	private void createInitialFAB() {
+		Log.i(TAG, "Creating initial FAB");
 		menuFABListener();
 		locationFABListener();
 	}
@@ -139,12 +145,14 @@ public class MainActivity extends Activity {
 	 * Creates menuFAB and handles clicks on it: either expanding or collapsing the menu.
 	 */
 	private void menuFABListener() {
+		Log.i(TAG, "Creating Menu FAB...");
 		// Setting up FAB
 		menuFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
 				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
 		// Attaching onClickListener
+		Log.i(TAG, "...attaching onClickListener");
 		menuFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -167,6 +175,7 @@ public class MainActivity extends Activity {
 	 * Creates locationFAB and handles clicks on it: either centering on campus or current location.
 	 */
 	private void locationFABListener() {
+		Log.i(TAG, "Creating Location FAB...");
 		// Setting up the appropriate FAB
 		if (locToggle == 0) {
 			locationFAB = new FloatingActionButton.Builder(this)
@@ -183,6 +192,7 @@ public class MainActivity extends Activity {
 		locationFAB.showFloatingActionButton();
 
 		// Attaching onClickListener
+		Log.i(TAG, "...attaching onClickListener");
 		locationFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -203,7 +213,9 @@ public class MainActivity extends Activity {
 	 * Creates mapTypeFAB and handles click on it: changing map type to either normal or hybrid
 	 */
 	private void mapTypeFABListener() {
+		Log.i(TAG, "Creating Map Type FAB...");
 		// Setting up FAB
+		Log.d(TAG, "mapToggle = " + mapToggle);
 		if (mapToggle == 0) { // Normal Map
 			mapTypeFAB = new FloatingActionButton.Builder(this)
 					.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
@@ -219,6 +231,7 @@ public class MainActivity extends Activity {
 		mapTypeFAB.showFloatingActionButton();
 
 		// Attaching onClickListener
+		Log.i(TAG, "...attacghin onClickListener");
 		mapTypeFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -231,6 +244,7 @@ public class MainActivity extends Activity {
 	 * Creates listFAB and handles click on it: opens up list of all events
 	 */
 	private void listFABListener() {
+		Log.i(TAG, "Creating List FAB...");
 		// Setting up FAB
 		listFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
@@ -240,6 +254,7 @@ public class MainActivity extends Activity {
 		listFAB.showFloatingActionButton();
 
 		// Attaching onClickListener
+		Log.i(TAG, "...attaching onClickListener");
 		listFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -254,6 +269,7 @@ public class MainActivity extends Activity {
 	 * Creates signInFAB and handles click on it: opens a dialog for signing in.
 	 */
 	private void signInFABListener() {
+		Log.i(TAG, "Creating Sign In FAB...");
 		// Setting up FAB
 		signInFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_gear_50))
@@ -263,10 +279,11 @@ public class MainActivity extends Activity {
 		signInFAB.showFloatingActionButton();
 
 		// Attaching onClickListener
+		Log.i(TAG, "...attaching onClickListener");
 		signInFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showSignInView();
+				showSignInDialog();
 			}
 		});
 	}
@@ -275,6 +292,7 @@ public class MainActivity extends Activity {
 	 * Creates adminFAB and handles click on it: opens a dialog menu with options for Admin Panel.
 	 */
 	private void adminFABListener() {
+		Log.i(TAG, "Creating Admin FAB...");
 		// Setting up FAB
 		adminFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
@@ -284,10 +302,11 @@ public class MainActivity extends Activity {
 		adminFAB.showFloatingActionButton();
 
 		// Attaching onClickListener
+		Log.i(TAG, "...attaching onClickListener");
 		adminFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showAdminPanel();
+				showAdminPanelDialog();
 			}
 		});
 	}
@@ -296,6 +315,7 @@ public class MainActivity extends Activity {
 	 * Expands the menu to show the following: mapTypeFAB, listFAB, signInFAB/adminFAB
 	 */
 	private void expandFABMenu() {
+		Log.i(TAG, "Expanding FAB Menu");
 		locationFAB.hideFloatingActionButton();
 		mapTypeFABListener();
 		listFABListener();
@@ -310,6 +330,7 @@ public class MainActivity extends Activity {
 	 * Collapses the menu to revert back to initial FAB layout
 	 */
 	private void collapseFABMenu() {
+		Log.i(TAG, "Collapsing FAB Menu");
 		mapTypeFAB.hideFloatingActionButton();
 		listFAB.hideFloatingActionButton();
 		if (adminSignedIn) {
@@ -325,7 +346,9 @@ public class MainActivity extends Activity {
 	 * with each map type.
 	 */
 	private void toggleMapType() {
+		Log.i(TAG, "Toggling Map Type...");
 		if (mapToggle == 0) { // Change Map Type to Hybrid
+			Log.i(TAG, "...to hybrid");
 			mapToggle = 1;
 			// Changing FAB icon and color
 			mapTypeFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
@@ -339,6 +362,7 @@ public class MainActivity extends Activity {
 			key3.setTextColor(Color.YELLOW);
 			Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_SHORT).show();
 		} else { // Change Map Type to Normal
+			Log.i(TAG, "...to normal");
 			mapToggle = 0;
 			// Changing FAB icon and color
 			mapTypeFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
@@ -357,7 +381,8 @@ public class MainActivity extends Activity {
 	/**
 	 * Creates a dialog box to sign-in to an Admin account.
 	 */
-	private void showSignInView() {
+	private void showSignInDialog() {
+		Log.i(TAG, "Creating Sign In Dialog");
 		signInBuilder.setView(signInView).setTitle("Enter Your Username and Password")
 				.setCancelable(false)
 				.setPositiveButton("Sign in", new DialogInterface.OnClickListener() {
@@ -379,7 +404,8 @@ public class MainActivity extends Activity {
 	 * Creates a dialog menu with options to add events, see current user's events, change
 	 * username/password, or sign out.
 	 */
-	private void showAdminPanel() {
+	private void showAdminPanelDialog() {
+		Log.i(TAG, "Creating Admin Panel Dialog");
 		adminOptionsListBuilder.setTitle("Admin Panel")
 				.setItems(adminOptions, new DialogInterface.OnClickListener() {
 					@Override
@@ -394,7 +420,7 @@ public class MainActivity extends Activity {
 							showMyEventsList();
 							break;
 						case 2: // Change PW/UN
-							showChangeSignInView();
+							showChangeSignInCredentialsDialog();
 							break;
 						case 3: // Sign out
 							signOutAdmin();
@@ -410,6 +436,7 @@ public class MainActivity extends Activity {
 	 * Starts a new EventListActivity filtered to show events from current user
 	 */
 	private void showMyEventsList() {
+		Log.i(TAG, "Starting EventListActivity to show events from user");
 		Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 		intent.putExtra("FilterType", ParseConstants.event_org_name);
 		intent.putExtra(ParseConstants.event_org_name, currentOrganization);
@@ -419,13 +446,14 @@ public class MainActivity extends Activity {
 	/**
 	 * Creates a dialog box to change username and/or password.
 	 */
-	private void showChangeSignInView() {
+	private void showChangeSignInCredentialsDialog() {
+		Log.i(TAG, "Creating Change Sign In Credentials Dialog");
 		signInBuilder.setView(changeSignInView).setTitle("Update Account Info")
 				.setCancelable(false)
 				.setPositiveButton("Change", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int item) {
-						attemptChangeSignIn();
+						attemptChangeSignInCredentials();
 						resetChangeSignInDialog();
 					}
 				}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -444,6 +472,7 @@ public class MainActivity extends Activity {
 	 * @return true if sign in is successful, false otherwise.
 	 */
 	private boolean attemptSignIn() {
+		Log.i(TAG, "Attempting to sign in");
 		final String UN = usernameView.getEditableText().toString().toLowerCase()
 				.replaceAll("\\s", "");
 		final String PW = passwordView.getEditableText().toString();
@@ -455,6 +484,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void done(List<AdminAccounts> arg0, ParseException arg1) {
 				if (arg1 != null) {
+					Log.i(TAG, "No organization accounts found");
 					Toast.makeText(getApplicationContext(), "Invalid username or password",
 							Toast.LENGTH_SHORT).show();
 				} else {
@@ -470,9 +500,11 @@ public class MainActivity extends Activity {
 						}
 					}
 					if (adminSignedIn) {
+						Log.i(TAG, "Signed in successfully");
 						Toast.makeText(getApplicationContext(), "Signed in successfully :)",
 								Toast.LENGTH_SHORT).show();
 					} else {
+						Log.i(TAG, "Sign in failed...either invalid username or password");
 						Toast.makeText(getApplicationContext(), "Invalid username or password",
 								Toast.LENGTH_SHORT).show();
 					}
@@ -490,7 +522,8 @@ public class MainActivity extends Activity {
 	 * 
 	 * @return true if changed successfully, false otherwise.
 	 */
-	private boolean attemptChangeSignIn() {
+	private boolean attemptChangeSignInCredentials() {
+		Log.i(TAG, "Attempting to change sign in credentials");
 		final String newUN = newUNView.getEditableText().toString().toLowerCase().trim();
 		final String newPW = newPWView.getEditableText().toString();
 		final String newPWConfirm = newPWConfirmView.getEditableText().toString();
@@ -506,6 +539,7 @@ public class MainActivity extends Activity {
 				@Override
 				public void done(List<AdminAccounts> arg0, ParseException arg1) {
 					if (arg0 == null) {
+						Log.i(TAG, "Username already exists");
 						Toast.makeText(getBaseContext(), "Username already exists",
 								Toast.LENGTH_SHORT).show();
 						synchronized (lock) {
@@ -518,6 +552,7 @@ public class MainActivity extends Activity {
 		}
 		// confirm minimum number of characters in username and password
 		if (newUN.length() < 4) {
+			Log.i(TAG, "Username too short... must be 4+ chars");
 			Toast.makeText(getBaseContext(), "Username must be at least 4 characters",
 					Toast.LENGTH_SHORT).show();
 			synchronized (lock) {
@@ -525,6 +560,7 @@ public class MainActivity extends Activity {
 			}
 		}
 		if (newPW.length() < 4) {
+			Log.i(TAG, "Password too short... must be 4+ chars");
 			Toast.makeText(getBaseContext(), "Password must be at least 4 characters",
 					Toast.LENGTH_SHORT).show();
 			synchronized (lock) {
@@ -533,6 +569,7 @@ public class MainActivity extends Activity {
 		}
 		// confirm passwords match
 		else if (!newPW.equals(newPWConfirm)) {
+			Log.i(TAG, "Passwords do not match");
 			Toast.makeText(getBaseContext(),
 					"Passwords do not match: [" + newPW + "] [" + newPWConfirm + "]",
 					Toast.LENGTH_SHORT).show();
@@ -541,9 +578,11 @@ public class MainActivity extends Activity {
 			}
 		}
 
-		if (!validChange) // either username already exists, username/password is not enough
+		if (!validChange) { // either username already exists, username/password is not enough
 							// characters, or passwords do not match
+			Log.i(TAG, "Changing sign in attempt failed... fix above problem(s)");
 			return false;
+		}
 
 		ParseQuery<AdminAccounts> query2 = ParseQuery.getQuery(AdminAccounts.class);
 		query2.whereContains(ParseConstants.admin_username, currentUser);
@@ -551,6 +590,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void done(List<AdminAccounts> arg0, ParseException arg1) {
 				if (arg0 == null || arg0.size() == 0) {
+					Log.d(TAG, "The current signed in user is probably set to a different user");
 					Toast.makeText(
 							getBaseContext(),
 							"Error changing username/password. Try again after signing out and in.",
@@ -560,6 +600,9 @@ public class MainActivity extends Activity {
 					arg0.get(0).setPassword(newPW);
 					arg0.get(0).saveInBackground();
 					currentUser = newUN;
+					Log.i(TAG, "Change successful!");
+					Log.i(TAG, "New username: " + newUN);
+					Log.i(TAG, "New password:" + newPW);
 					Toast.makeText(
 							context,
 							"Username/Password changed successfully: [" + newUN + "]" + ":["
@@ -576,6 +619,7 @@ public class MainActivity extends Activity {
 	 * Resets the sign in dialog to clear text and remove from view
 	 */
 	private void resetSignInDialog() {
+		Log.i(TAG, "Resetting fields in sign in dialog");
 		usernameView.getText().clear();
 		passwordView.getText().clear();
 		((ViewGroup) signInView.getParent()).removeView(signInView);
@@ -585,6 +629,7 @@ public class MainActivity extends Activity {
 	 * Resets the change sign in dialog to clear text and remove from view
 	 */
 	private void resetChangeSignInDialog() {
+		Log.i(TAG, "Resetting fields in change sign in credentials dialog");
 		newUNView.getText().clear();
 		newPWView.getText().clear();
 		newPWConfirmView.getText().clear();
@@ -595,6 +640,7 @@ public class MainActivity extends Activity {
 	 * Signs out the current user and resets the FABs appropriately
 	 */
 	private void signOutAdmin() {
+		Log.i(TAG, "Signing out of admin account");
 		currentUser = "";
 		currentOrganization = "";
 		adminSignedIn = false;
@@ -609,6 +655,7 @@ public class MainActivity extends Activity {
 	 * views.
 	 */
 	private void setupViewsAndCacheWidgets() {
+		Log.i(TAG, "Setting up views and caching widgets");
 		context = this;
 		signInBuilder = new AlertDialog.Builder(this);
 		adminOptionsListBuilder = new AlertDialog.Builder(this);
@@ -636,6 +683,7 @@ public class MainActivity extends Activity {
 	 * events. Also handles clicks on marker windows: opens up list of events filtered by building.
 	 */
 	private void setupMap() {
+		Log.i(TAG, "Initializing and setting up map");
 		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 		centerMapOnCampus();
 		mMap.getUiSettings().setZoomControlsEnabled(false);
@@ -647,6 +695,9 @@ public class MainActivity extends Activity {
 			@Override
 			public void onInfoWindowClick(Marker marker) {
 				String buildingName = marker.getTitle();
+				Log.i(TAG, "Clicked on marker: " + buildingName);
+				Log.i(TAG, "Clicked on marker: " + buildingName);
+				Log.i(TAG, "Starting EventListActivity to show events from building");
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 				intent.putExtra("FilterType", "BuildingName");
 				intent.putExtra("BuildingName", buildingName);
@@ -664,6 +715,11 @@ public class MainActivity extends Activity {
 	 * event has passed.
 	 */
 	private void queryAndAddEventsFromParse() {
+		// Clearing markers (if any exist) prior to adding
+		Log.i(TAG, "Clearing all markers on map (if any)");
+		mMap.clear();
+		markers.clear();
+
 		ParseObject.registerSubclass(UMDBuildings.class);
 		ParseObject.registerSubclass(EventObject.class);
 		ParseObject.registerSubclass(AdminAccounts.class);
@@ -676,19 +732,20 @@ public class MainActivity extends Activity {
 			public void done(List<EventObject> arg0, ParseException arg1) {
 				int count = 1;
 				for (EventObject x : arg0) {
-					Log.i(TAG, "Event number  is " + count++);
+					Log.d(TAG, "Event #: " + count++);
 					// Checking if date has passed
 					boolean oldEvent = false;
 					SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 					try {
 						if (format.parse(x.getEndDate()).before(new Date())) {
-							Log.i(TAG, "The event " + x.getEventName() + " has passed");
+							Log.d(TAG, "The event " + x.getEventName() + " has passed");
 							oldEvent = true;
 						}
 					} catch (java.text.ParseException e) {
 						e.printStackTrace();
 					}
 					if (oldEvent) { // deleting from database
+						Log.d(TAG, "Deleting old event from database");
 						x.deleteInBackground();
 
 					} else { // adding to map
@@ -729,6 +786,7 @@ public class MainActivity extends Activity {
 		Double lon = Double.parseDouble(building.getLng());
 		LatLng latLng = new LatLng(lat, lon);
 		String name = String.valueOf(building.getName());
+		Log.i(TAG, "Updating marker for " + name);
 		Marker marker = null;
 		int numEvent;
 		// Check if marker already exists
@@ -740,10 +798,12 @@ public class MainActivity extends Activity {
 		}
 		// Adding marker to map (or updating event count if already exists)
 		if (marker == null) { // Marker not already on map
+			Log.i(TAG, "Creating marker");
 			numEvent = 1;
 			marker = mMap.addMarker(new MarkerOptions().position(latLng).title(name));
 			markers.add(marker);
 		} else { // Marker already on map
+			Log.i(TAG, "Marker already exists...updating count");
 			int temp = Integer.parseInt(marker.getSnippet().replaceAll("\\D+", ""));
 			if (added) {
 				numEvent = ++temp;
@@ -754,6 +814,7 @@ public class MainActivity extends Activity {
 		// Set marker color (or delete if no events)
 		if (numEvent > 0) {
 			// Getting marker color based on number of events
+			Log.i(TAG, "Setting marker color based on number of events: " + numEvent);
 			float markerColor;
 			if (numEvent < 3) {
 				markerColor = BitmapDescriptorFactory.HUE_YELLOW;
@@ -774,6 +835,7 @@ public class MainActivity extends Activity {
 	 * location.
 	 */
 	private void centerMapOnMyLocation() {
+		Log.i(TAG, "Centering map on my location");
 		mMap.setMyLocationEnabled(true);
 		Location location = mMap.getMyLocation();
 		if (location != null) {
@@ -789,6 +851,7 @@ public class MainActivity extends Activity {
 	 * Centers map on center of campus.
 	 */
 	private void centerMapOnCampus() {
+		Log.i(TAG, "Centering map on campus");
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(UMD, 14));
 		Toast.makeText(getApplicationContext(), "Centering map on campus", Toast.LENGTH_SHORT)
 				.show();
@@ -800,6 +863,7 @@ public class MainActivity extends Activity {
 	 * @return true if available, false otherwise
 	 */
 	private boolean isNetworkAvailable() {
+		Log.i(TAG, "Checking if network is available");
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
@@ -810,6 +874,7 @@ public class MainActivity extends Activity {
 	 * for network again until available.
 	 */
 	private void openNetworkDialog() {
+		Log.i(TAG, "Opening network dialog");
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this)
 				.setMessage("Network not available")
 				.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
@@ -836,10 +901,13 @@ public class MainActivity extends Activity {
 	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
+		Log.i(TAG, "Getting activity result");
 		String buildingName;
 		if (requestCode == 0 && resultCode == Activity.RESULT_OK && resultIntent != null) {
 			if (resultIntent.getStringExtra("addBuildingName") != null) {
+				Log.i(TAG, "Got result - event added");
 				buildingName = resultIntent.getStringExtra("addBuildingName");
+				Log.i(TAG, "Updating marker for " + buildingName);
 				ParseQuery<UMDBuildings> buildingsQuery = ParseQuery.getQuery(UMDBuildings.class);
 				buildingsQuery.whereEqualTo(ParseConstants.building_name, buildingName);
 				buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
@@ -852,6 +920,7 @@ public class MainActivity extends Activity {
 					}
 				});
 			} else if (resultIntent.getBooleanExtra("deletedEvent", false)) {
+				Log.i(TAG, "Got result - event deleted");
 				Log.i(TAG, "Event(s) deleted, rebuilding map markers");
 				queryAndAddEventsFromParse();
 				// Note: Instead of getting events to delete from map, just remaking the map.
