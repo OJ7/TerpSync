@@ -9,13 +9,15 @@ import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.card.EventListActivity;
 import com.terpsync.parse.AdminAccounts;
-import com.terpsync.parse.EventObject;
+import com.terpsync.parse.Events;
 import com.terpsync.parse.ParseConstants;
 import com.terpsync.parse.UMDBuildings;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -51,7 +53,7 @@ public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 	public static final String PREFS_NAME = "MyPrefsFile";
 
-	private final Object lock = new Object();
+	private final Object lock = new Object(), lock2 = new Object();
 	private Context context;
 
 	// Global variable strings used for preferences
@@ -98,6 +100,9 @@ public class MainActivity extends Activity {
 		if (!isNetworkAvailable()) {
 			openNetworkDialog();
 		} else {
+
+			MapsInitializer.initialize(this);
+
 			setupMap();
 			queryAndAddEventsFromParse(); // fills map with current events from database
 			createInitialFAB(); // creates all FAB objects - better performance
@@ -231,7 +236,7 @@ public class MainActivity extends Activity {
 		mapTypeFAB.showFloatingActionButton();
 
 		// Attaching onClickListener
-		Log.i(TAG, "...attacghin onClickListener");
+		Log.i(TAG, "...attaching onClickListener");
 		mapTypeFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -260,7 +265,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 				intent.putExtra("FilterType", "All");
-				startActivity(intent);
+				startActivityForResult(intent, 0);
 			}
 		});
 	}
@@ -412,9 +417,9 @@ public class MainActivity extends Activity {
 					public void onClick(DialogInterface dialog, int item) {
 						switch (item) {
 						case 0: // Add Event
-							startActivityForResult(new Intent(MainActivity.this,
-									AddEventActivity.class).putExtra(ParseConstants.admin_org_name,
-									currentOrganization), 0);
+							Intent intent = new Intent(MainActivity.this, AddEventActivity.class);
+							intent.putExtra(ParseConstants.admin_org_name, currentOrganization);
+							startActivityForResult(intent, 0);
 							break;
 						case 1: // My Events
 							showMyEventsList();
@@ -440,7 +445,7 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 		intent.putExtra("FilterType", ParseConstants.event_org_name);
 		intent.putExtra(ParseConstants.event_org_name, currentOrganization);
-		startActivity(intent);
+		startActivityForResult(intent, 0);
 	}
 
 	/**
@@ -684,6 +689,8 @@ public class MainActivity extends Activity {
 	 */
 	private void setupMap() {
 		Log.i(TAG, "Initializing and setting up map");
+
+		// MapsInitializer.initialize(this);
 		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 		centerMapOnCampus();
 		mMap.getUiSettings().setZoomControlsEnabled(false);
@@ -696,12 +703,11 @@ public class MainActivity extends Activity {
 			public void onInfoWindowClick(Marker marker) {
 				String buildingName = marker.getTitle();
 				Log.i(TAG, "Clicked on marker: " + buildingName);
-				Log.i(TAG, "Clicked on marker: " + buildingName);
 				Log.i(TAG, "Starting EventListActivity to show events from building");
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 				intent.putExtra("FilterType", "BuildingName");
 				intent.putExtra("BuildingName", buildingName);
-				startActivity(intent);
+				startActivityForResult(intent, 0);
 			}
 		});
 		// Initially sets the colors used with normal map
@@ -721,17 +727,17 @@ public class MainActivity extends Activity {
 		markers.clear();
 
 		ParseObject.registerSubclass(UMDBuildings.class);
-		ParseObject.registerSubclass(EventObject.class);
+		ParseObject.registerSubclass(Events.class);
 		ParseObject.registerSubclass(AdminAccounts.class);
 		Parse.initialize(this, this.getString(R.string.parse_app_id),
 				this.getString(R.string.parse_client_key));
 		// Adding current events to map
-		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
-		eventsQuery.findInBackground(new FindCallback<EventObject>() {
+		ParseQuery<Events> eventsQuery = ParseQuery.getQuery(Events.class);
+		eventsQuery.findInBackground(new FindCallback<Events>() {
 			@Override
-			public void done(List<EventObject> arg0, ParseException arg1) {
+			public void done(List<Events> arg0, ParseException arg1) {
 				int count = 1;
-				for (EventObject x : arg0) {
+				for (Events x : arg0) {
 					Log.d(TAG, "Event #: " + count++);
 					// Checking if date has passed
 					boolean oldEvent = false;
@@ -798,12 +804,12 @@ public class MainActivity extends Activity {
 		}
 		// Adding marker to map (or updating event count if already exists)
 		if (marker == null) { // Marker not already on map
-			Log.i(TAG, "Creating marker");
+			Log.i(TAG, "Marker does not exist... creating marker");
 			numEvent = 1;
 			marker = mMap.addMarker(new MarkerOptions().position(latLng).title(name));
 			markers.add(marker);
 		} else { // Marker already on map
-			Log.i(TAG, "Marker already exists...updating count");
+			Log.i(TAG, "Marker already exists... updating count");
 			int temp = Integer.parseInt(marker.getSnippet().replaceAll("\\D+", ""));
 			if (added) {
 				numEvent = ++temp;
@@ -826,7 +832,9 @@ public class MainActivity extends Activity {
 			marker.setSnippet("Events: " + numEvent);
 			marker.setIcon(BitmapDescriptorFactory.defaultMarker(markerColor));
 		} else {
+			Log.i(TAG, "Removing empty marker for " + name);
 			marker.remove();
+			markers.remove(marker);
 		}
 	}
 
@@ -835,16 +843,21 @@ public class MainActivity extends Activity {
 	 * location.
 	 */
 	private void centerMapOnMyLocation() {
-		Log.i(TAG, "Centering map on my location");
+		Log.i(TAG, "Attempting to center map on current location");
 		mMap.setMyLocationEnabled(true);
 		Location location = mMap.getMyLocation();
 		if (location != null) {
+			Log.i(TAG, "Centering on current location");
 			myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+			Toast.makeText(getApplicationContext(), "Centering map on current location",
+					Toast.LENGTH_SHORT).show();
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
+		} else {
+			Log.i(TAG, "Current location not found");
+			Toast.makeText(getApplicationContext(),
+					"Can't resolve current location\nTry enabling Location Services",
+					Toast.LENGTH_LONG).show();
 		}
-		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
-
-		Toast.makeText(getApplicationContext(), "Centering map on current location",
-				Toast.LENGTH_SHORT).show();
 	}
 
 	/**
@@ -902,63 +915,72 @@ public class MainActivity extends Activity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
 		Log.i(TAG, "Getting activity result");
-		String buildingName;
+		String buildings;
 		if (requestCode == 0 && resultCode == Activity.RESULT_OK && resultIntent != null) {
 			if (resultIntent.getStringExtra("addBuildingName") != null) {
 				Log.i(TAG, "Got result - event added");
-				buildingName = resultIntent.getStringExtra("addBuildingName");
-				Log.i(TAG, "Updating marker for " + buildingName);
+				buildings = resultIntent.getStringExtra("addBuildingName");
 				ParseQuery<UMDBuildings> buildingsQuery = ParseQuery.getQuery(UMDBuildings.class);
-				buildingsQuery.whereEqualTo(ParseConstants.building_name, buildingName);
+				buildingsQuery.whereEqualTo(ParseConstants.building_name, buildings);
 				buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
 					@Override
 					public void done(List<UMDBuildings> arg0, ParseException arg1) {
 						UMDBuildings building = arg0.get(0);
 						updateMarker(building, true);
-						Toast.makeText(getApplicationContext(), "Added event to map",
-								Toast.LENGTH_SHORT).show();
+						// Toast.makeText(getApplicationContext(), "Added event to map",
+						// Toast.LENGTH_SHORT).show();
 					}
 				});
-			} else if (resultIntent.getBooleanExtra("deletedEvent", false)) {
-				Log.i(TAG, "Got result - event deleted");
-				Log.i(TAG, "Event(s) deleted, rebuilding map markers");
-				queryAndAddEventsFromParse();
+			} else if (resultIntent.getStringExtra("deletedEvent") != null) {
+				// IGNORE BELOW FOR NOW...
+				 Log.i(TAG, "Got result - event deleted");
+				// Log.i(TAG, "Event(s) deleted, rebuilding map markers");
+				// queryAndAddEventsFromParse();
 				// Note: Instead of getting events to delete from map, just remaking the map.
 				// A lazy implementation, but gets around the bug for now.
 
-				/*
-				 * buildingName = resultIntent.getStringExtra("deleteBuildingName");
-				 * ParseQuery<UMDBuildings> buildingsQuery2 =
-				 * ParseQuery.getQuery(UMDBuildings.class);
-				 * buildingsQuery2.whereEqualTo(ParseConstants.building_name, buildingName);
-				 * buildingsQuery2.findInBackground(new FindCallback<UMDBuildings>() {
-				 * 
-				 * @Override public void done(List<UMDBuildings> arg0, ParseException arg1) {
-				 * UMDBuildings building = arg0.get(0); updateMarker(building, false);
-				 * Toast.makeText(getApplicationContext(), "Remove marker from map",
-				 * Toast.LENGTH_SHORT).show(); } });
-				 */
-			} else {
+				buildings = resultIntent.getStringExtra("deletedEvent");
+				String[] parsedNames = buildings.split(";");
+				ParseQuery<UMDBuildings> buildingsQuery = ParseQuery.getQuery(UMDBuildings.class);
+				for (String name : parsedNames) {
+					synchronized (lock2) {
+						buildingsQuery.whereEqualTo(ParseConstants.building_name, name);
+						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
+							@Override
+							public void done(List<UMDBuildings> arg0, ParseException arg1) {
+								UMDBuildings building = arg0.get(0);
+								updateMarker(building, false);
+							}
+						});
+					}
+				}
 
+			} else {
+				Log.i(TAG, "No events added or deleted from previous activity.");
 			}
+		} else {
+			Log.i(TAG, "No activity result");
 		}
 	}
 
 	@Override
 	protected void onResume() {
+		Log.i(TAG, "Resuming Main Activity");
 		super.onResume();
 		restorePreferences();
 	}
 
 	@Override
 	protected void onPause() {
+		Log.i(TAG, "Pausing Main Activity");
 		super.onPause();
 		savePreferences();
 	}
 
 	@Override
 	protected void onStop() {
+		Log.i(TAG, "Stopping Main Activity");
 		super.onStop();
-		savePreferences();
+		// savePreferences();
 	}
 }

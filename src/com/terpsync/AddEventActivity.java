@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.terpsync.R;
-import com.terpsync.parse.EventObject;
+import com.terpsync.parse.Events;
 import com.terpsync.parse.ParseConstants;
 import com.terpsync.parse.UMDBuildings;
 import com.parse.FindCallback;
@@ -41,7 +41,7 @@ public class AddEventActivity extends Activity {
 
 	private static final String TAG = "AddEventActivity";
 
-	EventObject eventObject;
+	Events events;
 	Calendar myCalendar = Calendar.getInstance();
 
 	TextView orgNameTextView, startDateTextView, startTimeTextView, endDateTextView,
@@ -65,7 +65,7 @@ public class AddEventActivity extends Activity {
 		currentOrganization = intent.getStringExtra(ParseConstants.admin_org_name);
 		Log.i(TAG, "Adding event as:" + currentOrganization);
 
-		eventObject = new EventObject();
+		events = new Events();
 
 		cacheWidgets();
 		queryAndFillAutoCompleteView();
@@ -268,15 +268,15 @@ public class AddEventActivity extends Activity {
 				// All valid input from User, create parse object and add to DB
 				if (formFilled) {
 
-					eventObject.setOrgName(orgNameTextView.getText().toString());
-					eventObject.setEventName(eventNameEditText.getText().toString());
-					eventObject.setBuildingName(eventLocationTextView.getText().toString());
-					eventObject.setDescription(eventDescriptionEditText.getText().toString());
+					events.setOrgName(orgNameTextView.getText().toString());
+					events.setEventName(eventNameEditText.getText().toString());
+					events.setBuildingName(eventLocationTextView.getText().toString());
+					events.setDescription(eventDescriptionEditText.getText().toString());
 
 					if (paidButton.isChecked()) {
-						eventObject.setAdmission(costEditText.getText().toString());
+						events.setAdmission(costEditText.getText().toString());
 					} else {
-						eventObject.setAdmission("FREE");
+						events.setAdmission("FREE");
 					}
 
 					/*
@@ -284,14 +284,17 @@ public class AddEventActivity extends Activity {
 					 * callback which waits until it is refreshed so we can extract its newly
 					 * created object ID
 					 */
-					eventObject.saveInBackground(new SaveCallback() {
+					events.saveInBackground(new SaveCallback() {
 
 						@Override
 						public void done(ParseException arg0) {
 							setResult(
 									Activity.RESULT_OK,
 									new Intent().putExtra("addBuildingName",
-											eventObject.getBuildingName()));
+											events.getBuildingName()));
+							Log.i(TAG, "Event successfully added.");
+							Toast.makeText(getApplicationContext(), "Created event successfully",
+									Toast.LENGTH_SHORT).show();
 							finish();
 						}
 					});
@@ -326,7 +329,7 @@ public class AddEventActivity extends Activity {
 																				// because it starts
 																				// at index 0
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-				eventObject.setStartDate(sdf.format(date));
+				events.setStartDate(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
 				e.printStackTrace();
@@ -351,7 +354,7 @@ public class AddEventActivity extends Activity {
 																				// because it starts
 																				// at index 0
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-				eventObject.setEndDate(sdf.format(date));
+				events.setEndDate(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
 				e.printStackTrace();
@@ -373,7 +376,7 @@ public class AddEventActivity extends Activity {
 				date = new SimpleDateFormat("hh:mm", Locale.US).parse(String.format("%02d:%02d",
 						hourOfDay, minute));
 				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.US);
-				eventObject.setStartTime(sdf.format(date));
+				events.setStartTime(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
 				e.printStackTrace();
@@ -395,7 +398,7 @@ public class AddEventActivity extends Activity {
 				date = new SimpleDateFormat("hh:mm", Locale.US).parse(String.format("%02d:%02d",
 						hourOfDay, minute));
 				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.US);
-				eventObject.setEndTime(sdf.format(date));
+				events.setEndTime(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
 				e.printStackTrace();

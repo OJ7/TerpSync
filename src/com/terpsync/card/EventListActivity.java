@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
-import com.terpsync.parse.EventObject;
+import com.terpsync.parse.Events;
 import com.terpsync.parse.ParseConstants;
 import com.google.android.gms.drive.internal.x;
 import com.google.android.gms.internal.ma;
@@ -34,13 +34,13 @@ public class EventListActivity extends Activity {
 	private FloatingActionButton returnFAB, filterFAB, buildingFAB, orgFAB, priceFAB;
 	CardListAdapter mAdapter;
 	ListView lv; // List for all the event cards
-	List<EventObject> fullEventList, filteredEventList;
+	List<Events> fullEventList, filteredEventList;
 	AlertDialog.Builder action_builder, delete_builder;
 	View view = null;
 	boolean isDeleted = false, filterMenuOpen = false, orgFiltered = false,
 			buildingFiltered = false;
 	int priceFiltered = 0; // 0 = All, 1 = Free, 2 = Paid
-	String deletedBuildingName = "";
+	String deletedBuildings = "";
 	String filterType, filterName;
 	String buildingFilterName, orgFilterName;
 	String[] actionOptions = { "Edit Event", "Delete Event" };
@@ -95,7 +95,7 @@ public class EventListActivity extends Activity {
 	 */
 	private void getEventsAndCreateList(String filterType, String filterName) {
 		// Create the Parse Query object
-		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
+		ParseQuery<Events> eventsQuery = ParseQuery.getQuery(Events.class);
 		// Sort events by Start Date
 		eventsQuery.orderByAscending("StartDate");
 		// Checks if events need to be filtered
@@ -103,9 +103,9 @@ public class EventListActivity extends Activity {
 			eventsQuery.whereContains(filterType, filterName);
 		}
 		// Initiate a background thread, retrieve all Event Objects
-		eventsQuery.findInBackground(new FindCallback<EventObject>() {
+		eventsQuery.findInBackground(new FindCallback<Events>() {
 			@Override
-			public void done(List<EventObject> events, ParseException e) {
+			public void done(List<Events> events, ParseException e) {
 				if (e == null) { // All events were successfully returned
 					fullEventList = events;
 					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card, events);
@@ -115,7 +115,7 @@ public class EventListActivity extends Activity {
 				}
 			}
 		});
-		// filteredEventList = new ArrayList<EventObject>(fullEventList);
+		// filteredEventList = new ArrayList<Events>(fullEventList);
 
 		// TODO - Add On-Click Listeners for Cards
 		// - if click on card, expand cards (show detailed view w/button to edit/delete)
@@ -132,7 +132,7 @@ public class EventListActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> adaptView, View v, int position, long id) {
 				final int pos = position;
-				final EventObject x = (EventObject) adaptView.getItemAtPosition(pos);
+				final Events x = (Events) adaptView.getItemAtPosition(pos);
 
 				// Create alert dialog
 				action_builder.setTitle("Please select an option")
@@ -141,12 +141,13 @@ public class EventListActivity extends Activity {
 							public void onClick(DialogInterface dialog, int item) {
 								switch (item) {
 								case 0: // Edit Event
+									Log.i(TAG, "Clicked on Edit Event");
 									Toast.makeText(getBaseContext(), "Implement Editing Event",
 											Toast.LENGTH_LONG).show();
 									break;
 
 								case 1: // Delete Event
-									deletedBuildingName = x.getBuildingName();
+									Log.i(TAG, "Clicked on Delete Event, Confirm?");
 									delete_builder
 											.setTitle(
 													"Delete Event? (Warning: this cannot be undone!)")
@@ -156,10 +157,20 @@ public class EventListActivity extends Activity {
 														@Override
 														public void onClick(DialogInterface dialog,
 																int which) {
+															Log.i(TAG, "Deleting event...");
+															if (deletedBuildings == "") {
+																deletedBuildings = x
+																		.getBuildingName();
+															} else {
+																deletedBuildings += ";"
+																		+ x.getBuildingName();
+															}
+
 															isDeleted = true;
 															mAdapter.mEventsList.remove(pos);
 															mAdapter.notifyDataSetChanged();
 															x.deleteInBackground();
+															updateIntent();
 														}
 													})
 											.setNegativeButton("Cancel",
@@ -185,12 +196,13 @@ public class EventListActivity extends Activity {
 	 * Sets up the following Floating Action Buttons: returnFAB and filterFAB.
 	 */
 	private void setupFAB() {
-		returnFABListener();
+		// returnFABListener();
 		filterFABListener();
 	}
 
 	/**
-	 * Creates returnFAB and handles clicks on it: _____________
+	 * Creates returnFAB and handles clicks on it: updates the intent with the list of buildings
+	 * affected by deleted events and ends the activity.
 	 */
 	private void returnFABListener() {
 		returnFAB = new FloatingActionButton.Builder(this)
@@ -213,7 +225,7 @@ public class EventListActivity extends Activity {
 		filterFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_filter))
 				.withButtonColor(Color.BLUE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 86).create();
+				.withMargins(0, 0, 16, 16).create();
 		filterFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -225,7 +237,6 @@ public class EventListActivity extends Activity {
 				filterMenuOpen = !filterMenuOpen;
 			}
 		});
-
 	}
 
 	/**
@@ -244,7 +255,6 @@ public class EventListActivity extends Activity {
 		buildingFAB.hideFloatingActionButton();
 		orgFAB.hideFloatingActionButton();
 		priceFAB.hideFloatingActionButton();
-		updateAdapter();
 	}
 
 	/**
@@ -254,7 +264,7 @@ public class EventListActivity extends Activity {
 	private void buildingFABListener() {
 		buildingFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_building))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 226, 86).create();
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
 		setBuildingFABState();
 		buildingFAB.hideFloatingActionButton();
 		buildingFAB.showFloatingActionButton();
@@ -284,7 +294,7 @@ public class EventListActivity extends Activity {
 	private void orgFABListener() {
 		orgFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_crowd))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 156, 86).create();
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
 		setOrgFABState();
 		orgFAB.hideFloatingActionButton();
 		orgFAB.showFloatingActionButton();
@@ -314,7 +324,7 @@ public class EventListActivity extends Activity {
 	private void priceFABListner() {
 		priceFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_paid))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 86, 86).create();
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 		setPriceFABState();
 		priceFAB.hideFloatingActionButton();
 		priceFAB.showFloatingActionButton();
@@ -504,16 +514,23 @@ public class EventListActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		updateIntent();
 	}
 
 	/**
 	 * Updates the result storing an intent if an event was deleted.
 	 */
 	private void updateIntent() {
+		Log.i(TAG, "Updating intent");
 		if (isDeleted) {
-			setResult(Activity.RESULT_OK, new Intent().putExtra("deletedEvent", true));
+			Log.i(TAG, "Events deleted, buildings affected: " + deletedBuildings);
+			Intent intent = new Intent().putExtra("deletedEvent", deletedBuildings);
+			if (getParent() == null) {
+				setResult(Activity.RESULT_OK, intent);
+			} else {
+				getParent().setResult(Activity.RESULT_OK, intent);
+			}
 		} else {
+			Log.i(TAG, "No events deleted... nothing to update");
 			setResult(Activity.RESULT_OK);
 		}
 	}

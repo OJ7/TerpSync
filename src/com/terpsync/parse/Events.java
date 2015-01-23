@@ -3,10 +3,10 @@ package com.terpsync.parse;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
-@ParseClassName("EventObject")
-public class EventObject extends ParseObject {
+@ParseClassName("Events")
+public class Events extends ParseObject {
 
-	public EventObject() {
+	public Events() {
 
 	}
 
