@@ -171,6 +171,9 @@ public class EventListActivity extends Activity {
 															mAdapter.notifyDataSetChanged();
 															x.deleteInBackground();
 															updateIntent();
+															Toast.makeText(getBaseContext(), "Event deleted",
+																	Toast.LENGTH_LONG).show();
+															finish();
 														}
 													})
 											.setNegativeButton("Cancel",
