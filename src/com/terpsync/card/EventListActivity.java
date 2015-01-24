@@ -148,6 +148,8 @@ public class EventListActivity extends Activity {
 									// start edit activity
 									Intent intent = new Intent(EventListActivity.this, EditEventActivity.class);
 									intent.putExtra(ParseConstants.admin_org_name, x.getOrgName());
+									intent.putExtra("isNewEvent", false);
+									intent.putExtra(ParseConstants.event_object_id, x.getObjectId());
 									startActivityForResult(intent, 0);
 									// check if building changed
 									// if true, add old building to deleted, new building to added
