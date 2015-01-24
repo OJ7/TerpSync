@@ -9,7 +9,7 @@ import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.card.EventListActivity;
 import com.terpsync.parse.AdminAccounts;
-import com.terpsync.parse.Events;
+import com.terpsync.parse.EventObject;
 import com.terpsync.parse.ParseConstants;
 import com.terpsync.parse.UMDBuildings;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -727,17 +727,17 @@ public class MainActivity extends Activity {
 		markers.clear();
 
 		ParseObject.registerSubclass(UMDBuildings.class);
-		ParseObject.registerSubclass(Events.class);
+		ParseObject.registerSubclass(EventObject.class);
 		ParseObject.registerSubclass(AdminAccounts.class);
 		Parse.initialize(this, this.getString(R.string.parse_app_id),
 				this.getString(R.string.parse_client_key));
 		// Adding current events to map
-		ParseQuery<Events> eventsQuery = ParseQuery.getQuery(Events.class);
-		eventsQuery.findInBackground(new FindCallback<Events>() {
+		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
+		eventsQuery.findInBackground(new FindCallback<EventObject>() {
 			@Override
-			public void done(List<Events> arg0, ParseException arg1) {
+			public void done(List<EventObject> arg0, ParseException arg1) {
 				int count = 1;
-				for (Events x : arg0) {
+				for (EventObject x : arg0) {
 					Log.d(TAG, "Event #: " + count++);
 					// Checking if date has passed
 					boolean oldEvent = false;

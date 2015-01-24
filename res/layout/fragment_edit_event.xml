@@ -6,7 +6,7 @@
     android:alpha=".75"
     android:background="@drawable/bg_big_m"
     android:orientation="vertical"
-    android:paddingEnd="6dp"
+    android:paddingEnd="10dp"
     android:paddingStart="8dp" >
 
     <TextView
@@ -14,34 +14,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:gravity="center_horizontal"
         android:paddingBottom="12dp"
         android:paddingLeft="12dp"
         android:paddingRight="8dp"
         android:paddingTop="12dp"
-        android:text="Student Org Name"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#FFFFFF" />
 
     <LinearLayout
+        android:id="@+id/icon_name_row"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="4" >
+        android:layout_height="wrap_content" >
 
-        <EditText
-            android:id="@+id/eventTitle"
+        <ImageView
+            android:id="@+id/name_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:cropToPadding="false"
+            android:paddingRight="10dp"
+            android:src="@drawable/name" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5"
-            android:hint="@+string/enter_event_name"
-            android:imeOptions="actionNext"
-            android:paddingBottom="8dp"
-            android:singleLine="true"
-            android:textColor="#FFFAF0"
-            android:textColorHint="#A9A9A9" >
+            android:orientation="horizontal"
+            android:weightSum="4" >
 
-            <requestFocus />
-        </EditText>
+            <EditText
+                android:id="@+id/eventTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:hint="@+string/enter_event_name"
+                android:imeOptions="actionNext"
+                android:paddingBottom="8dp"
+                android:singleLine="true"
+                android:textColor="#FFFAF0"
+                android:textColorHint="#A9A9A9" >
+
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -224,16 +238,6 @@
                 android:paddingBottom="8dp"
                 android:paddingLeft="8dp" >
 
-                <TextView
-                    android:id="@+id/eventAdmissionFee"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.5"
-                    android:paddingTop="4dp"
-                    android:text="@+string/event_admission_fee"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp" />
-
                 <RadioGroup
                     android:id="@+id/eventAdmissionRadioGroup"
                     android:layout_width="0dp"
@@ -262,7 +266,8 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:paddingRight="20dp" >
 
                 <TextView
                     android:id="@+id/eventCost_textView"
@@ -274,7 +279,7 @@
                     android:text="@+string/enter_cost_textView"
                     android:textColor="#FFFFFF"
                     android:textSize="22sp"
-                    android:visibility="invisible" />
+                    android:visibility="visible" />
 
                 <EditText
                     android:id="@+id/eventCost"
@@ -288,7 +293,7 @@
                     android:paddingLeft="8dp"
                     android:textColor="#FFFAF0"
                     android:textColorHint="#A9A9A9"
-                    android:visibility="invisible" />
+                    android:visibility="visible" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

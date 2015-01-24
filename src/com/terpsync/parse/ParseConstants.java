@@ -2,7 +2,7 @@ package com.terpsync.parse;
 
 public class ParseConstants {
 
-	// Strings used to access fields for Events
+	// Strings used to access fields for EventObject
 	public static final String event_org_name = "OrganizationName";
 	public static final String event_name = "EventName";
 	public static final String event_location = "BuildingName";

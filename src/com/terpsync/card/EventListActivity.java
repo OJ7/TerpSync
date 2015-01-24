@@ -3,9 +3,12 @@ package com.terpsync.card;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.terpsync.AddEventActivity;
+import com.terpsync.EditEventActivity;
 import com.terpsync.FloatingActionButton;
+import com.terpsync.MainActivity;
 import com.terpsync.R;
-import com.terpsync.parse.Events;
+import com.terpsync.parse.EventObject;
 import com.terpsync.parse.ParseConstants;
 import com.google.android.gms.drive.internal.x;
 import com.google.android.gms.internal.ma;
@@ -34,7 +37,7 @@ public class EventListActivity extends Activity {
 	private FloatingActionButton returnFAB, filterFAB, buildingFAB, orgFAB, priceFAB;
 	CardListAdapter mAdapter;
 	ListView lv; // List for all the event cards
-	List<Events> fullEventList, filteredEventList;
+	List<EventObject> fullEventList, filteredEventList;
 	AlertDialog.Builder action_builder, delete_builder;
 	View view = null;
 	boolean isDeleted = false, filterMenuOpen = false, orgFiltered = false,
@@ -95,7 +98,7 @@ public class EventListActivity extends Activity {
 	 */
 	private void getEventsAndCreateList(String filterType, String filterName) {
 		// Create the Parse Query object
-		ParseQuery<Events> eventsQuery = ParseQuery.getQuery(Events.class);
+		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
 		// Sort events by Start Date
 		eventsQuery.orderByAscending("StartDate");
 		// Checks if events need to be filtered
@@ -103,9 +106,9 @@ public class EventListActivity extends Activity {
 			eventsQuery.whereContains(filterType, filterName);
 		}
 		// Initiate a background thread, retrieve all Event Objects
-		eventsQuery.findInBackground(new FindCallback<Events>() {
+		eventsQuery.findInBackground(new FindCallback<EventObject>() {
 			@Override
-			public void done(List<Events> events, ParseException e) {
+			public void done(List<EventObject> events, ParseException e) {
 				if (e == null) { // All events were successfully returned
 					fullEventList = events;
 					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card, events);
@@ -115,7 +118,6 @@ public class EventListActivity extends Activity {
 				}
 			}
 		});
-		// filteredEventList = new ArrayList<Events>(fullEventList);
 
 		// TODO - Add On-Click Listeners for Cards
 		// - if click on card, expand cards (show detailed view w/button to edit/delete)
@@ -132,7 +134,7 @@ public class EventListActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> adaptView, View v, int position, long id) {
 				final int pos = position;
-				final Events x = (Events) adaptView.getItemAtPosition(pos);
+				final EventObject x = (EventObject) adaptView.getItemAtPosition(pos);
 
 				// Create alert dialog
 				action_builder.setTitle("Please select an option")
@@ -142,8 +144,16 @@ public class EventListActivity extends Activity {
 								switch (item) {
 								case 0: // Edit Event
 									Log.i(TAG, "Clicked on Edit Event");
-									Toast.makeText(getBaseContext(), "Implement Editing Event",
-											Toast.LENGTH_LONG).show();
+									
+									// start edit activity
+									Intent intent = new Intent(EventListActivity.this, EditEventActivity.class);
+									intent.putExtra(ParseConstants.admin_org_name, x.getOrgName());
+									startActivityForResult(intent, 0);
+									// check if building changed
+									// if true, add old building to deleted, new building to added
+									
+									//Toast.makeText(getBaseContext(), "Implement Editing Event",
+									//		Toast.LENGTH_LONG).show();
 									break;
 
 								case 1: // Delete Event

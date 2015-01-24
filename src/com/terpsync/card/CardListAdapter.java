@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import com.google.android.gms.internal.lo;
 import com.terpsync.R;
-import com.terpsync.parse.Events;
+import com.terpsync.parse.EventObject;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -25,20 +25,20 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class CardListAdapter extends ArrayAdapter<Events> implements Filterable {
+public class CardListAdapter extends ArrayAdapter<EventObject> implements Filterable {
 
 	private static final String TAG = "CardListAdapter";
 	private Context mContext;
 	private final Object lock = new Object();
-	private ArrayList<Events> mOriginalEvents;
+	private ArrayList<EventObject> mOriginalEvents;
 
-	List<Events> mEventsList;
+	List<EventObject> mEventsList;
 
 	// Constructor
-	public CardListAdapter(Context context, int resourceId, List<Events> item) {
+	public CardListAdapter(Context context, int resourceId, List<EventObject> item) {
 		super(context, resourceId, item);
 		this.mContext = context;
-		this.mEventsList = (ArrayList<Events>) item;
+		this.mEventsList = (ArrayList<EventObject>) item;
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class CardListAdapter extends ArrayAdapter<Events> implements Filterable 
 			vh = (ViewHolder) convertView.getTag();
 		}
 
-		Events currCard = mEventsList.get(position); // Get current card
+		EventObject currCard = mEventsList.get(position); // Get current card
 
 		// Set the title, organization, and location
 		vh.event_title.setText(currCard.getEventName());
@@ -116,7 +116,7 @@ public class CardListAdapter extends ArrayAdapter<Events> implements Filterable 
 	};
 
 	@Override
-	public Events getItem(final int position) {
+	public EventObject getItem(final int position) {
 		return this.mEventsList.get(position);
 	}
 
@@ -142,48 +142,48 @@ public class CardListAdapter extends ArrayAdapter<Events> implements Filterable 
 
 				if (mOriginalEvents == null) {
 					synchronized (lock) {
-						mOriginalEvents = new ArrayList<Events>(mEventsList);
+						mOriginalEvents = new ArrayList<EventObject>(mEventsList);
 					}
 				}
 
 				if (constraint == null || constraint.length() == 0) {
 					synchronized (lock) {
-						ArrayList<Events> list = new ArrayList<Events>(mOriginalEvents);
+						ArrayList<EventObject> list = new ArrayList<EventObject>(mOriginalEvents);
 						filterResults.values = list;
 						filterResults.count = list.size();
 					}
 				} else {
-					List<Events> filteredEvents = new ArrayList<Events>();
+					List<EventObject> filteredEvents = new ArrayList<EventObject>();
 					int i = Integer.parseInt(constraint.toString().substring(0, 1));
 					String filterName = constraint.subSequence(2, constraint.length()).toString();
 					int numEvents = 0;
-					for (Events events : mEventsList) {
+					for (EventObject eventObject : mEventsList) {
 						switch (i) {
 						case 0: // filter by building
 							//Log.i(TAG, "Filtering by Building: " + filterName);
-							if (events.getBuildingName().equals(filterName)) {
-								filteredEvents.add(events);
+							if (eventObject.getBuildingName().equals(filterName)) {
+								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}
 							break;
 						case 1: // filter by organization
 							//Log.i(TAG, "Filtering by Organization: " + filterName);
-							if (events.getOrgName().equals(filterName)) {
-								filteredEvents.add(events);
+							if (eventObject.getOrgName().equals(filterName)) {
+								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}
 							break;
 						case 2: // filter by free
 							//Log.i(TAG, "Filtering by Free Events");
-							if (events.getAdmission().equals(filterName)) {
-								filteredEvents.add(events);
+							if (eventObject.getAdmission().equals(filterName)) {
+								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}
 							break;
 						case 3: // filter by paid
-							//Log.i(TAG, "Filtering by Paid Events");
-							if (!events.getAdmission().equals(filterName)) {
-								filteredEvents.add(events);
+							//Log.i(TAG, "Filtering by Paid EventObject");
+							if (!eventObject.getAdmission().equals(filterName)) {
+								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}
 							break;
@@ -201,7 +201,7 @@ public class CardListAdapter extends ArrayAdapter<Events> implements Filterable 
 
 			@Override
 			protected void publishResults(CharSequence contraint, FilterResults results) {
-				mEventsList = (List<Events>) results.values;
+				mEventsList = (List<EventObject>) results.values;
 
 				if (results != null && results.count > 0) {
 					notifyDataSetChanged();
@@ -217,7 +217,7 @@ public class CardListAdapter extends ArrayAdapter<Events> implements Filterable 
 
 	public ArrayList<String> getValuesFromFields(String field) {
 		ArrayList<String> list = new ArrayList<String>();
-		for (Events x : mEventsList) {
+		for (EventObject x : mEventsList) {
 			if (field.equals("building")) {
 				if (!list.contains(x.getBuildingName())) {
 					list.add(x.getBuildingName());
@@ -237,8 +237,8 @@ public class CardListAdapter extends ArrayAdapter<Events> implements Filterable 
 	 * @param newList
 	 *            the list of events to replace with
 	 */
-	public void updateData(List<Events> newList) {
-		this.mEventsList = (ArrayList<Events>) newList;
+	public void updateData(List<EventObject> newList) {
+		this.mEventsList = (ArrayList<EventObject>) newList;
 	}
 
 	/**

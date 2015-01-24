@@ -24,28 +24,30 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class AddEventActivity extends Activity {
+public class EditEventFragment extends Fragment {
 
-	private static final String TAG = "AddEventActivity";
+	private static final String TAG = "EditEventFragement";
 
-	EventObject eventObject;
-	Calendar myCalendar = Calendar.getInstance();
-
-	TextView orgNameTextView, startDateTextView, startTimeTextView, endDateTextView,
-			endTimeTextView, dollarSignTextView;
+	TextView orgNameTV, startDateTextView, startTimeTextView, endDateTextView, endTimeTextView,
+			dollarSignTextView;
 	AutoCompleteTextView eventLocationTextView;
 	EditText eventNameEditText, eventDescriptionEditText, costEditText;
 	RadioGroup admissionRadioGroup;
@@ -54,46 +56,70 @@ public class AddEventActivity extends Activity {
 	String currentOrganization;
 	ArrayList<String> buildingNames;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_add_event);
-		ActionBar actionBar = getActionBar();
-		actionBar.setTitle("New Event");
-		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
-		Intent intent = getIntent();
-		currentOrganization = intent.getStringExtra(ParseConstants.admin_org_name);
-		Log.i(TAG, "Adding event as:" + currentOrganization);
+	private EventObject mEvent;
+	private Calendar myCalendar = Calendar.getInstance();
+	private LinearLayout rootView;
+	private FragmentActivity fragAct;
+	private Intent mIntent;
+	private int mYear = myCalendar.get(Calendar.YEAR), mMonth = myCalendar.get(Calendar.MONTH),
+			mDay = myCalendar.get(Calendar.DAY_OF_MONTH), mHour = myCalendar
+					.get(Calendar.HOUR_OF_DAY), mMinute = myCalendar.get(Calendar.MINUTE);
 
-		eventObject = new EventObject();
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+		fragAct = super.getActivity();
+		rootView = (LinearLayout) inflater.inflate(R.layout.fragment_edit_event, container, false);
+
+		mIntent = fragAct.getIntent();
+
+		currentOrganization = mIntent.getStringExtra(ParseConstants.admin_org_name);
 
 		cacheWidgets();
 		queryAndFillAutoCompleteView();
 		setViewListeners();
 		setSubmitButtonListener();
+		orgNameTV.setText(currentOrganization);
 
-		orgNameTextView.setText(currentOrganization);
+		// check if adding or editing
+		if (true) {
+			Log.i(TAG, "Adding event as:" + currentOrganization);
+			mEvent = new EventObject();
+		} else {
+			Log.i(TAG, "Editing event as:" + currentOrganization);
+			// fill fields with info from event
+		}
 
-	} // end of onCreate
+		return rootView;
+	}
+
+	public EditEventFragment() {
+
+	}
+
+	public EditEventFragment(EventObject event, boolean readOnly, Intent intent) {
+		mEvent = event;
+		mIntent = intent;
+		setHasOptionsMenu(true);
+	}
 
 	/**
 	 * Get references to all the views
 	 */
 	private void cacheWidgets() {
-		orgNameTextView = (TextView) findViewById(R.id.studentOrgName);
-		eventNameEditText = (EditText) findViewById(R.id.eventTitle);
-		startDateTextView = (TextView) findViewById(R.id.eventStartDate);
-		endDateTextView = (TextView) findViewById(R.id.eventEndDate);
-		startTimeTextView = (TextView) findViewById(R.id.eventStartTime);
-		endTimeTextView = (TextView) findViewById(R.id.eventEndTime);
-		eventLocationTextView = (AutoCompleteTextView) findViewById(R.id.eventLocation);
-		eventDescriptionEditText = (EditText) findViewById(R.id.eventDescription);
-		admissionRadioGroup = (RadioGroup) findViewById(R.id.eventAdmissionRadioGroup);
-		freeButton = (RadioButton) findViewById(R.id.eventFree);
-		paidButton = (RadioButton) findViewById(R.id.eventPaid);
-		costEditText = (EditText) findViewById(R.id.eventCost);
-		saveButton = (Button) findViewById(R.id.save_event_button);
-		dollarSignTextView = (TextView) findViewById(R.id.eventCost_textView);
+		orgNameTV = (TextView) rootView.findViewById(R.id.studentOrgName);
+		eventNameEditText = (EditText) rootView.findViewById(R.id.eventTitle);
+		startDateTextView = (TextView) rootView.findViewById(R.id.eventStartDate);
+		endDateTextView = (TextView) rootView.findViewById(R.id.eventEndDate);
+		startTimeTextView = (TextView) rootView.findViewById(R.id.eventStartTime);
+		endTimeTextView = (TextView) rootView.findViewById(R.id.eventEndTime);
+		eventLocationTextView = (AutoCompleteTextView) rootView.findViewById(R.id.eventLocation);
+		eventDescriptionEditText = (EditText) rootView.findViewById(R.id.eventDescription);
+		admissionRadioGroup = (RadioGroup) rootView.findViewById(R.id.eventAdmissionRadioGroup);
+		freeButton = (RadioButton) rootView.findViewById(R.id.eventFree);
+		paidButton = (RadioButton) rootView.findViewById(R.id.eventPaid);
+		costEditText = (EditText) rootView.findViewById(R.id.eventCost);
+		saveButton = (Button) rootView.findViewById(R.id.save_event_button);
+		dollarSignTextView = (TextView) rootView.findViewById(R.id.eventCost_textView);
 	}
 
 	/**
@@ -117,7 +143,7 @@ public class AddEventActivity extends Activity {
 				}
 
 				// Create an ArrayAdapter containing country names
-				ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(AddEventActivity.this,
+				ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(fragAct,
 						R.layout.list_item, buildingNames.toArray());
 
 				// Set the adapter for the AutoCompleteTextView and add Validator
@@ -197,32 +223,26 @@ public class AddEventActivity extends Activity {
 		startDateTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new DatePickerDialog(AddEventActivity.this, startDatePicker, myCalendar
-						.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar
-						.get(Calendar.DAY_OF_MONTH)).show();
+				new DatePickerDialog(fragAct, mStartDateListener, mYear, mMonth, mDay).show();
 
 			}
 		});
 		endDateTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new DatePickerDialog(AddEventActivity.this, endDatePicker, myCalendar
-						.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar
-						.get(Calendar.DAY_OF_MONTH)).show();
+				new DatePickerDialog(fragAct, mEndDateListener, mYear, mMonth, mDay).show();
 			}
 		});
 		startTimeTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new TimePickerDialog(AddEventActivity.this, startTimePicker, myCalendar
-						.get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE), false).show();
+				new TimePickerDialog(fragAct, mStartTimeListener, mHour, mMinute, false).show();
 			}
 		});
 		endTimeTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new TimePickerDialog(AddEventActivity.this, endTimePicker, myCalendar
-						.get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE), false).show();
+				new TimePickerDialog(fragAct, mEndTimeListener, mHour, mMinute, false).show();
 			}
 		});
 
@@ -236,7 +256,7 @@ public class AddEventActivity extends Activity {
 	 * messages to the user.
 	 * 
 	 * It will then query the GPS coordinates based on the building selected by the user and include
-	 * that in the events information for easy data base retrieval when adding a marker in
+	 * that in the mEvent information for easy data base retrieval when adding a marker in
 	 * onActivityResult
 	 */
 	private void setSubmitButtonListener() {
@@ -249,7 +269,7 @@ public class AddEventActivity extends Activity {
 				boolean formFilled = true;
 
 				// TODO (major) - make sure location from list is chosen
-				if (orgNameTextView.getText().toString().isEmpty()
+				if (orgNameTV.getText().toString().isEmpty()
 						|| eventNameEditText.getText().toString().isEmpty()
 						|| startDateTextView.getText().toString().isEmpty()
 						|| endDateTextView.getText().toString().isEmpty()
@@ -260,23 +280,23 @@ public class AddEventActivity extends Activity {
 						|| (!paidButton.isChecked() && !freeButton.isChecked())) {
 
 					formFilled = false;
-					Toast.makeText(getApplicationContext(), "Please fill all required fields",
-							Toast.LENGTH_LONG).show();
+					Toast.makeText(fragAct, "Please fill all required fields", Toast.LENGTH_LONG)
+							.show();
 
 				}
 
 				// All valid input from User, create parse object and add to DB
 				if (formFilled) {
 
-					eventObject.setOrgName(orgNameTextView.getText().toString());
-					eventObject.setEventName(eventNameEditText.getText().toString());
-					eventObject.setBuildingName(eventLocationTextView.getText().toString());
-					eventObject.setDescription(eventDescriptionEditText.getText().toString());
+					mEvent.setOrgName(orgNameTV.getText().toString());
+					mEvent.setEventName(eventNameEditText.getText().toString());
+					mEvent.setBuildingName(eventLocationTextView.getText().toString());
+					mEvent.setDescription(eventDescriptionEditText.getText().toString());
 
 					if (paidButton.isChecked()) {
-						eventObject.setAdmission(costEditText.getText().toString());
+						mEvent.setAdmission(costEditText.getText().toString());
 					} else {
-						eventObject.setAdmission("FREE");
+						mEvent.setAdmission("FREE");
 					}
 
 					/*
@@ -284,18 +304,18 @@ public class AddEventActivity extends Activity {
 					 * callback which waits until it is refreshed so we can extract its newly
 					 * created object ID
 					 */
-					eventObject.saveInBackground(new SaveCallback() {
+					mEvent.saveInBackground(new SaveCallback() {
 
 						@Override
 						public void done(ParseException arg0) {
-							setResult(
+							fragAct.setResult(
 									Activity.RESULT_OK,
 									new Intent().putExtra("addBuildingName",
-											eventObject.getBuildingName()));
+											mEvent.getBuildingName()));
 							Log.i(TAG, "Event successfully added.");
-							Toast.makeText(getApplicationContext(), "Created event successfully",
+							Toast.makeText(fragAct, "Created event successfully",
 									Toast.LENGTH_SHORT).show();
-							finish();
+							fragAct.finish();
 						}
 					});
 				}
@@ -315,7 +335,7 @@ public class AddEventActivity extends Activity {
 	 * If endDate or endTime not set, default to one hour past startDate/Time If endDate/Time
 	 * changed to before startDate/Time, change to difference in shift in endDate/Time
 	 */
-	DatePickerDialog.OnDateSetListener startDatePicker = new DatePickerDialog.OnDateSetListener() {
+	DatePickerDialog.OnDateSetListener mStartDateListener = new DatePickerDialog.OnDateSetListener() {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 			myCalendar.set(Calendar.YEAR, year);
@@ -329,7 +349,7 @@ public class AddEventActivity extends Activity {
 																				// because it starts
 																				// at index 0
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-				eventObject.setStartDate(sdf.format(date));
+				mEvent.setStartDate(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
 				e.printStackTrace();
@@ -340,7 +360,7 @@ public class AddEventActivity extends Activity {
 	/**
 	 * TODO - Add documentation
 	 */
-	DatePickerDialog.OnDateSetListener endDatePicker = new DatePickerDialog.OnDateSetListener() {
+	DatePickerDialog.OnDateSetListener mEndDateListener = new DatePickerDialog.OnDateSetListener() {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 			myCalendar.set(Calendar.YEAR, year);
@@ -354,7 +374,7 @@ public class AddEventActivity extends Activity {
 																				// because it starts
 																				// at index 0
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-				eventObject.setEndDate(sdf.format(date));
+				mEvent.setEndDate(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
 				e.printStackTrace();
@@ -365,7 +385,7 @@ public class AddEventActivity extends Activity {
 	/**
 	 * TODO - Add documentation
 	 */
-	TimePickerDialog.OnTimeSetListener startTimePicker = new TimePickerDialog.OnTimeSetListener() {
+	TimePickerDialog.OnTimeSetListener mStartTimeListener = new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
@@ -376,7 +396,7 @@ public class AddEventActivity extends Activity {
 				date = new SimpleDateFormat("hh:mm", Locale.US).parse(String.format("%02d:%02d",
 						hourOfDay, minute));
 				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.US);
-				eventObject.setStartTime(sdf.format(date));
+				mEvent.setStartTime(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
 				e.printStackTrace();
@@ -387,7 +407,7 @@ public class AddEventActivity extends Activity {
 	/**
 	 * TODO - Add documentation
 	 */
-	TimePickerDialog.OnTimeSetListener endTimePicker = new TimePickerDialog.OnTimeSetListener() {
+	TimePickerDialog.OnTimeSetListener mEndTimeListener = new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
@@ -398,7 +418,7 @@ public class AddEventActivity extends Activity {
 				date = new SimpleDateFormat("hh:mm", Locale.US).parse(String.format("%02d:%02d",
 						hourOfDay, minute));
 				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.US);
-				eventObject.setEndTime(sdf.format(date));
+				mEvent.setEndTime(sdf.format(date));
 			} catch (java.text.ParseException e) {
 
 				e.printStackTrace();
