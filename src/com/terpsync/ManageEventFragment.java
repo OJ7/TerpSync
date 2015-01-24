@@ -42,7 +42,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class EditEventFragment extends Fragment {
+public class ManageEventFragment extends Fragment {
 
 	private static final String TAG = "EditEventFragement";
 
@@ -68,7 +68,7 @@ public class EditEventFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		fragAct = super.getActivity();
-		rootView = (LinearLayout) inflater.inflate(R.layout.fragment_edit_event, container, false);
+		rootView = (LinearLayout) inflater.inflate(R.layout.fragment_manage_event, container, false);
 
 		mIntent = fragAct.getIntent();
 
@@ -92,11 +92,11 @@ public class EditEventFragment extends Fragment {
 		return rootView;
 	}
 
-	public EditEventFragment() {
+	public ManageEventFragment() {
 
 	}
 
-	public EditEventFragment(EventObject event, boolean readOnly, Intent intent) {
+	public ManageEventFragment(EventObject event, boolean readOnly, Intent intent) {
 		mEvent = event;
 		mIntent = intent;
 		setHasOptionsMenu(true);

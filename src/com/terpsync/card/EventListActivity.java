@@ -51,7 +51,7 @@ public class EventListActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_list);
+		setContentView(R.layout.activity_event_list);
 		action_builder = new AlertDialog.Builder(this);
 		delete_builder = new AlertDialog.Builder(this);
 		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));

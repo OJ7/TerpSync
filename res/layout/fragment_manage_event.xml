@@ -279,7 +279,7 @@
                     android:text="@+string/enter_cost_textView"
                     android:textColor="#FFFFFF"
                     android:textSize="22sp"
-                    android:visibility="visible" />
+                    android:visibility="invisible" />
 
                 <EditText
                     android:id="@+id/eventCost"
@@ -293,7 +293,7 @@
                     android:paddingLeft="8dp"
                     android:textColor="#FFFAF0"
                     android:textColorHint="#A9A9A9"
-                    android:visibility="visible" />
+                    android:visibility="invisible" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
