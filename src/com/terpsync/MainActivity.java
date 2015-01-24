@@ -419,6 +419,7 @@ public class MainActivity extends Activity {
 						case 0: // Add Event
 							Intent intent = new Intent(MainActivity.this, AddEventActivity.class);
 							intent.putExtra(ParseConstants.admin_org_name, currentOrganization);
+							intent.putExtra("isNewEvent", true);
 							startActivityForResult(intent, 0);
 							break;
 						case 1: // My Events

@@ -154,8 +154,7 @@ public class EventListActivity extends Activity {
 									// check if building changed
 									// if true, add old building to deleted, new building to added
 									
-									//Toast.makeText(getBaseContext(), "Implement Editing Event",
-									//		Toast.LENGTH_LONG).show();
+
 									break;
 
 								case 1: // Delete Event
@@ -183,7 +182,7 @@ public class EventListActivity extends Activity {
 															mAdapter.notifyDataSetChanged();
 															x.deleteInBackground();
 															updateIntent();
-															Toast.makeText(getBaseContext(), "Event deleted",
+															Toast.makeText(getBaseContext(), "Event Deleted",
 																	Toast.LENGTH_LONG).show();
 															finish();
 														}

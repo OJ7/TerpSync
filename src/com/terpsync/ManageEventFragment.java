@@ -82,7 +82,7 @@ public class ManageEventFragment extends Fragment {
 		currentOrganization = mIntent.getStringExtra(ParseConstants.admin_org_name);
 		orgNameText.setText(currentOrganization);
 
-		isNewEvent = mIntent.getBooleanExtra("isNew", false);
+		isNewEvent = mIntent.getBooleanExtra("isNewEvent", false);
 
 		// check if adding or editing
 		if (isNewEvent) { // Creating Event
