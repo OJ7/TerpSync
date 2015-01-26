@@ -2,29 +2,22 @@ package com.terpsync;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import com.terpsync.R;
-import com.terpsync.card.CardListAdapter;
 import com.terpsync.parse.EventObject;
 import com.terpsync.parse.ParseConstants;
 import com.terpsync.parse.UMDBuildings;
-import com.google.android.gms.internal.el;
 import com.parse.FindCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -46,7 +39,7 @@ import android.widget.Toast;
 
 public class ManageEventFragment extends Fragment {
 
-	private static final String TAG = "EditEventFragement";
+	private static final String TAG = "ManageEventFragement";
 
 	TextView orgNameText, startDateText, startTimeText, endDateText, endTimeText, dollarSignText;
 	AutoCompleteTextView eventLocationText;
@@ -57,17 +50,22 @@ public class ManageEventFragment extends Fragment {
 	String currentOrganization;
 	ArrayList<String> buildingNames;
 
-	private EventObject mEvent;
-	private Calendar myCalendar = Calendar.getInstance();
+	private EventObject mEvent; // The event to be created (or edited)
+	private Calendar myCalendar = Calendar.getInstance(), startCal = Calendar.getInstance(),
+			endCal = Calendar.getInstance();
 	private LinearLayout rootView;
-	private FragmentActivity fragAct;
+	private FragmentActivity fragAct; // The FragmentActivity this fragment is attached too
 	private Intent mIntent;
 	private int mYear = myCalendar.get(Calendar.YEAR), mMonth = myCalendar.get(Calendar.MONTH),
 			mDay = myCalendar.get(Calendar.DAY_OF_MONTH), mHour = myCalendar
 					.get(Calendar.HOUR_OF_DAY), mMinute = myCalendar.get(Calendar.MINUTE);
-	private boolean isNewEvent; // determines whether to create new event or edit exisiting one
+	private boolean isNewEvent; // determines whether to create new event or edit existing one
+	private boolean isLocationChanged; // determines if location was changed when editing event
+	private String originalBuilding; // the building from the eventObject (if editing event)
+	private String objectID; // the objectID of eventObject (if editing event)
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		Log.i(TAG, "Entering onCreateView()");
 
 		fragAct = super.getActivity();
 		rootView = (LinearLayout) inflater
@@ -77,24 +75,23 @@ public class ManageEventFragment extends Fragment {
 		cacheWidgets();
 		queryAndFillAutoCompleteView();
 		setViewListeners();
-		setSubmitButtonListener();
 
 		currentOrganization = mIntent.getStringExtra(ParseConstants.admin_org_name);
 		orgNameText.setText(currentOrganization);
 
 		isNewEvent = mIntent.getBooleanExtra("isNewEvent", false);
 
-		// check if adding or editing
+		// check if Creating or Editing Event+Loading Data
 		if (isNewEvent) { // Creating Event
 			Log.i(TAG, "Adding event as:" + currentOrganization);
 			mEvent = new EventObject();
 		} else { // Editing Event
 			Log.i(TAG, "Editing event as:" + currentOrganization);
 			// Getting the EventObject and assigning to mEvent
-			String id = mIntent.getStringExtra(ParseConstants.event_object_id);
+			objectID = mIntent.getStringExtra(ParseConstants.event_object_id);
 			try {
 				ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
-				mEvent = eventsQuery.get(id);
+				mEvent = eventsQuery.get(objectID);
 			} catch (ParseException e1) {
 				e1.printStackTrace();
 			}
@@ -105,19 +102,14 @@ public class ManageEventFragment extends Fragment {
 	}
 
 	public ManageEventFragment() {
-
-	}
-
-	public ManageEventFragment(EventObject event, boolean readOnly, Intent intent) {
-		mEvent = event;
-		mIntent = intent;
-		setHasOptionsMenu(true);
+		// nothing here
 	}
 
 	/**
 	 * Get references to all the views
 	 */
 	private void cacheWidgets() {
+		Log.i(TAG, "cacheWidgets()");
 		orgNameText = (TextView) rootView.findViewById(R.id.studentOrgName);
 		eventNameText = (EditText) rootView.findViewById(R.id.eventTitle);
 		startDateText = (TextView) rootView.findViewById(R.id.eventStartDate);
@@ -135,12 +127,13 @@ public class ManageEventFragment extends Fragment {
 	}
 
 	/**
-	 * TODO - update documentation
-	 * 
 	 * This method initializes a Query that populates the AutoCompleteTextView with all the
-	 * Buildings on Campus in a background thread.
+	 * buildings on campus in a background thread. A validator is attache to the eventLocationText
+	 * to make sure a building was chosen from the list.
 	 */
 	private void queryAndFillAutoCompleteView() {
+		Log.i(TAG, "Entering queryAndFillAutoCompleteView()");
+
 		ParseQuery<UMDBuildings> query = ParseQuery.getQuery(UMDBuildings.class);
 		query.whereExists("name"); // will get all the buildings
 		query.setLimit(200); // setting max num of queries
@@ -148,20 +141,25 @@ public class ManageEventFragment extends Fragment {
 
 			@Override
 			public void done(List<UMDBuildings> arg0, ParseException arg1) {
-				buildingNames = new ArrayList<String>(arg0.size());
+				if (arg1 == null) {
+					buildingNames = new ArrayList<String>(arg0.size());
 
-				for (UMDBuildings building : arg0) {
-					buildingNames.add(building.getName());
+					for (UMDBuildings building : arg0) {
+						buildingNames.add(building.getName());
+					}
+
+					// Create an ArrayAdapter containing country names
+					ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(fragAct,
+							R.layout.list_item, buildingNames.toArray());
+
+					// Set the adapter for the AutoCompleteTextView and add Validator
+					eventLocationText.setAdapter(adapter);
+					eventLocationText.setValidator(new Validator());
+					eventLocationText.setOnFocusChangeListener(new FocusListener());
+				} else {
+					arg1.printStackTrace();
 				}
 
-				// Create an ArrayAdapter containing country names
-				ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(fragAct,
-						R.layout.list_item, buildingNames.toArray());
-
-				// Set the adapter for the AutoCompleteTextView and add Validator
-				eventLocationText.setAdapter(adapter);
-				eventLocationText.setValidator(new Validator());
-				eventLocationText.setOnFocusChangeListener(new FocusListener());
 			}
 		});
 	}
@@ -194,7 +192,7 @@ public class ManageEventFragment extends Fragment {
 	/**
 	 * Used with eventLocationTextView to validate the input in field after view focus is changed.
 	 * 
-	 * @author Gooner
+	 * @author OJ
 	 * 
 	 */
 	class FocusListener implements View.OnFocusChangeListener {
@@ -209,13 +207,17 @@ public class ManageEventFragment extends Fragment {
 	}
 
 	/**
-	 * TODO - Add documentation
+	 * Sets the associated listeners for the admissionRadioGroup and the (start/end)-(date/time)
+	 * TextViews.
 	 */
 	private void setViewListeners() {
+		Log.i(TAG, "Entering setViewListeners()");
 		// RadioGroup Listeners
+		Log.i(TAG, "Setting admissionRadioGroupListener");
 		admissionRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				locationClearFocus();
 				if (checkedId == -1) {
 					// No item selected
 				} else if (checkedId == R.id.eventFree) {
@@ -227,16 +229,15 @@ public class ManageEventFragment extends Fragment {
 					costText.setVisibility(View.VISIBLE);
 					dollarSignText.setVisibility(View.VISIBLE);
 				}
-
 			}
 		});
 
 		// OnClickListeners for Date and Time pickers
+		Log.i(TAG, "Setting Listeners for Date and Time Pickers");
 		startDateText.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new DatePickerDialog(fragAct, mStartDateListener, mYear, mMonth, mDay).show();
-
 			}
 		});
 		endDateText.setOnClickListener(new View.OnClickListener() {
@@ -258,29 +259,21 @@ public class ManageEventFragment extends Fragment {
 			}
 		});
 
+		setSubmitButtonListener();
 	}
 
 	/**
-	 * TODO - update documentation
-	 * 
-	 * The Save Button listener will check to make sure if all the users input is correct before
-	 * adding the new event to the database. If any fields are invalid it will display toast
-	 * messages to the user.
-	 * 
-	 * It will then query the GPS coordinates based on the building selected by the user and include
-	 * that in the mEvent information for easy data base retrieval when adding a marker in
-	 * onActivityResult
+	 * The submitButtonListener will check to make sure if all the users input is correct before
+	 * adding the new event (or updating) to the database. If any fields are invalid it will display
+	 * toast messages to the user.
 	 */
 	private void setSubmitButtonListener() {
-
+		Log.i(TAG, "Setting SubmitButtonListener");
 		saveButton.setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-
+				locationClearFocus();
 				boolean formFilled = true;
-
-				// TODO (major) - make sure location from list is chosen
 				if (orgNameText.getText().toString().isEmpty()
 						|| eventNameText.getText().toString().isEmpty()
 						|| startDateText.getText().toString().isEmpty()
@@ -290,16 +283,15 @@ public class ManageEventFragment extends Fragment {
 						|| eventLocationText.getText().toString().isEmpty()
 						|| (paidButton.isChecked() && costText.getText().toString().isEmpty())
 						|| (!paidButton.isChecked() && !freeButton.isChecked())) {
-
 					formFilled = false;
+					Log.i(TAG, "All required fields not filled out");
 					Toast.makeText(fragAct, "Please fill all required fields", Toast.LENGTH_LONG)
 							.show();
-
 				}
 
 				// All valid input from User, create parse object and add to DB
 				if (formFilled) {
-
+					Log.i(TAG, "Form filled out, setting eventObject fields");
 					mEvent.setOrgName(orgNameText.getText().toString());
 					mEvent.setEventName(eventNameText.getText().toString());
 					mEvent.setBuildingName(eventLocationText.getText().toString());
@@ -311,35 +303,30 @@ public class ManageEventFragment extends Fragment {
 						mEvent.setAdmission("FREE");
 					}
 
+					if ((!mEvent.getBuildingName().equals(originalBuilding)))
+						isLocationChanged = true;
+
 					/*
 					 * saveInBackground uploads the parse object to the DB creating a new save
 					 * callback which waits until it is refreshed so we can extract its newly
 					 * created object ID
 					 */
 					mEvent.saveInBackground(new SaveCallback() {
-
 						@Override
 						public void done(ParseException arg0) {
-							fragAct.setResult(
-									Activity.RESULT_OK,
-									new Intent().putExtra("addBuildingName",
-											mEvent.getBuildingName()));
-							Log.i(TAG, "Event successfully added.");
-							Toast.makeText(fragAct, "Created event successfully",
-									Toast.LENGTH_SHORT).show();
-							fragAct.finish();
+							setResult();
 						}
 					});
 				}
-
 			}
 		});
-
 	}
 
 	// TODO (minor) - manage default behavior for date/time
 	/**
-	 * TODO - update documentation
+	 * Listener gets the date from DatePicker and updates the associated startDate TextView
+	 * 
+	 * TODO - implement below behaviors.
 	 * 
 	 * If startDate or startTime not set, default to current day and current time rounded up to
 	 * nearest hour.
@@ -350,16 +337,15 @@ public class ManageEventFragment extends Fragment {
 	DatePickerDialog.OnDateSetListener mStartDateListener = new DatePickerDialog.OnDateSetListener() {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-			myCalendar.set(Calendar.YEAR, year);
-			myCalendar.set(Calendar.MONTH, monthOfYear);
-			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-			updateDateLabel(startDateText);
+			startCal.set(Calendar.YEAR, year);
+			startCal.set(Calendar.MONTH, monthOfYear);
+			startCal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+			updateDateLabel(startDateText, 0);
 			Date date = null;
 			try {
+				// Adding 1 to month because it starts at index 0
 				date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).parse(String.format(
-						"%02d/%02d/%04d", monthOfYear + 1, dayOfMonth, year)); // Adding 1 to month
-																				// because it starts
-																				// at index 0
+						"%02d/%02d/%04d", monthOfYear + 1, dayOfMonth, year));
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 				mEvent.setStartDate(sdf.format(date));
 			} catch (java.text.ParseException e) {
@@ -370,21 +356,20 @@ public class ManageEventFragment extends Fragment {
 	};
 
 	/**
-	 * TODO - Add documentation
+	 * Listener gets the date from DatePicker and updates the associated endDate TextView
 	 */
 	DatePickerDialog.OnDateSetListener mEndDateListener = new DatePickerDialog.OnDateSetListener() {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-			myCalendar.set(Calendar.YEAR, year);
-			myCalendar.set(Calendar.MONTH, monthOfYear);
-			myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-			updateDateLabel(endDateText);
+			endCal.set(Calendar.YEAR, year);
+			endCal.set(Calendar.MONTH, monthOfYear);
+			endCal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+			updateDateLabel(endDateText, 1);
 			Date date = null;
 			try {
+				// Adding 1 to month because it starts at index 0
 				date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).parse(String.format(
-						"%02d/%02d/%04d", monthOfYear + 1, dayOfMonth, year)); // Adding 1 to month
-																				// because it starts
-																				// at index 0
+						"%02d/%02d/%04d", monthOfYear + 1, dayOfMonth, year));
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 				mEvent.setEndDate(sdf.format(date));
 			} catch (java.text.ParseException e) {
@@ -395,14 +380,14 @@ public class ManageEventFragment extends Fragment {
 	};
 
 	/**
-	 * TODO - Add documentation
+	 * Listener gets the time from TimePicker and updates the associated startTime TextView
 	 */
 	TimePickerDialog.OnTimeSetListener mStartTimeListener = new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-			myCalendar.set(Calendar.MINUTE, minute);
-			updateTimeLabel(startTimeText);
+			startCal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+			startCal.set(Calendar.MINUTE, minute);
+			updateTimeLabel(startTimeText, 0);
 			Date date = null;
 			try {
 				date = new SimpleDateFormat("hh:mm", Locale.US).parse(String.format("%02d:%02d",
@@ -417,14 +402,14 @@ public class ManageEventFragment extends Fragment {
 	};
 
 	/**
-	 * TODO - Add documentation
+	 * Listener gets the time from TimePicker and updates the associated endTime TextView
 	 */
 	TimePickerDialog.OnTimeSetListener mEndTimeListener = new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-			myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-			myCalendar.set(Calendar.MINUTE, minute);
-			updateTimeLabel(endTimeText);
+			endCal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+			endCal.set(Calendar.MINUTE, minute);
+			updateTimeLabel(endTimeText, 1);
 			Date date = null;
 			try {
 				date = new SimpleDateFormat("hh:mm", Locale.US).parse(String.format("%02d:%02d",
@@ -439,46 +424,65 @@ public class ManageEventFragment extends Fragment {
 	};
 
 	/**
-	 * TODO - update documentation
-	 * 
-	 * Updates the associated Date TextView
+	 * Updates the associated Date TextView with the date set with the DatePicker
 	 * 
 	 * @param tv
 	 *            The TextView (either starting date or ending date) to be updated
+	 * @param startEnd
+	 *            Determines which Calendar to use: 0 = start 1 = end
 	 */
-	private void updateDateLabel(TextView tv) {
+	private void updateDateLabel(TextView tv, int startEnd) {
+		Log.i(TAG, "Entering updateDateLabel()");
 		String myFormat = "EEEE, MMM dd, yyyy";
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-		tv.setText(sdf.format(myCalendar.getTime()));
+		if (startEnd == 0) {
+			tv.setText(sdf.format(startCal.getTime()));
+		} else {
+			tv.setText(sdf.format(endCal.getTime()));
+		}
 	}
 
 	/**
-	 * TODO - update documentation
-	 * 
-	 * Updates the associated Time TextView
+	 * Updates the associated Time TextView with the time set with the TimePicker
 	 * 
 	 * @param tv
 	 *            The TextView (either starting time or ending time) to be updated
+	 * @param startEnd
+	 *            Determines which Calendar to use: 0 = start 1 = end
 	 */
-	private void updateTimeLabel(TextView tv) {
+	private void updateTimeLabel(TextView tv, int startEnd) {
+		Log.i(TAG, "Entering updateTimeLabel()");
 		String myFormat = "hh:mm aa";
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-		tv.setText(sdf.format(myCalendar.getTime()));
+		if (startEnd == 0) {
+			tv.setText(sdf.format(startCal.getTime()));
+		} else {
+			tv.setText(sdf.format(endCal.getTime()));
+		}
 	}
 
 	/**
-	 * TODO - add doc
-	 * 
-	 * @param mEvent
+	 * Clears focus from eventLocationText in order to ensure validation of building
+	 */
+	private void locationClearFocus() {
+		if (eventLocationText.isFocused()) { 
+			eventLocationText.clearFocus();
+		}
+	}
+
+	/**
+	 * Loads all the information into the form from the eventObject that is being edited.
 	 */
 	private void loadEventData() {
+		Log.i(TAG, "Entering loadEventData()");
 		try {
 			eventNameText.setText(mEvent.getEventName());
 			startDateText.setText(mEvent.getStartDate());
 			startTimeText.setText(mEvent.getStartTime());
 			endDateText.setText(mEvent.getEndDate());
 			endTimeText.setText(mEvent.getEndTime());
-			eventLocationText.setText(mEvent.getBuildingName());
+			originalBuilding = mEvent.getBuildingName();
+			eventLocationText.setText(originalBuilding);
 			if (mEvent.getDescription() != "") {
 				eventDescriptionText.setText(mEvent.getDescription());
 			}
@@ -489,9 +493,35 @@ public class ManageEventFragment extends Fragment {
 				costText.setText(mEvent.getAdmission());
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
 			// Event is null, can not edit event
 		}
 	}
 
+	/**
+	 * Sets the result of the FragementActivity by passing an intent with information about
+	 * buildings added/modified in order to update the map.
+	 */
+	private void setResult() {
+		Log.i(TAG, "Entering setResult()");
+
+		Intent intent = new Intent();
+		if (isNewEvent || isLocationChanged) { // Building added or changed to
+			intent.putExtra("addedNames", mEvent.getBuildingName());
+		}
+		if (isLocationChanged) { // Building removed from event
+			intent.putExtra("deletedNames", originalBuilding);
+		}
+		if (!isNewEvent) { // ObjectID if editing event
+			intent.putExtra("objectID", objectID);
+		}
+		fragAct.setResult(Activity.RESULT_OK, intent);
+		if (isNewEvent) {
+			Log.i(TAG, "Event successfully added.");
+			Toast.makeText(fragAct, "Event Created", Toast.LENGTH_SHORT).show();
+		} else {
+			Log.i(TAG, "Event successfully updated.");
+			Toast.makeText(fragAct, "Event Updated", Toast.LENGTH_SHORT).show();
+		}
+		fragAct.finish(); // finish activity after submitting event
+	}
 }

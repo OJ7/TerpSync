@@ -2,16 +2,11 @@ package com.terpsync.card;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.terpsync.AddEventActivity;
 import com.terpsync.EditEventActivity;
 import com.terpsync.FloatingActionButton;
-import com.terpsync.MainActivity;
 import com.terpsync.R;
 import com.terpsync.parse.EventObject;
 import com.terpsync.parse.ParseConstants;
-import com.google.android.gms.drive.internal.x;
-import com.google.android.gms.internal.ma;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -34,16 +29,18 @@ import android.widget.ListView;
 public class EventListActivity extends Activity {
 
 	private static final String TAG = "EventListActivity";
-	private FloatingActionButton returnFAB, filterFAB, buildingFAB, orgFAB, priceFAB;
+	private FloatingActionButton filterFAB, buildingFAB, orgFAB, priceFAB;
+	private Intent mResultIntent = new Intent();
 	CardListAdapter mAdapter;
 	ListView lv; // List for all the event cards
-	List<EventObject> fullEventList, filteredEventList;
+	List<EventObject> fullEventList;
 	AlertDialog.Builder action_builder, delete_builder;
 	View view = null;
 	boolean isDeleted = false, filterMenuOpen = false, orgFiltered = false,
 			buildingFiltered = false;
 	int priceFiltered = 0; // 0 = All, 1 = Free, 2 = Paid
-	String deletedBuildings = "";
+	private int editEventIndex = -1;
+	String deletedBuildings = "", addedBuildings = "";
 	String filterType, filterName;
 	String buildingFilterName, orgFilterName;
 	String[] actionOptions = { "Edit Event", "Delete Event" };
@@ -144,17 +141,13 @@ public class EventListActivity extends Activity {
 								switch (item) {
 								case 0: // Edit Event
 									Log.i(TAG, "Clicked on Edit Event");
-									
-									// start edit activity
-									Intent intent = new Intent(EventListActivity.this, EditEventActivity.class);
+									Intent intent = new Intent(EventListActivity.this,
+											EditEventActivity.class);
 									intent.putExtra(ParseConstants.admin_org_name, x.getOrgName());
 									intent.putExtra("isNewEvent", false);
 									intent.putExtra(ParseConstants.event_object_id, x.getObjectId());
+									editEventIndex = pos;
 									startActivityForResult(intent, 0);
-									// check if building changed
-									// if true, add old building to deleted, new building to added
-									
-
 									break;
 
 								case 1: // Delete Event
@@ -182,9 +175,10 @@ public class EventListActivity extends Activity {
 															mAdapter.notifyDataSetChanged();
 															x.deleteInBackground();
 															updateIntent();
-															Toast.makeText(getBaseContext(), "Event Deleted",
+															Toast.makeText(getBaseContext(),
+																	"Event Deleted",
 																	Toast.LENGTH_LONG).show();
-															finish();
+															// finish();
 														}
 													})
 											.setNegativeButton("Cancel",
@@ -218,19 +212,14 @@ public class EventListActivity extends Activity {
 	 * Creates returnFAB and handles clicks on it: updates the intent with the list of buildings
 	 * affected by deleted events and ends the activity.
 	 */
-	private void returnFABListener() {
-		returnFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_undo))
-				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 16).create();
-		returnFAB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				updateIntent();
-				finish();
-			}
-		});
-	}
+	/*
+	 * private void returnFABListener() { returnFAB = new FloatingActionButton.Builder(this)
+	 * .withDrawable(getResources().getDrawable(R.drawable.ic_action_undo))
+	 * .withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT) .withMargins(0, 0,
+	 * 16, 16).create(); returnFAB.setOnClickListener(new OnClickListener() {
+	 * 
+	 * @Override public void onClick(View v) { updateIntent(); finish(); } }); }
+	 */
 
 	/**
 	 * Creates filterFAB and handles clicks on it: expands/collapses filter type FABs.
@@ -535,18 +524,68 @@ public class EventListActivity extends Activity {
 	 */
 	private void updateIntent() {
 		Log.i(TAG, "Updating intent");
+
 		if (isDeleted) {
 			Log.i(TAG, "Events deleted, buildings affected: " + deletedBuildings);
-			Intent intent = new Intent().putExtra("deletedEvent", deletedBuildings);
+			mResultIntent.putExtra("deletedNames", deletedBuildings);
 			if (getParent() == null) {
-				setResult(Activity.RESULT_OK, intent);
+				setResult(Activity.RESULT_OK, mResultIntent);
 			} else {
-				getParent().setResult(Activity.RESULT_OK, intent);
+				getParent().setResult(Activity.RESULT_OK, mResultIntent);
 			}
 		} else {
 			Log.i(TAG, "No events deleted... nothing to update");
 			setResult(Activity.RESULT_OK);
 		}
+		finish();
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
+		Log.i(TAG, "Getting activity result");
+		if (requestCode == 0 && resultCode == Activity.RESULT_OK && resultIntent != null) {
+			if (resultIntent.getStringExtra("addedNames") != null) {
+				Log.i(TAG, "Got result - building added");
+				if (addedBuildings == "") {
+					addedBuildings = resultIntent.getStringExtra("addedNames");
+				} else {
+					addedBuildings += ";" + resultIntent.getStringExtra("addedNames");
+				}
+				mResultIntent.putExtra("addedNames", addedBuildings);
+			}
+			if (resultIntent.getStringExtra("deletedNames") != null) {
+				Log.i(TAG, "Got result - building deleted");
+				isDeleted = true;
+				if (deletedBuildings == "") {
+					deletedBuildings = resultIntent.getStringExtra("deletedNames");
+				} else {
+					deletedBuildings += ";" + resultIntent.getStringExtra("deletedNames");
+				}
+				mResultIntent.putExtra("deletedNames", deletedBuildings);
+			}
+			if (resultIntent.getStringExtra("objectID") != null) {
+				String id = resultIntent.getStringExtra("objectID");
+				Log.i(TAG, "Got event objectID: " + id + "\nUpdating list with updated event");
+				// Updating the event in adapter and updating list
+				try {
+					ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
+					EventObject x = eventsQuery.get(id);
+					fullEventList.set(editEventIndex, x);
+					mAdapter.replaceData(fullEventList);
+					refilterList();
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+			Log.i(TAG, "Building(s) added: " + addedBuildings);
+			Log.i(TAG, "Building(s) deleted: " + deletedBuildings);
+
+			setResult(Activity.RESULT_OK, mResultIntent);
+		} else {
+			Log.i(TAG, "No activity result");
+		}
+
+		editEventIndex = -1; // resetting the editEventIndex after done using it
 	}
 
 }

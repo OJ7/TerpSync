@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Locale;
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
+import com.terpsync.card.CardListAdapter;
 import com.terpsync.card.EventListActivity;
 import com.terpsync.parse.AdminAccounts;
 import com.terpsync.parse.EventObject;
 import com.terpsync.parse.ParseConstants;
 import com.terpsync.parse.UMDBuildings;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 	public static final String PREFS_NAME = "MyPrefsFile";
 
-	private final Object lock = new Object(), lock2 = new Object();
+	private final Object lock = new Object();
 	private Context context;
 
 	// Global variable strings used for preferences
@@ -763,8 +763,13 @@ public class MainActivity extends Activity {
 						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
 							@Override
 							public void done(List<UMDBuildings> arg0, ParseException arg1) {
-								UMDBuildings building = arg0.get(0);
-								updateMarker(building, true);
+								if(arg1 == null){
+									UMDBuildings building = arg0.get(0);
+									updateMarker(building, true);									
+								}
+								else {
+									arg1.printStackTrace();
+								}
 							}
 						});
 					}
@@ -918,44 +923,52 @@ public class MainActivity extends Activity {
 		Log.i(TAG, "Getting activity result");
 		String buildings;
 		if (requestCode == 0 && resultCode == Activity.RESULT_OK && resultIntent != null) {
-			if (resultIntent.getStringExtra("addBuildingName") != null) {
-				Log.i(TAG, "Got result - event added");
-				buildings = resultIntent.getStringExtra("addBuildingName");
-				ParseQuery<UMDBuildings> buildingsQuery = ParseQuery.getQuery(UMDBuildings.class);
-				buildingsQuery.whereEqualTo(ParseConstants.building_name, buildings);
-				buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
-					@Override
-					public void done(List<UMDBuildings> arg0, ParseException arg1) {
-						UMDBuildings building = arg0.get(0);
-						updateMarker(building, true);
-						// Toast.makeText(getApplicationContext(), "Added event to map",
-						// Toast.LENGTH_SHORT).show();
-					}
-				});
-			} else if (resultIntent.getStringExtra("deletedEvent") != null) {
-				// IGNORE BELOW FOR NOW...
-				 Log.i(TAG, "Got result - event deleted");
-				// Log.i(TAG, "Event(s) deleted, rebuilding map markers");
-				// queryAndAddEventsFromParse();
-				// Note: Instead of getting events to delete from map, just remaking the map.
-				// A lazy implementation, but gets around the bug for now.
-
-				buildings = resultIntent.getStringExtra("deletedEvent");
-				String[] parsedNames = buildings.split(";");
-				ParseQuery<UMDBuildings> buildingsQuery = ParseQuery.getQuery(UMDBuildings.class);
-				for (String name : parsedNames) {
-					synchronized (lock2) {
+			if (resultIntent.getStringExtra("addedNames") != null
+					|| resultIntent.getStringExtra("deletedNames") != null) {
+				if (resultIntent.getStringExtra("addedNames") != null) {
+					buildings = resultIntent.getStringExtra("addedNames");
+					Log.i(TAG, "Got result - building(s) added: " + buildings);
+					String[] parsedNames = buildings.split(";");
+					// Searching for buildings and updating markers
+					for (String name : parsedNames) {
+						ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
+								.getQuery(UMDBuildings.class);
 						buildingsQuery.whereEqualTo(ParseConstants.building_name, name);
 						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
 							@Override
 							public void done(List<UMDBuildings> arg0, ParseException arg1) {
-								UMDBuildings building = arg0.get(0);
-								updateMarker(building, false);
+								if (arg1 == null) { // Found building, updating marker
+									UMDBuildings building = arg0.get(0);
+									updateMarker(building, true);
+								} else { // object retrieval failed throw exception -- fail fast
+									arg1.printStackTrace();
+								}
 							}
 						});
 					}
 				}
-
+				if (resultIntent.getStringExtra("deletedNames") != null) {
+					Log.i(TAG, "Got result - building(s) deleted");
+					buildings = resultIntent.getStringExtra("deletedNames");
+					String[] parsedNames = buildings.split(";");
+					for (String name : parsedNames) {
+						ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
+								.getQuery(UMDBuildings.class);
+						buildingsQuery.whereEqualTo(ParseConstants.building_name, name);
+						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
+							@Override
+							public void done(List<UMDBuildings> arg0, ParseException arg1) {
+								if(arg1 == null){
+									UMDBuildings building = arg0.get(0);
+									updateMarker(building, false);	
+								}
+								else{
+									arg1.printStackTrace();
+								}									
+							}
+						});
+					}
+				}
 			} else {
 				Log.i(TAG, "No events added or deleted from previous activity.");
 			}
@@ -982,6 +995,5 @@ public class MainActivity extends Activity {
 	protected void onStop() {
 		Log.i(TAG, "Stopping Main Activity");
 		super.onStop();
-		// savePreferences();
 	}
 }

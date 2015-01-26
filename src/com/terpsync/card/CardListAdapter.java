@@ -2,17 +2,11 @@ package com.terpsync.card;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
-
-import com.google.android.gms.internal.lo;
 import com.terpsync.R;
 import com.terpsync.parse.EventObject;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,6 +32,11 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 		super(context, resourceId, item);
 		this.mContext = context;
 		this.mEventsList = (ArrayList<EventObject>) item;
+		if (mOriginalEvents == null) {
+			synchronized (lock) {
+				mOriginalEvents = new ArrayList<EventObject>(mEventsList);
+			}
+		}
 	}
 
 	/**
@@ -160,28 +158,28 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 					for (EventObject eventObject : mEventsList) {
 						switch (i) {
 						case 0: // filter by building
-							//Log.i(TAG, "Filtering by Building: " + filterName);
+							// Log.i(TAG, "Filtering by Building: " + filterName);
 							if (eventObject.getBuildingName().equals(filterName)) {
 								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}
 							break;
 						case 1: // filter by organization
-							//Log.i(TAG, "Filtering by Organization: " + filterName);
+							// Log.i(TAG, "Filtering by Organization: " + filterName);
 							if (eventObject.getOrgName().equals(filterName)) {
 								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}
 							break;
 						case 2: // filter by free
-							//Log.i(TAG, "Filtering by Free Events");
+							// Log.i(TAG, "Filtering by Free Events");
 							if (eventObject.getAdmission().equals(filterName)) {
 								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}
 							break;
 						case 3: // filter by paid
-							//Log.i(TAG, "Filtering by Paid EventObject");
+							// Log.i(TAG, "Filtering by Paid EventObject");
 							if (!eventObject.getAdmission().equals(filterName)) {
 								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
@@ -232,13 +230,14 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 	}
 
 	/**
-	 * Replaces the list of events with the one specified. Useful when filtering events.
+	 * Replaces the current list of events with the one specified. Useful when filtering events.
 	 * 
 	 * @param newList
 	 *            the list of events to replace with
 	 */
 	public void updateData(List<EventObject> newList) {
 		this.mEventsList = (ArrayList<EventObject>) newList;
+		notifyDataSetChanged();
 	}
 
 	/**
@@ -247,5 +246,18 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 	public void resetData() {
 		mEventsList.clear();
 		mEventsList.addAll(mOriginalEvents);
+		notifyDataSetChanged();
+	}
+
+	/**
+	 * Replaces the original list of events with the one specified. Useful when events were
+	 * modified.
+	 * 
+	 * @param newList
+	 *            the list of events to replace with
+	 */
+	public void replaceData(List<EventObject> newList) {
+		this.mOriginalEvents = (ArrayList<EventObject>) newList;
+		notifyDataSetChanged();
 	}
 }
