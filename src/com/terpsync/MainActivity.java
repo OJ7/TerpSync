@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
-import com.terpsync.card.CardListAdapter;
 import com.terpsync.card.EventListActivity;
 import com.terpsync.parse.AdminAccounts;
 import com.terpsync.parse.EventObject;
@@ -27,6 +26,7 @@ import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -479,7 +479,7 @@ public class MainActivity extends Activity {
 	 */
 	private boolean attemptSignIn() {
 		Log.i(TAG, "Attempting to sign in");
-		final String UN = usernameView.getEditableText().toString().toLowerCase()
+		final String UN = usernameView.getEditableText().toString().toLowerCase(Locale.US)
 				.replaceAll("\\s", "");
 		final String PW = passwordView.getEditableText().toString();
 
@@ -530,7 +530,7 @@ public class MainActivity extends Activity {
 	 */
 	private boolean attemptChangeSignInCredentials() {
 		Log.i(TAG, "Attempting to change sign in credentials");
-		final String newUN = newUNView.getEditableText().toString().toLowerCase().trim();
+		final String newUN = newUNView.getEditableText().toString().toLowerCase(Locale.US).trim();
 		final String newPW = newPWView.getEditableText().toString();
 		final String newPWConfirm = newPWConfirmView.getEditableText().toString();
 
@@ -660,6 +660,7 @@ public class MainActivity extends Activity {
 	 * Gets context for all dialogs builders, inflates all views, and gets all needed references to
 	 * views.
 	 */
+	@SuppressLint("InflateParams")
 	private void setupViewsAndCacheWidgets() {
 		Log.i(TAG, "Setting up views and caching widgets");
 		context = this;
@@ -763,11 +764,10 @@ public class MainActivity extends Activity {
 						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
 							@Override
 							public void done(List<UMDBuildings> arg0, ParseException arg1) {
-								if(arg1 == null){
+								if (arg1 == null) {
 									UMDBuildings building = arg0.get(0);
-									updateMarker(building, true);									
-								}
-								else {
+									updateMarker(building, true);
+								} else {
 									arg1.printStackTrace();
 								}
 							}
@@ -958,13 +958,12 @@ public class MainActivity extends Activity {
 						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
 							@Override
 							public void done(List<UMDBuildings> arg0, ParseException arg1) {
-								if(arg1 == null){
+								if (arg1 == null) {
 									UMDBuildings building = arg0.get(0);
-									updateMarker(building, false);	
-								}
-								else{
+									updateMarker(building, false);
+								} else {
 									arg1.printStackTrace();
-								}									
+								}
 							}
 						});
 					}

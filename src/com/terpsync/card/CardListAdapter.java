@@ -55,9 +55,9 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 	/**
 	 * Updates and displays information on the card associated with the event
 	 */
+	@SuppressLint("InflateParams")
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder vh; // ViewHolder object
-
 		// Gets the tag for the reusable View if available. Otherwise, sets up the ViewHolder.
 		if (convertView == null) { // first time setting up the layout
 			LayoutInflater inflater = (LayoutInflater) mContext
@@ -197,6 +197,7 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 				return filterResults;
 			}
 
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void publishResults(CharSequence contraint, FilterResults results) {
 				mEventsList = (List<EventObject>) results.values;
