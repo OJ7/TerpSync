@@ -1,7 +1,12 @@
 package com.terpsync.card;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import com.terpsync.EditEventActivity;
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
@@ -108,6 +113,7 @@ public class EventListActivity extends Activity {
 			public void done(List<EventObject> events, ParseException e) {
 				if (e == null) { // All events were successfully returned
 					fullEventList = events;
+					Collections.sort(fullEventList, new DateTimeComparator());
 					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card, events);
 					lv.setAdapter(mAdapter);
 				} else { // object retrieval failed throw exception -- fail fast
@@ -499,6 +505,40 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
+	 * Compares EventObjects by startDate and startTime.
+	 * 
+	 * TODO - If an event is more than one day long, it gets counted as the end of the day in order
+	 * to avoid it taking up the space at the top of the list.
+	 * 
+	 * @author OJ
+	 * 
+	 */
+	public class DateTimeComparator implements Comparator<EventObject> {
+		@Override
+		public int compare(EventObject o1, EventObject o2) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+			SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+			try {
+				Date date1 = dateFormat.parse(o1.getStartDate());
+				Date date2 = dateFormat.parse(o2.getStartDate());
+
+				// If start dates are equal, compare by start time
+				if (o1.getStartDate().compareTo(o2.getStartDate()) == 0) {
+					Date time1 = timeFormat.parse(o1.getStartTime()), time2 = timeFormat.parse(o2
+							.getStartTime());
+					return time1.compareTo(time2);
+				} else {
+					return date1.compareTo(date2);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				// default return if above fails (shouldn't get here)
+				return o1.getStartDate().compareTo(o2.getStartDate());
+			}
+		}
+	}
+
+	/**
 	 * Updates the CardListAdapter with the updated list of events.
 	 */
 	private void updateAdapter() {
@@ -512,11 +552,6 @@ public class EventListActivity extends Activity {
 	private void resetAdapter() {
 		Log.i(TAG, "resetting adapter");
 		mAdapter.resetData();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
 	}
 
 	/**
@@ -566,7 +601,7 @@ public class EventListActivity extends Activity {
 			if (resultIntent.getStringExtra("objectID") != null) {
 				String id = resultIntent.getStringExtra("objectID");
 				Log.i(TAG, "Got event objectID: " + id + "\nUpdating list with updated event");
-				// Updating the event in adapter and updating list
+				// Updating the event in adapter and updating list (BUG: this doesn't work)
 				try {
 					ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
 					EventObject x = eventsQuery.get(id);

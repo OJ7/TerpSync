@@ -185,6 +185,7 @@ public class ManageEventFragment extends Fragment {
 		@Override
 		public CharSequence fixText(CharSequence invalidText) {
 			Log.v(TAG, "Clearing location field");
+			Toast.makeText(fragAct, "Choose building from list", Toast.LENGTH_LONG).show();
 			return "";
 		}
 	}
@@ -465,7 +466,7 @@ public class ManageEventFragment extends Fragment {
 	 * Clears focus from eventLocationText in order to ensure validation of building
 	 */
 	private void locationClearFocus() {
-		if (eventLocationText.isFocused()) { 
+		if (eventLocationText.isFocused()) {
 			eventLocationText.clearFocus();
 		}
 	}
