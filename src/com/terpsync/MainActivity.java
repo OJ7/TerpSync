@@ -719,8 +719,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Gets all events from database and either adds event to map or deletes from database if the
-	 * event has passed.
+	 * Gets all events from database adds to map.
 	 */
 	private void queryAndAddEventsFromParse() {
 		// Clearing markers (if any exist) prior to adding
@@ -741,38 +740,20 @@ public class MainActivity extends Activity {
 				int count = 1;
 				for (EventObject x : arg0) {
 					Log.d(TAG, "Event #: " + count++);
-					// Checking if date has passed
-					boolean oldEvent = false;
-					SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-					try {
-						if (format.parse(x.getEndDate()).before(new Date())) {
-							Log.d(TAG, "The event " + x.getEventName() + " has passed");
-							oldEvent = true;
-						}
-					} catch (java.text.ParseException e) {
-						e.printStackTrace();
-					}
-					if (oldEvent) { // deleting from database
-						Log.d(TAG, "Deleting old event from database");
-						x.deleteInBackground();
-
-					} else { // adding to map
-						ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
-								.getQuery(UMDBuildings.class);
-						buildingsQuery.whereEqualTo(ParseConstants.building_name,
-								x.getBuildingName());
-						buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
-							@Override
-							public void done(List<UMDBuildings> arg0, ParseException arg1) {
-								if (arg1 == null) {
-									UMDBuildings building = arg0.get(0);
-									updateMarker(building, true);
-								} else {
-									arg1.printStackTrace();
-								}
+					ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
+							.getQuery(UMDBuildings.class);
+					buildingsQuery.whereEqualTo(ParseConstants.building_name, x.getBuildingName());
+					buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
+						@Override
+						public void done(List<UMDBuildings> arg0, ParseException arg1) {
+							if (arg1 == null) {
+								UMDBuildings building = arg0.get(0);
+								updateMarker(building, true);
+							} else {
+								arg1.printStackTrace();
 							}
-						});
-					}
+						}
+					});
 				}
 			}
 		});
