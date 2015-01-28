@@ -143,7 +143,8 @@ public class MainActivity extends Activity {
 	private void createInitialFAB() {
 		Log.i(TAG, "Creating initial FAB");
 		menuFABListener();
-		locationFABListener();
+		//locationFABListener();
+		listFABListener();
 	}
 
 	/**
@@ -186,11 +187,13 @@ public class MainActivity extends Activity {
 			locationFAB = new FloatingActionButton.Builder(this)
 					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 					.withButtonColor(Color.parseColor("#00A0B0"))
-					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+					//.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
 		} else {
 			locationFAB = new FloatingActionButton.Builder(this)
 					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 					.withButtonColor(Color.parseColor("#BD1550"))
+					//.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 		}
 		locationFAB.hideFloatingActionButton();
@@ -254,7 +257,8 @@ public class MainActivity extends Activity {
 		listFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
 				.withButtonColor(Color.parseColor("#CBE86B"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
+				//.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 		listFAB.hideFloatingActionButton();
 		listFAB.showFloatingActionButton();
 
@@ -321,9 +325,11 @@ public class MainActivity extends Activity {
 	 */
 	private void expandFABMenu() {
 		Log.i(TAG, "Expanding FAB Menu");
-		locationFAB.hideFloatingActionButton();
+		//locationFAB.hideFloatingActionButton();
+		listFAB.hideFloatingActionButton();
 		mapTypeFABListener();
-		listFABListener();
+		//listFABListener();
+		locationFABListener();
 		if (!adminSignedIn) {
 			signInFABListener();
 		} else {
@@ -337,13 +343,15 @@ public class MainActivity extends Activity {
 	private void collapseFABMenu() {
 		Log.i(TAG, "Collapsing FAB Menu");
 		mapTypeFAB.hideFloatingActionButton();
-		listFAB.hideFloatingActionButton();
+		//listFAB.hideFloatingActionButton();
+		locationFAB.hideFloatingActionButton();
 		if (adminSignedIn) {
 			adminFAB.hideFloatingActionButton();
 		} else {
 			signInFAB.hideFloatingActionButton();
 		}
-		locationFABListener();
+		//locationFABListener();
+		listFABListener();
 	}
 
 	/**
