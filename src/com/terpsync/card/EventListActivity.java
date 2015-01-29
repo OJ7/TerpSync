@@ -15,6 +15,8 @@ import com.terpsync.parse.ParseConstants;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -49,6 +51,7 @@ public class EventListActivity extends Activity {
 	String filterType, filterName;
 	String buildingFilterName, orgFilterName;
 	String[] actionOptions = { "Edit Event", "Delete Event" };
+	private ActionBar actionBar;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,7 +59,8 @@ public class EventListActivity extends Activity {
 		setContentView(R.layout.activity_event_list);
 		action_builder = new AlertDialog.Builder(this);
 		delete_builder = new AlertDialog.Builder(this);
-		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
+		actionBar = getActionBar();
+		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
 		lv = (ListView) findViewById(R.id.event_list);
 
 		// Determine filter options
@@ -75,13 +79,15 @@ public class EventListActivity extends Activity {
 	 */
 	private void determineFilterAndCreateList() {
 		if (filterType.equals("All")) { // Un-filtered, all events
+			actionBar.setTitle("All Events");
 			getEventsAndCreateList(filterType, "");
-		} else if (filterType.equals(ParseConstants.event_org_name)) { // Filter by organization
-																		// name
+		} else if (filterType.equals(ParseConstants.event_org_name)) { // Filter by org name
+			actionBar.setTitle("Events by " + filterName);
 			getEventsAndCreateList(filterType, filterName);
 			orgFiltered = true;
 			setActionDialog();
 		} else if (filterType.equals(ParseConstants.event_location)) { // Filter by building name
+			actionBar.setTitle("Events in " + filterName);
 			getEventsAndCreateList(filterType, filterName);
 			buildingFiltered = true;
 		}

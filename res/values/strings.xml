@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">TerpSync</string>
-    <string name="title_list_activity">All Events</string>
+    <string name="title_list_activity">Events</string>
     <string name="title_add_event_activity">New Event</string>
     <string name="title_edit_event_activity">Edit Event</string>
     <string name="action_settings">Settings</string>
