@@ -81,7 +81,7 @@ public class MainActivity extends Activity {
 	EditText usernameView, passwordView, newUNView, newPWView, newPWConfirmView;
 	View signInView = null, changeSignInView = null;
 	String[] adminOptions = { "Create an Event", "Manage My Events", "Change Username/Password",
-			"Sign Out" };
+			"Sign Out", "Settings" };
 	boolean validChange = false;
 
 	@Override
@@ -292,7 +292,10 @@ public class MainActivity extends Activity {
 		signInFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showSignInDialog();
+				Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+				startActivity(intent);
+				// TODO - add signinDialog to settings
+				//showSignInDialog();
 			}
 		});
 	}
@@ -438,6 +441,10 @@ public class MainActivity extends Activity {
 							break;
 						case 3: // Sign out
 							signOutAdmin();
+							break;
+						case 4: // Settings
+							Intent intent1 = new Intent(MainActivity.this, SettingsActivity.class);
+							startActivity(intent1);
 							break;
 						default:
 							break;

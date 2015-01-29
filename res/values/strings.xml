@@ -39,4 +39,13 @@
 	<string name="newPassword">New password</string>
 	<string name="newPasswordConfirm">Confirm password</string>
 	<string name="ora">#ffa500</string>
+	
+	<!-- Preferences Strings -->
+	<string name="pref_user_settings_title">User Settings</string>
+	<string name="pref_admin_settings_title">Student Organization Leaders Access</string>
+	<string name="pref_admin_sign_in_title">Sign in</string>
+	<string name="pref_admin_get_access_title">Get Access</string>
+	<string name="pref_title_placeholder">Placeholder</string>
+	<string name="pref_summary_placeholder">A place for future options</string>
+	
 </resources>
