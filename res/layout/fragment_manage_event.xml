@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/editEventLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alpha=".75"
+    android:background="@drawable/bg_big_m"
+    android:orientation="vertical"
+    android:paddingEnd="10dp"
+    android:paddingStart="8dp" >
+
+    <TextView
+        android:id="@+id/studentOrgName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:paddingBottom="12dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="8dp"
+        android:paddingTop="12dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFFFF" />
+
+    <LinearLayout
+        android:id="@+id/icon_name_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/name_icon"
+          android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:src="@drawable/name" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4" >
+
+            <EditText
+                android:id="@+id/eventTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:hint="@+string/enter_event_name"
+                android:imeOptions="actionNext"
+                android:paddingBottom="8dp"
+                android:singleLine="true"
+                android:textColor="#FFFAF0"
+                android:textColorHint="#A9A9A9" >
+
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/icon_date_time_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/calendar_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:src="@drawable/calendartime" />
+
+        <LinearLayout
+            android:id="@+id/date_time_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/start_date_time_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/eventStartDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:clickable="true"
+                    android:hint="@string/start_date"
+                    android:onClick="onClick"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="12dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFAF0"
+                    android:textColorHint="#A9A9A9" />
+
+                <TextView
+                    android:id="@+id/eventStartTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="right"
+                    android:hint="@string/start_time"
+                    android:onClick="onClick"
+                    android:paddingBottom="8dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFAF0"
+                    android:textColorHint="#A9A9A9" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/end_date_time_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/eventEndDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:clickable="true"
+                    android:hint="@string/end_date"
+                    android:onClick="onClick"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="12dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFAF0"
+                    android:textColorHint="#A9A9A9" />
+
+                <TextView
+                    android:id="@+id/eventEndTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="right"
+                    android:hint="@string/end_time"
+                    android:onClick="onClick"
+                    android:paddingBottom="8dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFAF0"
+                    android:textColorHint="#A9A9A9" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/icon_building_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/building_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:src="@drawable/building" />
+
+        <LinearLayout
+            android:id="@+id/building_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:weightSum="4" >
+
+            <AutoCompleteTextView
+                android:id="@+id/eventLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:completionThreshold="1"
+                android:hint="@string/search_text"
+                android:imeOptions="actionNext"
+                android:paddingBottom="8dp"
+                android:singleLine="true"
+                android:textColor="#FFFAF0"
+                android:textColorHint="#A9A9A9" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/icon_description_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/description_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:src="@drawable/list" />
+
+        <LinearLayout
+            android:id="@+id/description_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/eventDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@+string/add_event_description_textView"
+                android:maxHeight="50dp"
+                android:maxLines="4"
+                android:paddingBottom="8dp"
+                android:textColor="#FFFAF0"
+                android:textColorHint="#A9A9A9" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/icon_admission_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/admission_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:src="@drawable/dollar" />
+
+        <LinearLayout
+            android:id="@+id/admission_cost_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/admission_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp" >
+
+                <RadioGroup
+                    android:id="@+id/eventAdmissionRadioGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:gravity="right"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:id="@+id/eventFree"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@+string/event_free"
+                        android:textColor="#FFFFFF" />
+
+                    <RadioButton
+                        android:id="@+id/eventPaid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@+string/event_paid"
+                        android:textColor="#FFFFFF" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="20dp" >
+
+                <TextView
+                    android:id="@+id/eventCost_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/eventCost"
+                    android:paddingLeft="8dp"
+                    android:paddingTop="4dp"
+                    android:text="@+string/enter_cost_textView"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp"
+                    android:visibility="invisible" />
+
+                <EditText
+                    android:id="@+id/eventCost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:hint="@string/enter_cost"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="8dp"
+                    android:textColor="#FFFAF0"
+                    android:textColorHint="#A9A9A9"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".25" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.25" >
+
+        <Button
+            android:id="@+id/save_event_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@+string/event_save"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+</LinearLayout>

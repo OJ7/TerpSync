@@ -1,94 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="0.5dp"
+    android:paddingBottom="3dp"
     android:paddingLeft="0.5dp"
     android:paddingRight="3dp"
-    android:paddingBottom="3dp"
-    android:background="#000000"
-    android:id="@+id/card">
-    <!-- android:background="@+drawable/rounded_corners"-->
-    
-       <RelativeLayout
-           android:layout_width="fill_parent"
-           android:layout_height="150dp"
-		   android:id="@+id/cardBackground"
-		   android:background="#7f000000">
-         
-	       <TextView
-	        android:id="@+id/card_event_title"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_above="@+id/card_organization"
-        	android:layout_alignLeft="@+id/card_organization"
-        	android:paddingBottom="4dp"
-     	    android:paddingRight="2dp"
-	        android:paddingLeft="4dp"
-	        android:text=""
-	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:background="#B3000000"
-	        android:textStyle="bold"
-	        android:typeface="sans" />
-	       
-	       <TextView
-	        android:id="@+id/card_organization"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_above="@+id/card_location"
-       	 	android:layout_alignLeft="@+id/card_location"
-       	 	android:paddingBottom="1dp"
-        	android:paddingRight="2dp"
-        	android:paddingLeft="4dp"
-	        android:text=""
-	        android:background="#B3000000"
-	        android:textAppearance="?android:attr/textAppearanceMedium"
-	        android:textStyle="bold"
-	        android:typeface="sans" />
-	 
-	       <TextView
-	        android:id="@+id/card_location"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_above="@+id/card_date"
-        	android:layout_alignLeft="@+id/card_date"
-	        android:text=""
-        	android:paddingRight="2dp"
-        	android:paddingLeft="4dp"
-	        android:background="#B3000000"
-	        android:textAppearance="?android:attr/textAppearanceMedium"
-	        android:textStyle="bold"
-	        android:typeface="sans" />
-	       
-	        <TextView
-	        android:id="@+id/card_date"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_above="@+id/card_time"
-        	android:layout_alignParentBottom="true"
-        	android:layout_alignParentLeft="true"
-        	android:paddingLeft="4dp"
-	        android:text=""
-	        android:background="#B3000000"
-	        android:textAppearance="?android:attr/textAppearanceSmall"
-	        android:textStyle="bold"
-	        android:textColor="#ffffff"
-	        android:typeface="sans" />
-	           
-	    <TextView
-	        android:id="@+id/card_time"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text=""
-	        android:background="#B3000000"
-	        android:textStyle="bold"
-	        android:textColor="#ffffff"
-        	android:layout_toRightOf="@+id/card_date"
-        	android:layout_alignParentBottom="true"
-        	android:paddingLeft="10dp"
-        	android:paddingRight="2dp"
-	        android:textAppearance="?android:attr/textAppearanceSmall" />
+    android:paddingTop="0.5dp" >
 
-	</RelativeLayout>
-</LinearLayout>
+    <!-- android:background="@+drawable/rounded_corners" -->
+
+    <ImageView
+        android:id="@+id/cardBackground"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp" />
+
+    <RelativeLayout
+        android:id="@+id/cardOverlay"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:background="@drawable/cards_overlay" >
+
+        <TextView
+            android:id="@+id/card_event_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/card_organization"
+            android:layout_alignLeft="@+id/card_organization"
+            android:paddingBottom="1dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="2dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/card_organization"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/card_location"
+            android:layout_alignLeft="@+id/card_location"
+            android:paddingBottom="1dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="2dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/card_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/card_date"
+            android:layout_alignLeft="@+id/card_date"
+            android:paddingLeft="4dp"
+            android:paddingRight="2dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/card_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/card_time"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:paddingLeft="4dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/card_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/card_date"
+            android:paddingLeft="10dp"
+            android:paddingRight="2dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+</RelativeLayout>

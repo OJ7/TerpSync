@@ -1,4 +1,4 @@
-package com.example.campuseventsapp;
+package com.terpsync.parse;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
@@ -21,8 +21,8 @@ public class AdminAccounts extends ParseObject{
 		return getString("organizationName");
 	}
 
-	public void setUsername(String userN) {
-		put("username", userN);
+	public void setUsername(String userName) {
+		put("username", userName);
 	}
 
 	public void setPassword(String pw) {

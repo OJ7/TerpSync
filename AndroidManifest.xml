@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.campuseventsapp"
+    package="com.terpsync"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -11,10 +11,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--
-     The following two permissions are not required to use
-     Google Maps Android API v2, but are recommended.
-    -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -29,7 +25,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name="com.terpsync.MainActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,15 +35,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.campuseventsapp.card.EventListActivity"
-            android:label="@string/title_list_activity" >
+            android:name="com.terpsync.card.EventListActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_list_activity"
+            android:parentActivityName="com.terpsync.MainActivity" >
         </activity>
         <activity
-            android:name="com.example.campuseventsapp.AddEventActivity"
+            android:name="com.terpsync.AddEventActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_add_event_activity"
-            android:parentActivityName="com.example.campuseventsapp.MainActivity" >
+            android:parentActivityName="com.terpsync.MainActivity" >
         </activity>
-       
+        <activity
+            android:name="com.terpsync.EditEventActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_edit_event_activity"
+            android:parentActivityName="com.terpsync.MainActivity" >
+        </activity>
+        <activity
+            android:name="com.terpsync.SettingsActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/action_settings"
+            android:parentActivityName="com.terpsync.MainActivity" >
+        </activity>
 
         <meta-data
             android:name="com.google.android.gms.version"

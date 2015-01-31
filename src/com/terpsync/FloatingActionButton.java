@@ -1,4 +1,4 @@
-package com.example.campuseventsapp;
+package com.terpsync;
 
 /*
  * Giving credits to Jogan

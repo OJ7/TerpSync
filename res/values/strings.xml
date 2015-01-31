@@ -2,9 +2,9 @@
 <resources>
 
     <string name="app_name">TerpSync</string>
-    <string name="title_list_activity">List View</string>
+    <string name="title_list_activity">Events</string>
     <string name="title_add_event_activity">New Event</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="title_edit_event_activity">Edit Event</string>
     <string name="action_settings">Settings</string>
 
     <!-- AddEventActivity specific strings: -->
@@ -34,8 +34,18 @@
     <string name="title_activity_setup_login_info">SetupLoginInfo</string>
     
     <!-- Main activity strings -->
-    <string name="newUsername">Please enter your new UN</string>
-	<string name="oldUsername">Please enter your old UN</string>
-	<string name="newPassword">Please enter your new PW</string>
+    <string name="newUsername">New username</string>
+	<string name="oldUsername">Old username</string>
+	<string name="newPassword">New password</string>
+	<string name="newPasswordConfirm">Confirm password</string>
 	<string name="ora">#ffa500</string>
+	
+	<!-- Preferences Strings -->
+	<string name="pref_user_settings_title">User Settings</string>
+	<string name="pref_admin_settings_title">Student Organization Leaders Access</string>
+	<string name="pref_admin_sign_in_title">Sign in</string>
+	<string name="pref_admin_get_access_title">Get Access</string>
+	<string name="pref_title_placeholder">Placeholder</string>
+	<string name="pref_summary_placeholder">A place for future options</string>
+	
 </resources>
