@@ -15,10 +15,10 @@ import com.terpsync.parse.ParseConstants;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -52,7 +52,9 @@ public class EventListActivity extends Activity {
 	String buildingFilterName, orgFilterName;
 	String[] actionOptions = { "Edit Event", "Delete Event" };
 	private ActionBar actionBar;
+	protected ProgressDialog proDialog;
 
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -114,9 +116,11 @@ public class EventListActivity extends Activity {
 			eventsQuery.whereContains(filterType, filterName);
 		}
 		// Initiate a background thread, retrieve all Event Objects
+		startLoading();
 		eventsQuery.findInBackground(new FindCallback<EventObject>() {
 			@Override
 			public void done(List<EventObject> events, ParseException e) {
+				stopLoading();
 				if (e == null) { // All events were successfully returned
 					fullEventList = events;
 					Collections.sort(fullEventList, new DateTimeComparator());
@@ -151,60 +155,64 @@ public class EventListActivity extends Activity {
 							@Override
 							public void onClick(DialogInterface dialog, int item) {
 								switch (item) {
-								case 0: // Edit Event
-									Log.i(TAG, "Clicked on Edit Event");
-									Intent intent = new Intent(EventListActivity.this,
-											EditEventActivity.class);
-									intent.putExtra(ParseConstants.admin_org_name, x.getOrgName());
-									intent.putExtra("isNewEvent", false);
-									intent.putExtra(ParseConstants.event_object_id, x.getObjectId());
-									editEventIndex = pos;
-									startActivityForResult(intent, 0);
-									break;
+									case 0: // Edit Event
+										Log.i(TAG, "Clicked on Edit Event");
+										Intent intent = new Intent(EventListActivity.this,
+												EditEventActivity.class);
+										intent.putExtra(ParseConstants.admin_org_name,
+												x.getOrgName());
+										intent.putExtra("isNewEvent", false);
+										intent.putExtra(ParseConstants.event_object_id,
+												x.getObjectId());
+										editEventIndex = pos;
+										startActivityForResult(intent, 0);
+										break;
 
-								case 1: // Delete Event
-									Log.i(TAG, "Clicked on Delete Event, Confirm?");
-									delete_builder
-											.setTitle(
-													"Delete Event? (Warning: this cannot be undone!)")
-											.setPositiveButton("Delete",
-													new DialogInterface.OnClickListener() {
+									case 1: // Delete Event
+										Log.i(TAG, "Clicked on Delete Event, Confirm?");
+										delete_builder
+												.setTitle(
+														"Delete Event? (Warning: this cannot be undone!)")
+												.setPositiveButton("Delete",
+														new DialogInterface.OnClickListener() {
 
-														@Override
-														public void onClick(DialogInterface dialog,
-																int which) {
-															Log.i(TAG, "Deleting event...");
-															if (deletedBuildings == "") {
-																deletedBuildings = x
-																		.getBuildingName();
-															} else {
-																deletedBuildings += ";"
-																		+ x.getBuildingName();
+															@Override
+															public void onClick(
+																	DialogInterface dialog,
+																	int which) {
+																Log.i(TAG, "Deleting event...");
+																if (deletedBuildings == "") {
+																	deletedBuildings = x
+																			.getBuildingName();
+																} else {
+																	deletedBuildings += ";"
+																			+ x.getBuildingName();
+																}
+
+																isDeleted = true;
+																mAdapter.mEventsList.remove(pos);
+																mAdapter.notifyDataSetChanged();
+																x.deleteInBackground();
+																updateIntent();
+																Toast.makeText(getBaseContext(),
+																		"Event Deleted",
+																		Toast.LENGTH_LONG).show();
+																// finish();
 															}
+														})
+												.setNegativeButton("Cancel",
+														new DialogInterface.OnClickListener() {
+															@Override
+															public void onClick(
+																	DialogInterface dialog,
+																	int which) {
+																dialog.cancel();
+															}
+														}).create().show();
+										break;
 
-															isDeleted = true;
-															mAdapter.mEventsList.remove(pos);
-															mAdapter.notifyDataSetChanged();
-															x.deleteInBackground();
-															updateIntent();
-															Toast.makeText(getBaseContext(),
-																	"Event Deleted",
-																	Toast.LENGTH_LONG).show();
-															// finish();
-														}
-													})
-											.setNegativeButton("Cancel",
-													new DialogInterface.OnClickListener() {
-														@Override
-														public void onClick(DialogInterface dialog,
-																int which) {
-															dialog.cancel();
-														}
-													}).create().show();
-									break;
-
-								default:
-									break;
+									default:
+										break;
 								}
 							}
 						}).create().show();
@@ -221,6 +229,8 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
+	 * OUTDATED
+	 * 
 	 * Creates returnFAB and handles clicks on it: updates the intent with the list of buildings
 	 * affected by deleted events and ends the activity.
 	 */
@@ -348,18 +358,18 @@ public class EventListActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				switch (priceFiltered) {
-				case 0: // Filtering by free
-					priceFiltered++;
-					filterByPrice();
-					break;
-				case 1: // Filtering by paid
-					priceFiltered++;
-					filterByPrice();
-					break;
-				case 2: // Unfiltering
-					priceFiltered = 0;
-					refilterList();
-					break;
+					case 0: // Filtering by free
+						priceFiltered++;
+						filterByPrice();
+						break;
+					case 1: // Filtering by paid
+						priceFiltered++;
+						filterByPrice();
+						break;
+					case 2: // Unfiltering
+						priceFiltered = 0;
+						refilterList();
+						break;
 				}
 				setPriceFABState();
 			}
@@ -401,21 +411,21 @@ public class EventListActivity extends Activity {
 	 */
 	private void setPriceFABState() {
 		switch (priceFiltered) {
-		case 0: // All
-			priceFAB.setFloatingActionButtonColor(Color.GRAY);
-			priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
-					R.drawable.ic_action_paid));
-			break;
-		case 1: // Free
-			priceFAB.setFloatingActionButtonColor(Color.RED);
-			priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
-					R.drawable.ic_action_free));
-			break;
-		case 2: // Paid
-			priceFAB.setFloatingActionButtonColor(Color.GREEN);
-			priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
-					R.drawable.ic_action_paid));
-			break;
+			case 0: // All
+				priceFAB.setFloatingActionButtonColor(Color.GRAY);
+				priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+						R.drawable.ic_action_paid));
+				break;
+			case 1: // Free
+				priceFAB.setFloatingActionButtonColor(Color.RED);
+				priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+						R.drawable.ic_action_free));
+				break;
+			case 2: // Paid
+				priceFAB.setFloatingActionButtonColor(Color.GREEN);
+				priceFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
+						R.drawable.ic_action_paid));
+				break;
 		}
 	}
 
@@ -542,6 +552,27 @@ public class EventListActivity extends Activity {
 				return o1.getStartDate().compareTo(o2.getStartDate());
 			}
 		}
+	}
+
+	/**
+	 * TODO - add documentation
+	 */
+	protected void startLoading() {
+		proDialog = new ProgressDialog(this);
+		proDialog.setMessage("Loading...");
+		proDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		proDialog.setCancelable(false);
+		proDialog.show();
+	}
+
+	/**
+	 * TODO - add documentation
+	 */
+	protected void stopLoading() {
+		if (proDialog != null && proDialog.isShowing()) {
+			proDialog.dismiss();
+		}
+		proDialog = null;
 	}
 
 	/**

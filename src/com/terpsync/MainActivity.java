@@ -1,8 +1,6 @@
 package com.terpsync;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import com.terpsync.FloatingActionButton;
@@ -29,6 +27,7 @@ import com.parse.ParseException;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -83,6 +82,8 @@ public class MainActivity extends Activity {
 	String[] adminOptions = { "Create an Event", "Manage My Events", "Change Username/Password",
 			"Sign Out", "Settings" };
 	boolean validChange = false;
+	protected ProgressDialog proDialog;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +144,7 @@ public class MainActivity extends Activity {
 	private void createInitialFAB() {
 		Log.i(TAG, "Creating initial FAB");
 		menuFABListener();
-		//locationFABListener();
+		// locationFABListener();
 		listFABListener();
 	}
 
@@ -187,13 +188,16 @@ public class MainActivity extends Activity {
 			locationFAB = new FloatingActionButton.Builder(this)
 					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 					.withButtonColor(Color.parseColor("#00A0B0"))
-					//.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
-					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
+					// .withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16,
+					// 86).create();
+					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156)
+					.create();
 		} else {
 			locationFAB = new FloatingActionButton.Builder(this)
 					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 					.withButtonColor(Color.parseColor("#BD1550"))
-					//.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+					// .withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16,
+					// 86).create();
 					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 		}
 		locationFAB.hideFloatingActionButton();
@@ -257,7 +261,7 @@ public class MainActivity extends Activity {
 		listFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
 				.withButtonColor(Color.parseColor("#CBE86B"))
-				//.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
+				// .withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 		listFAB.hideFloatingActionButton();
 		listFAB.showFloatingActionButton();
@@ -295,7 +299,7 @@ public class MainActivity extends Activity {
 				Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
 				startActivity(intent);
 				// TODO - add signinDialog to settings
-				//showSignInDialog();
+				// showSignInDialog();
 			}
 		});
 	}
@@ -328,10 +332,10 @@ public class MainActivity extends Activity {
 	 */
 	private void expandFABMenu() {
 		Log.i(TAG, "Expanding FAB Menu");
-		//locationFAB.hideFloatingActionButton();
+		// locationFAB.hideFloatingActionButton();
 		listFAB.hideFloatingActionButton();
 		mapTypeFABListener();
-		//listFABListener();
+		// listFABListener();
 		locationFABListener();
 		if (!adminSignedIn) {
 			signInFABListener();
@@ -346,14 +350,14 @@ public class MainActivity extends Activity {
 	private void collapseFABMenu() {
 		Log.i(TAG, "Collapsing FAB Menu");
 		mapTypeFAB.hideFloatingActionButton();
-		//listFAB.hideFloatingActionButton();
+		// listFAB.hideFloatingActionButton();
 		locationFAB.hideFloatingActionButton();
 		if (adminSignedIn) {
 			adminFAB.hideFloatingActionButton();
 		} else {
 			signInFAB.hideFloatingActionButton();
 		}
-		//locationFABListener();
+		// locationFABListener();
 		listFABListener();
 	}
 
@@ -427,27 +431,29 @@ public class MainActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int item) {
 						switch (item) {
-						case 0: // Add Event
-							Intent intent = new Intent(MainActivity.this, AddEventActivity.class);
-							intent.putExtra(ParseConstants.admin_org_name, currentOrganization);
-							intent.putExtra("isNewEvent", true);
-							startActivityForResult(intent, 0);
-							break;
-						case 1: // My Events
-							showMyEventsList();
-							break;
-						case 2: // Change PW/UN
-							showChangeSignInCredentialsDialog();
-							break;
-						case 3: // Sign out
-							signOutAdmin();
-							break;
-						case 4: // Settings
-							Intent intent1 = new Intent(MainActivity.this, SettingsActivity.class);
-							startActivity(intent1);
-							break;
-						default:
-							break;
+							case 0: // Add Event
+								Intent intent = new Intent(MainActivity.this,
+										AddEventActivity.class);
+								intent.putExtra(ParseConstants.admin_org_name, currentOrganization);
+								intent.putExtra("isNewEvent", true);
+								startActivityForResult(intent, 0);
+								break;
+							case 1: // My Events
+								showMyEventsList();
+								break;
+							case 2: // Change PW/UN
+								showChangeSignInCredentialsDialog();
+								break;
+							case 3: // Sign out
+								signOutAdmin();
+								break;
+							case 4: // Settings
+								Intent intent1 = new Intent(MainActivity.this,
+										SettingsActivity.class);
+								startActivity(intent1);
+								break;
+							default:
+								break;
 						}
 					}
 				}).create().show();
@@ -749,29 +755,8 @@ public class MainActivity extends Activity {
 				this.getString(R.string.parse_client_key));
 		// Adding current events to map
 		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
-		eventsQuery.findInBackground(new FindCallback<EventObject>() {
-			@Override
-			public void done(List<EventObject> arg0, ParseException arg1) {
-				int count = 1;
-				for (EventObject x : arg0) {
-					Log.d(TAG, "Event #: " + count++);
-					ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
-							.getQuery(UMDBuildings.class);
-					buildingsQuery.whereEqualTo(ParseConstants.building_name, x.getBuildingName());
-					buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
-						@Override
-						public void done(List<UMDBuildings> arg0, ParseException arg1) {
-							if (arg1 == null) {
-								UMDBuildings building = arg0.get(0);
-								updateMarker(building, true);
-							} else {
-								arg1.printStackTrace();
-							}
-						}
-					});
-				}
-			}
-		});
+		startLoading();
+		eventsQuery.findInBackground(addMapMarkersCallback);
 	}
 
 	/**
@@ -906,6 +891,27 @@ public class MainActivity extends Activity {
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
 	}
+	
+	/**
+	 * TODO - add documentation
+	 */
+	protected void startLoading() {
+	    proDialog = new ProgressDialog(this);
+	    proDialog.setMessage("Loading...");
+	    proDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+	    proDialog.setCancelable(false);
+	    proDialog.show();
+	}
+
+	/**
+	 * TODO - add documentation
+	 */
+	protected void stopLoading() {
+		if(proDialog != null && proDialog.isShowing()){
+			proDialog.dismiss();
+		}
+		proDialog = null;
+	}
 
 	/**
 	 * TODO - update documentation
@@ -991,4 +997,38 @@ public class MainActivity extends Activity {
 		Log.i(TAG, "Stopping Main Activity");
 		super.onStop();
 	}
+
+	/*
+	 * Add (Parse) FindCallback functions below to keep the above code more dense and
+	 * organized
+	 */
+
+	/**
+	 * Two nested FindCallbacks. One gets the list of all events. The other gets the building for
+	 * each event and updates the marker for that building.
+	 */
+	FindCallback<EventObject> addMapMarkersCallback = new FindCallback<EventObject>() {
+		@Override
+		public void done(List<EventObject> arg0, ParseException arg1) {
+			int count = 1;
+			for (EventObject x : arg0) {
+				Log.d(TAG, "Event #: " + count++);
+				ParseQuery<UMDBuildings> buildingsQuery = ParseQuery.getQuery(UMDBuildings.class);
+				buildingsQuery.whereEqualTo(ParseConstants.building_name, x.getBuildingName());
+				buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
+					@Override
+					public void done(List<UMDBuildings> arg0, ParseException arg1) {
+						stopLoading();
+						if (arg1 == null) {
+							UMDBuildings building = arg0.get(0);
+							updateMarker(building, true);
+						} else {
+							arg1.printStackTrace();
+						}
+					}
+				});
+			}
+		}
+	};
+
 }
