@@ -42,10 +42,19 @@
 	
 	<!-- Preferences Strings -->
 	<string name="pref_user_settings_title">User Settings</string>
-	<string name="pref_admin_settings_title">Student Organization Leaders Access</string>
-	<string name="pref_admin_sign_in_title">Sign in</string>
-	<string name="pref_admin_get_access_title">Get Access</string>
 	<string name="pref_title_placeholder">Placeholder</string>
 	<string name="pref_summary_placeholder">A place for future options</string>
+	<string name="pref_title_notifications">Notifications</string>
+	<string name="pref_summary_notifications">Coming soon</string>
+	
+	<string name="pref_admin_settings_title">Student Organization Leaders Access</string>
+	<string name="pref_title_admin_sign_in">Sign in</string>
+	<string name="pref_title_admin_get_access">Get Access</string>
+	
+	<string name="pref_about_settings_title">TerpSync</string>
+	<string name="pref_about_title">More information</string>
+	<string name="pref_summary_about">Click to find out more about the app</string>
+	
+	
 	
 </resources>
