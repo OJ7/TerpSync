@@ -43,7 +43,7 @@ public class EventListActivity extends Activity {
 	List<EventObject> fullEventList;
 	AlertDialog.Builder action_builder, delete_builder;
 	View view = null;
-	boolean isDeleted = false, filterMenuOpen = false, orgFiltered = false,
+	boolean isDeleted = false, isSignedIn = false, filterMenuOpen = false, orgFiltered = false,
 			buildingFiltered = false;
 	int priceFiltered = 0; // 0 = All, 1 = Free, 2 = Paid
 	private int editEventIndex = -1;
@@ -51,6 +51,7 @@ public class EventListActivity extends Activity {
 	String filterType, filterName;
 	String buildingFilterName, orgFilterName;
 	String[] actionOptions = { "Edit Event", "Delete Event" };
+	String currentOrganization = "";
 	private ActionBar actionBar;
 	protected ProgressDialog proDialog;
 
@@ -65,8 +66,12 @@ public class EventListActivity extends Activity {
 		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
 		lv = (ListView) findViewById(R.id.event_list);
 
-		// Determine filter options
 		Intent intent = getIntent();
+		if(intent.getBooleanExtra("SignedIn", false)){
+			isSignedIn = true;	
+			currentOrganization = intent.getStringExtra("CurrentOrganization");
+		}
+		// Determine filter options
 		filterType = intent.getStringExtra("FilterType");
 		filterName = intent.getStringExtra(filterType);
 
@@ -87,12 +92,14 @@ public class EventListActivity extends Activity {
 			actionBar.setTitle("Events by " + filterName);
 			getEventsAndCreateList(filterType, filterName);
 			orgFiltered = true;
-			setActionDialog();
 		} else if (filterType.equals(ParseConstants.event_location)) { // Filter by building name
 			actionBar.setTitle("Events in " + filterName);
 			getEventsAndCreateList(filterType, filterName);
 			buildingFiltered = true;
 		}
+		if(isSignedIn){
+			setActionDialog();
+		}	
 	}
 
 	/**
@@ -148,7 +155,13 @@ public class EventListActivity extends Activity {
 			public void onItemClick(AdapterView<?> adaptView, View v, int position, long id) {
 				final int pos = position;
 				final EventObject x = (EventObject) adaptView.getItemAtPosition(pos);
-
+				
+				// Don't add dialog to events by other organizations
+				if (!(currentOrganization.equals(x.getOrgName()))) { 
+					Log.i(TAG, "Clicked on another organization's event: " + x.getEventName());
+					return;
+				}
+				Log.i(TAG, "Clicked on your event: " + x.getEventName());
 				// Create alert dialog
 				action_builder.setTitle("Please select an option")
 						.setItems(actionOptions, new DialogInterface.OnClickListener() {

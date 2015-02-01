@@ -273,6 +273,8 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 				intent.putExtra("FilterType", "All");
+				intent.putExtra("SignedIn", adminSignedIn);
+				intent.putExtra("CurrentOrganization", currentOrganization);
 				startActivityForResult(intent, 0);
 			}
 		});
@@ -467,6 +469,8 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 		intent.putExtra("FilterType", ParseConstants.event_org_name);
 		intent.putExtra(ParseConstants.event_org_name, currentOrganization);
+		intent.putExtra("SignedIn", adminSignedIn);
+		intent.putExtra("CurrentOrganization", currentOrganization);
 		startActivityForResult(intent, 0);
 	}
 
@@ -730,6 +734,8 @@ public class MainActivity extends Activity {
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 				intent.putExtra("FilterType", "BuildingName");
 				intent.putExtra("BuildingName", buildingName);
+				intent.putExtra("SignedIn", adminSignedIn);
+				intent.putExtra("CurrentOrganization", currentOrganization);
 				startActivityForResult(intent, 0);
 			}
 		});
