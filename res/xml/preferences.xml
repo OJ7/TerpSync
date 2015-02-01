@@ -13,6 +13,7 @@
         android:key="pref_key_admin_settings"
         android:title="@string/pref_admin_settings_title" >
         <Preference
+            android:key="pref_admin_sign_in"
             android:summary="@string/pref_summary_admin_sign_in"
             android:title="@string/pref_title_admin_sign_in" >
             <intent android:action=".SignInActivity" />
