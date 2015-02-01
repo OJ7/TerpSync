@@ -1,4 +1,4 @@
-package settings;
+package com.terpsync.settings;
 
 import com.terpsync.R;
 import com.terpsync.R.xml;

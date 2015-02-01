@@ -3,9 +3,6 @@ package com.terpsync;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import settings.SettingsActivity;
-
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.card.EventListActivity;
@@ -14,6 +11,7 @@ import com.terpsync.parse.AdminAccounts;
 import com.terpsync.parse.EventObject;
 import com.terpsync.parse.ParseConstants;
 import com.terpsync.parse.UMDBuildings;
+import com.terpsync.settings.SettingsActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -104,9 +102,6 @@ public class MainActivity extends Activity {
 		if (!isNetworkAvailable()) {
 			openNetworkDialog();
 		} else {
-
-			MapsInitializer.initialize(this);
-
 			setupMap();
 			queryAndAddEventsFromParse(); // fills map with current events from database
 			createInitialFAB(); // creates all FAB objects - better performance
@@ -120,9 +115,9 @@ public class MainActivity extends Activity {
 	private void restorePreferences() {
 		Log.i(TAG, "Restoring preferences");
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-		isSignedIn = settings.getBoolean(signedInPref, isSignedIn);
-		currentUser = settings.getString(currentUserPref, currentUser);
-		currentOrganization = settings.getString(currentOrgPref, currentOrganization);
+		isSignedIn = settings.getBoolean(signedInPref, false);
+		currentUser = settings.getString(currentUserPref, "");
+		currentOrganization = settings.getString(currentOrgPref, "");
 	}
 
 	/**
@@ -714,8 +709,7 @@ public class MainActivity extends Activity {
 	 */
 	private void setupMap() {
 		Log.i(TAG, "Initializing and setting up map");
-
-		// MapsInitializer.initialize(this);
+		MapsInitializer.initialize(this);
 		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 		centerMapOnCampus();
 		mMap.getUiSettings().setZoomControlsEnabled(false);
