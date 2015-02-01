@@ -62,11 +62,12 @@ public class MainActivity extends Activity {
 			currentOrgPref = "currentOrganization";
 
 	// Global variables for Current User (if signed in)
+	boolean isSignedIn = false;
 	String currentUser = "", currentOrganization = "";
 
 	// Global variables for FAB
 	private FloatingActionButton menuFAB, locationFAB, mapTypeFAB, listFAB, signInFAB, adminFAB;
-	private boolean menuExpanded = false, isSignedIn = false;
+	private boolean menuExpanded = false;
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
 	private int mapToggle = 0; // 0 = normal map, 1 = hybrid map
 

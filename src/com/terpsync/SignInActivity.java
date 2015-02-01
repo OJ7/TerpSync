@@ -14,6 +14,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.List;
 import java.util.Locale;
 import com.parse.FindCallback;
@@ -23,25 +25,18 @@ import com.terpsync.parse.AdminAccounts;
 import com.terpsync.parse.ParseConstants;
 
 /**
- * A login screen that offers login via user/password.
+ * A sign in screen that offers login via user/password.
  */
 public class SignInActivity extends PreferenceActivity {
 
 	private static final String TAG = "SignInActivity";
 	public static final String PREFS_NAME = "MyPrefsFile";
-	private final Object lock = new Object();
 
 	// Global variable strings used for preferences
 	private final String signedInPref = "isSignedIn", currentUserPref = "currentUser",
 			currentOrgPref = "currentOrganization";
 
-	private boolean signedIn = false;
 	private String mUser, mPassword;
-
-	/**
-	 * Keep track of the login task to ensure we can cancel it if requested.
-	 */
-	private UserSignInTask mAuthTask = null;
 
 	// UI references.
 	private AutoCompleteTextView mUserView;
@@ -56,7 +51,6 @@ public class SignInActivity extends PreferenceActivity {
 
 		// Set up the login form.
 		mUserView = (AutoCompleteTextView) findViewById(R.id.user);
-		// populateAutoComplete();
 
 		mPasswordView = (EditText) findViewById(R.id.password);
 		mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -89,10 +83,6 @@ public class SignInActivity extends PreferenceActivity {
 	 */
 	public void attemptSignIn() {
 		Log.i(TAG, "Attempting to sign in");
-
-		if (mAuthTask != null) {
-			return;
-		}
 
 		// Reset errors.
 		mUserView.setError(null);
@@ -130,9 +120,6 @@ public class SignInActivity extends PreferenceActivity {
 			focusView.requestFocus();
 		} else {
 			// Kick off a background task to perform the user login attempt.
-			/*
-			 * mAuthTask = new UserSignInTask(username, password); mAuthTask.execute((Void) null);
-			 */
 			mUser = username;
 			mPassword = password;
 			ParseQuery<AdminAccounts> query = ParseQuery.getQuery(AdminAccounts.class);
@@ -143,50 +130,34 @@ public class SignInActivity extends PreferenceActivity {
 				public void done(List<AdminAccounts> arg0, ParseException arg1) {
 					if (arg1 != null && arg0.size() < 1) {
 						Log.i(TAG, "No organization accounts found");
-						/*
-						 * Toast.makeText(getApplicationContext(), "Invalid username or password",
-						 * Toast.LENGTH_SHORT).show();
-						 */
+						mUserView.setError(getString(R.string.error_incorrect_username));
+						mUserView.requestFocus();
 					} else {
 						AdminAccounts x = arg0.get(0);
 						// Log.i(TAG, "user: " + mUser + " -- " + x.getUsername());
 						// Log.i(TAG, "pass" + mPassword + " -- " + x.getPassword());
 						if (x.getUsername().equals(mUser) && x.getPassword().equals(mPassword)) {
+							Log.i(TAG, "Signed in successfully");
+							Toast.makeText(getApplicationContext(), "Signed in successfully :)",
+									Toast.LENGTH_SHORT).show();
 							SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME,
 									MODE_PRIVATE).edit();
-							signedIn = true;
 							editor.putBoolean(signedInPref, true);
 							editor.putString(currentUserPref, x.getUsername());
 							editor.putString(currentOrgPref, x.getOrganizatonName());
-							Log.i(TAG, "Signed in successfully");
-							/*
-							 * Toast.makeText(getApplicationContext(), "Signed in successfully :)",
-							 * Toast.LENGTH_SHORT).show();
-							 */
 							if (editor.commit())
 								Log.i(TAG, "Preferences saved successfully");
 							else
 								Log.i(TAG, "Preferences failed to save");
+							finish(); // ends activity once signed in
 						} else {
-							Log.i(TAG, "Sign in failed...either invalid username or password");
-							/*
-							 * Toast.makeText(getApplicationContext(),
-							 * "Invalid username or password", Toast.LENGTH_SHORT).show();
-							 */
+							Log.i(TAG, "Sign in failed... incorrect password");
+							mPasswordView.setError(getString(R.string.error_incorrect_password));
+							mPasswordView.requestFocus();
 						}
-					}
-
-					mAuthTask = null;
-
-					if (signedIn) {
-						finish();
-					} else {
-						mPasswordView.setError(getString(R.string.error_incorrect_password));
-						mPasswordView.requestFocus();
 					}
 				}
 			});
-
 		}
 	}
 
@@ -200,95 +171,4 @@ public class SignInActivity extends PreferenceActivity {
 		return password.length() > 3;
 	}
 
-	/**
-	 * Represents an asynchronous login/registration task used to authenticate the user.
-	 */
-	public class UserSignInTask extends AsyncTask<Void, Void, Boolean> {
-
-		private final String mUser;
-		private final String mPassword;
-
-		UserSignInTask(String username, String password) {
-			mUser = username;
-			mPassword = password;
-		}
-
-		@Override
-		protected Boolean doInBackground(Void... params) {
-			ParseQuery<AdminAccounts> query = ParseQuery.getQuery(AdminAccounts.class);
-			query.whereContains(ParseConstants.admin_username, mUser);
-			query.setLimit(2);
-			query.findInBackground(new FindCallback<AdminAccounts>() {
-				@Override
-				public void done(List<AdminAccounts> arg0, ParseException arg1) {
-					if (arg1 != null && arg0.size() < 1) {
-						Log.i(TAG, "No organization accounts found");
-						mUserView.setError(getString(R.string.error_invalid_username));
-						mUserView.requestFocus();
-						/*
-						 * Toast.makeText(getApplicationContext(), "Invalid username or password",
-						 * Toast.LENGTH_SHORT).show();
-						 */
-					} else {
-						AdminAccounts x = arg0.get(0);
-						// Log.i(TAG, "user: " + mUser + " -- " + x.getUsername());
-						// Log.i(TAG, "pass" + mPassword + " -- " + x.getPassword());
-						if (x.getUsername().equals(mUser) && x.getPassword().equals(mPassword)) {
-							SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME,
-									MODE_PRIVATE).edit();
-							signedIn = true;
-							editor.putBoolean(signedInPref, true);
-							editor.putString(currentUserPref, x.getUsername());
-							editor.putString(currentOrgPref, x.getOrganizatonName());
-							Log.i(TAG, "Signed in successfully");
-							/*
-							 * Toast.makeText(getApplicationContext(), "Signed in successfully :)",
-							 * Toast.LENGTH_SHORT).show();
-							 */
-							if (editor.commit())
-								Log.i(TAG, "Preferences saved successfully");
-							else
-								Log.i(TAG, "Preferences failed to save");
-						} else {
-							Log.i(TAG, "Sign in failed... invalid password");
-							mPasswordView.setError(getString(R.string.error_incorrect_password));
-							mPasswordView.requestFocus();
-							/*
-							 * Toast.makeText(getApplicationContext(),
-							 * "Invalid username or password", Toast.LENGTH_SHORT).show();
-							 */
-						}
-					}
-
-					mAuthTask = null;
-
-					if (signedIn) {
-						finish();
-					} else {
-						mPasswordView.setError(getString(R.string.error_incorrect_password));
-						mPasswordView.requestFocus();
-					}
-				}
-			});
-
-			return signedIn;
-		}
-
-		@Override
-		protected void onPostExecute(final Boolean success) {
-			mAuthTask = null;
-
-			if (success) {
-				finish();
-			} else {
-				mPasswordView.setError(getString(R.string.error_incorrect_password));
-				mPasswordView.requestFocus();
-			}
-		}
-
-		@Override
-		protected void onCancelled() {
-			mAuthTask = null;
-		}
-	}
 }
