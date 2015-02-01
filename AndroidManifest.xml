@@ -41,19 +41,19 @@
             android:parentActivityName="com.terpsync.MainActivity" >
         </activity>
         <activity
-            android:name="com.terpsync.AddEventActivity"
+            android:name="com.terpsync.events.AddEventActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_add_event_activity"
             android:parentActivityName="com.terpsync.MainActivity" >
         </activity>
         <activity
-            android:name="com.terpsync.EditEventActivity"
+            android:name="com.terpsync.events.EditEventActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_edit_event_activity"
             android:parentActivityName="com.terpsync.MainActivity" >
         </activity>
         <activity
-            android:name="com.terpsync.SettingsActivity"
+            android:name="settings.SettingsActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/action_settings"
             android:parentActivityName="com.terpsync.MainActivity" >

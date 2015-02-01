@@ -3,9 +3,13 @@ package com.terpsync;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import settings.SettingsActivity;
+
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.card.EventListActivity;
+import com.terpsync.events.AddEventActivity;
 import com.terpsync.parse.AdminAccounts;
 import com.terpsync.parse.EventObject;
 import com.terpsync.parse.ParseConstants;
@@ -56,7 +60,7 @@ public class MainActivity extends Activity {
 	private Context context;
 
 	// Global variable strings used for preferences
-	private final String adminTogglePref = "adminToggle", currentUserPref = "currentUser",
+	private final String signedInPref = "isSignedIn", currentUserPref = "currentUser",
 			currentOrgPref = "currentOrganization";
 
 	// Global variables for Current User (if signed in)
@@ -64,7 +68,7 @@ public class MainActivity extends Activity {
 
 	// Global variables for FAB
 	private FloatingActionButton menuFAB, locationFAB, mapTypeFAB, listFAB, signInFAB, adminFAB;
-	private boolean menuExpanded = false, adminSignedIn = false;
+	private boolean menuExpanded = false, isSignedIn = false;
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
 	private int mapToggle = 0; // 0 = normal map, 1 = hybrid map
 
@@ -115,8 +119,8 @@ public class MainActivity extends Activity {
 	 */
 	private void restorePreferences() {
 		Log.i(TAG, "Restoring preferences");
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		adminSignedIn = settings.getBoolean(adminTogglePref, adminSignedIn);
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+		isSignedIn = settings.getBoolean(signedInPref, isSignedIn);
 		currentUser = settings.getString(currentUserPref, currentUser);
 		currentOrganization = settings.getString(currentOrgPref, currentOrganization);
 	}
@@ -126,9 +130,8 @@ public class MainActivity extends Activity {
 	 */
 	private void savePreferences() {
 		Log.i(TAG, "Saving preferences");
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putBoolean(adminTogglePref, adminSignedIn);
+		SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+		editor.putBoolean(signedInPref, isSignedIn);
 		editor.putString(currentUserPref, currentUser);
 		editor.putString(currentOrgPref, currentOrganization);
 		if (editor.commit())
@@ -272,8 +275,6 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 				intent.putExtra("FilterType", "All");
-				intent.putExtra("SignedIn", adminSignedIn);
-				intent.putExtra("CurrentOrganization", currentOrganization);
 				startActivityForResult(intent, 0);
 			}
 		});
@@ -338,7 +339,7 @@ public class MainActivity extends Activity {
 		mapTypeFABListener();
 		// listFABListener();
 		locationFABListener();
-		if (!adminSignedIn) {
+		if (!isSignedIn) {
 			signInFABListener();
 		} else {
 			adminFABListener();
@@ -353,7 +354,7 @@ public class MainActivity extends Activity {
 		mapTypeFAB.hideFloatingActionButton();
 		// listFAB.hideFloatingActionButton();
 		locationFAB.hideFloatingActionButton();
-		if (adminSignedIn) {
+		if (isSignedIn) {
 			adminFAB.hideFloatingActionButton();
 		} else {
 			signInFAB.hideFloatingActionButton();
@@ -468,8 +469,6 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 		intent.putExtra("FilterType", ParseConstants.event_org_name);
 		intent.putExtra(ParseConstants.event_org_name, currentOrganization);
-		intent.putExtra("SignedIn", adminSignedIn);
-		intent.putExtra("CurrentOrganization", currentOrganization);
 		startActivityForResult(intent, 0);
 	}
 
@@ -522,14 +521,14 @@ public class MainActivity extends Activity {
 						if (x.getUsername().equals(UN) && x.getPassword().equals(PW)) {
 							currentUser = x.getUsername();
 							currentOrganization = x.getOrganizatonName();
-							adminSignedIn = true;
+							isSignedIn = true;
 							// Replacing signInFAB
 							signInFAB.hideFloatingActionButton();
 							adminFABListener();
 							break;
 						}
 					}
-					if (adminSignedIn) {
+					if (isSignedIn) {
 						Log.i(TAG, "Signed in successfully");
 						Toast.makeText(getApplicationContext(), "Signed in successfully :)",
 								Toast.LENGTH_SHORT).show();
@@ -541,7 +540,7 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
-		return adminSignedIn;
+		return isSignedIn;
 	}
 
 	/**
@@ -673,7 +672,7 @@ public class MainActivity extends Activity {
 		Log.i(TAG, "Signing out of admin account");
 		currentUser = "";
 		currentOrganization = "";
-		adminSignedIn = false;
+		isSignedIn = false;
 		// Replaces adminFAB with signInFAB
 		adminFAB.hideFloatingActionButton();
 		signInFABListener();
@@ -733,8 +732,6 @@ public class MainActivity extends Activity {
 				Intent intent = new Intent(MainActivity.this, EventListActivity.class);
 				intent.putExtra("FilterType", "BuildingName");
 				intent.putExtra("BuildingName", buildingName);
-				intent.putExtra("SignedIn", adminSignedIn);
-				intent.putExtra("CurrentOrganization", currentOrganization);
 				startActivityForResult(intent, 0);
 			}
 		});

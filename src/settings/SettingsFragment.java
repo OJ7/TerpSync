@@ -1,4 +1,7 @@
-package com.terpsync;
+package settings;
+
+import com.terpsync.R;
+import com.terpsync.R.xml;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;

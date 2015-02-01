@@ -7,12 +7,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import com.terpsync.AddEventActivity;
-import com.terpsync.EditEventActivity;
 import com.terpsync.FloatingActionButton;
 import com.terpsync.MainActivity;
 import com.terpsync.R;
+import com.terpsync.events.AddEventActivity;
+import com.terpsync.events.EditEventActivity;
 import com.terpsync.parse.EventObject;
 import com.terpsync.parse.ParseConstants;
 import com.parse.FindCallback;
@@ -24,6 +23,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -39,6 +39,11 @@ import android.widget.ListView;
 public class EventListActivity extends Activity {
 
 	private static final String TAG = "EventListActivity";
+	public static final String PREFS_NAME = "MyPrefsFile";
+
+	// Global variable strings used for preferences
+	private final String signedInPref = "isSignedIn", currentOrgPref = "currentOrganization";
+
 	private FloatingActionButton createFAB, filterFAB, buildingFAB, orgFAB, priceFAB;
 	private Intent mResultIntent = new Intent();
 	CardListAdapter mAdapter;
@@ -69,19 +74,28 @@ public class EventListActivity extends Activity {
 		actionBar = getActionBar();
 		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00A0B0")));
 		lv = (ListView) findViewById(R.id.event_list);
-
-		Intent intent = getIntent();
-		if (intent.getBooleanExtra("SignedIn", false)) {
-			isSignedIn = true;
-			currentOrganization = intent.getStringExtra("CurrentOrganization");
+		restorePreferences();
+		if (isSignedIn) {
 			spacingAmount = FAB_SPACING;
 		}
-		// Determine filter options
+
+		// Getting information from intent
+		Intent intent = getIntent();
 		filterType = intent.getStringExtra("FilterType");
 		filterName = intent.getStringExtra(filterType);
 
 		setupFAB();
 		determineFilterAndCreateList();
+	}
+
+	/**
+	 * Restores information if the user was previously signed in.
+	 */
+	private void restorePreferences() {
+		Log.i(TAG, "Restoring preferences");
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+		isSignedIn = settings.getBoolean(signedInPref, false);
+		currentOrganization = settings.getString(currentOrgPref, "");
 	}
 
 	/**

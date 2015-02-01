@@ -1,6 +1,8 @@
-package com.terpsync;
+package com.terpsync.events;
 
 import com.terpsync.R;
+import com.terpsync.R.layout;
+
 import android.app.ActionBar;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
