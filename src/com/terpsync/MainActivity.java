@@ -903,7 +903,7 @@ public class MainActivity extends Activity {
 	 */
 	protected void startLoading() {
 	    proDialog = new ProgressDialog(this);
-	    proDialog.setMessage("Loading...");
+	    proDialog.setMessage("Loading map...");
 	    proDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 	    proDialog.setCancelable(false);
 	    proDialog.show();
