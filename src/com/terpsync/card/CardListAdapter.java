@@ -124,6 +124,7 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 	@SuppressLint("DefaultLocale")
 	private String getBitMapLocation(String buildingName) {
 		buildingName = buildingName.toLowerCase();
+		buildingName = buildingName.replaceAll("\\(.*\\)", "").trim();
 		buildingName = buildingName.replaceAll("[.]", "");
 		buildingName = buildingName.replaceAll("\\s+", " ");
 		buildingName = buildingName.replaceAll("[^a-z0-9\\s]", " ");
