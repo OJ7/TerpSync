@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import com.terpsync.FloatingActionButton;
-import com.terpsync.MainActivity;
 import com.terpsync.R;
 import com.terpsync.events.AddEventActivity;
 import com.terpsync.events.EditEventActivity;
@@ -286,7 +285,7 @@ public class EventListActivity extends Activity {
 		filterFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_filter))
 				.withButtonColor(Color.BLUE).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 16 + FAB_SPACING).create();
+				.withMargins(0, 0, 16, 16 + spacingAmount).create();
 		filterFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -326,7 +325,7 @@ public class EventListActivity extends Activity {
 		buildingFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_building))
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 226 + FAB_SPACING).create();
+				.withMargins(0, 0, 16, 226 + spacingAmount).create();
 		setBuildingFABState();
 		buildingFAB.hideFloatingActionButton();
 		buildingFAB.showFloatingActionButton();
@@ -357,7 +356,7 @@ public class EventListActivity extends Activity {
 		orgFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_crowd))
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 156 + FAB_SPACING).create();
+				.withMargins(0, 0, 16, 156 + spacingAmount).create();
 		setOrgFABState();
 		orgFAB.hideFloatingActionButton();
 		orgFAB.showFloatingActionButton();
@@ -388,7 +387,7 @@ public class EventListActivity extends Activity {
 		priceFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_paid))
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 86 + FAB_SPACING).create();
+				.withMargins(0, 0, 16, 86 + spacingAmount).create();
 		setPriceFABState();
 		priceFAB.hideFloatingActionButton();
 		priceFAB.showFloatingActionButton();
