@@ -185,7 +185,7 @@ public class ManageEventFragment extends Fragment {
 		@Override
 		public CharSequence fixText(CharSequence invalidText) {
 			Log.v(TAG, "Clearing location field");
-			Toast.makeText(fragAct, "Choose building from list", Toast.LENGTH_LONG).show();
+			Toast.makeText(fragAct, "Choose building from list", Toast.LENGTH_SHORT).show();
 			return "";
 		}
 	}

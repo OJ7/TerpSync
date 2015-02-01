@@ -49,7 +49,6 @@ public class EventListActivity extends Activity {
 	boolean isDeleted = false, isSignedIn = false, filterMenuOpen = false, orgFiltered = false,
 			buildingFiltered = false;
 	int priceFiltered = 0; // 0 = All, 1 = Free, 2 = Paid
-	private int editEventIndex = -1;
 	String deletedBuildings = "", addedBuildings = "";
 	String filterType, filterName;
 	String buildingFilterName, orgFilterName;
@@ -133,7 +132,6 @@ public class EventListActivity extends Activity {
 		eventsQuery.findInBackground(new FindCallback<EventObject>() {
 			@Override
 			public void done(List<EventObject> events, ParseException e) {
-				stopLoading();
 				if (e == null) { // All events were successfully returned
 					fullEventList = events;
 					Collections.sort(fullEventList, new DateTimeComparator());
@@ -142,6 +140,7 @@ public class EventListActivity extends Activity {
 				} else { // object retrieval failed throw exception -- fail fast
 					e.printStackTrace();
 				}
+				stopLoading();
 			}
 		});
 
@@ -183,7 +182,6 @@ public class EventListActivity extends Activity {
 										intent.putExtra("isNewEvent", false);
 										intent.putExtra(ParseConstants.event_object_id,
 												x.getObjectId());
-										editEventIndex = pos;
 										startActivityForResult(intent, 0);
 										break;
 
@@ -619,24 +617,22 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * Updates the result storing an intent if an event was deleted.
+	 * Updates the result storing an intent if event(s)/building(s) were added or deleted.
 	 */
 	private void updateIntent() {
 		Log.i(TAG, "Updating intent");
 
-		if (isDeleted) {
-			Log.i(TAG, "Events deleted, buildings affected: " + deletedBuildings);
-			mResultIntent.putExtra("deletedNames", deletedBuildings);
-			if (getParent() == null) {
-				setResult(Activity.RESULT_OK, mResultIntent);
-			} else {
-				getParent().setResult(Activity.RESULT_OK, mResultIntent);
-			}
-		} else {
-			Log.i(TAG, "No events deleted... nothing to update");
-			setResult(Activity.RESULT_OK);
+		if (!addedBuildings.equals("")) {
+			mResultIntent.putExtra("addedNames", addedBuildings);
 		}
-		finish();
+		if (!deletedBuildings.equals("")) {
+			mResultIntent.putExtra("deletedNames", deletedBuildings);
+		}
+		if (getParent() == null) {
+			setResult(Activity.RESULT_OK, mResultIntent);
+		} else {
+			getParent().setResult(Activity.RESULT_OK, mResultIntent);
+		}
 	}
 
 	@Override
@@ -655,7 +651,6 @@ public class EventListActivity extends Activity {
 				} else {
 					addedBuildings += ";" + resultIntent.getStringExtra("addedNames");
 				}
-				mResultIntent.putExtra("addedNames", addedBuildings);
 			}
 			// Checking if building(s) were deleted
 			if (resultIntent.getStringExtra("deletedNames") != null) {
@@ -666,26 +661,14 @@ public class EventListActivity extends Activity {
 				} else {
 					deletedBuildings += ";" + resultIntent.getStringExtra("deletedNames");
 				}
-				mResultIntent.putExtra("deletedNames", deletedBuildings);
 			}
-			/*
-			 * if (resultIntent.getStringExtra("objectID") != null) { String id =
-			 * resultIntent.getStringExtra("objectID"); Log.i(TAG, "Got event objectID: " + id +
-			 * "\nUpdating list with updated event"); // Updating the event in adapter and updating
-			 * list (BUG: this doesn't work) try { ParseQuery<EventObject> eventsQuery =
-			 * ParseQuery.getQuery(EventObject.class); EventObject x = eventsQuery.get(id);
-			 * fullEventList.set(editEventIndex, x); mAdapter.replaceData(fullEventList);
-			 * refilterList(); } catch (ParseException e) { e.printStackTrace(); } }
-			 */
 			Log.i(TAG, "Building(s) added: " + addedBuildings);
 			Log.i(TAG, "Building(s) deleted: " + deletedBuildings);
 
-			setResult(Activity.RESULT_OK, mResultIntent);
+			updateIntent();
 		} else {
 			Log.i(TAG, "No activity result");
 		}
-
-		editEventIndex = -1; // resetting the editEventIndex after done using it
 	}
 
 }

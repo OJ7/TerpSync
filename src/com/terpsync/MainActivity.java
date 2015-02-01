@@ -84,7 +84,6 @@ public class MainActivity extends Activity {
 	boolean validChange = false;
 	protected ProgressDialog proDialog;
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.i(TAG, "Entering onCreate()");
@@ -897,23 +896,23 @@ public class MainActivity extends Activity {
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
 	}
-	
+
 	/**
 	 * TODO - add documentation
 	 */
 	protected void startLoading() {
-	    proDialog = new ProgressDialog(this);
-	    proDialog.setMessage("Loading map...");
-	    proDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-	    proDialog.setCancelable(false);
-	    proDialog.show();
+		proDialog = new ProgressDialog(this);
+		proDialog.setMessage("Loading map...");
+		proDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		proDialog.setCancelable(false);
+		proDialog.show();
 	}
 
 	/**
 	 * TODO - add documentation
 	 */
 	protected void stopLoading() {
-		if(proDialog != null && proDialog.isShowing()){
+		if (proDialog != null && proDialog.isShowing()) {
 			proDialog.dismiss();
 		}
 		proDialog = null;
@@ -956,8 +955,8 @@ public class MainActivity extends Activity {
 					}
 				}
 				if (resultIntent.getStringExtra("deletedNames") != null) {
-					Log.i(TAG, "Got result - building(s) deleted");
 					buildings = resultIntent.getStringExtra("deletedNames");
+					Log.i(TAG, "Got result - building(s) deleted: " + buildings);
 					String[] parsedNames = buildings.split(";");
 					for (String name : parsedNames) {
 						ParseQuery<UMDBuildings> buildingsQuery = ParseQuery
@@ -1005,8 +1004,7 @@ public class MainActivity extends Activity {
 	}
 
 	/*
-	 * Add (Parse) FindCallback functions below to keep the above code more dense and
-	 * organized
+	 * Add (Parse) FindCallback functions below to keep the above code more dense and organized
 	 */
 
 	/**
@@ -1024,13 +1022,13 @@ public class MainActivity extends Activity {
 				buildingsQuery.findInBackground(new FindCallback<UMDBuildings>() {
 					@Override
 					public void done(List<UMDBuildings> arg0, ParseException arg1) {
-						stopLoading();
 						if (arg1 == null) {
 							UMDBuildings building = arg0.get(0);
 							updateMarker(building, true);
 						} else {
 							arg1.printStackTrace();
 						}
+						stopLoading();
 					}
 				});
 			}
