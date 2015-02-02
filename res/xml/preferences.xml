@@ -22,7 +22,9 @@
     <PreferenceCategory
         android:key="pref_key_about_settings"
         android:title="@string/pref_about_settings_title" >
-        <Preference android:title="@string/pref_about_title" >
+        <Preference
+            android:summary="@string/pref_summary_about"
+            android:title="@string/pref_about_title" >
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="http://oj7.github.io/TerpSync" />
