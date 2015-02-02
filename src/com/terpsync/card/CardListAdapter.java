@@ -174,14 +174,15 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 							break;
 						case 2: // filter by free
 							// Log.i(TAG, "Filtering by Free Events");
+							Log.i(TAG, "Event Cost: " +eventObject.getAdmission());
 							if (eventObject.getAdmission().equals(filterName)) {
 								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}
 							break;
 						case 3: // filter by paid
-							// Log.i(TAG, "Filtering by Paid EventObject");
-							if (!eventObject.getAdmission().equals(filterName)) {
+							Log.i(TAG, "Event Cost: " +eventObject.getAdmission());
+							if (!(eventObject.getAdmission().equals(filterName))) {
 								filteredEvents.add(eventObject);
 								Log.i(TAG, "Number of events added: " + ++numEvents);
 							}

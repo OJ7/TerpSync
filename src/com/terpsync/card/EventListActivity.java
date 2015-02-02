@@ -402,7 +402,7 @@ public class EventListActivity extends Activity {
 						break;
 					case 1: // Filtering by paid
 						priceFiltered++;
-						filterByPrice();
+						refilterList();
 						break;
 					case 2: // Unfiltering
 						priceFiltered = 0;
