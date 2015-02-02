@@ -910,6 +910,15 @@ public class MainActivity extends Activity {
 		}
 		proDialog = null;
 	}
+	
+	public void onBackPressed(){
+		if (menuExpanded) {
+			collapseFABMenu();
+			menuExpanded = false;
+		} else {
+			finish();
+		}
+	}
 
 	/**
 	 * TODO - update documentation

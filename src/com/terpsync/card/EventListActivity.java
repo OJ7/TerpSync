@@ -647,6 +647,15 @@ public class EventListActivity extends Activity {
 			getParent().setResult(Activity.RESULT_OK, mResultIntent);
 		}
 	}
+	
+	public void onBackPressed(){
+		if (filterMenuOpen) {
+			closeFilterMenu();
+			filterMenuOpen = false;
+		} else {
+			finish();
+		}
+	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
