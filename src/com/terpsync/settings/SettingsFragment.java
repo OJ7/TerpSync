@@ -39,7 +39,7 @@ public class SettingsFragment extends PreferenceFragment {
 
 	Preference signInPreference;
 	Builder manageAccountDialog, changeSignInBuilder;
-	String[] manageAccountOptions = { "Change username/password", "Sign out" };
+	String[] manageAccountOptions = { "Change Username/Ppassword", "Sign Out" };
 	AlertDialog myDialog;
 	EditText mUserView, mPasswordView, mConfirmView;
 	Button mChangeButton;
@@ -291,7 +291,7 @@ public class SettingsFragment extends PreferenceFragment {
 						Log.i(TAG, "New password:" + password);
 						Toast.makeText(
 								getActivity().getBaseContext(),
-								"Username/Password changed successfully: [" + username + "]" + ":["
+								"Username/Password changed successfully:\n[" + username + "]" + ":["
 										+ password + "]", Toast.LENGTH_SHORT).show();
 					} else { // object retrieval failed throw exception -- fail fast
 						arg1.printStackTrace();
@@ -303,11 +303,11 @@ public class SettingsFragment extends PreferenceFragment {
 	}
 
 	private boolean isUserValid(String user) {
-		return user.length() > 3;
+		return user.length() > 2;
 	}
 
 	private boolean isPasswordValid(String password) {
-		return password.length() > 3;
+		return password.length() > 2;
 	}
 
 	/**

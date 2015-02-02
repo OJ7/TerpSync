@@ -97,7 +97,7 @@ public class SignInActivity extends PreferenceActivity {
 		View focusView = null;
 
 		// Check for a valid password, if the user entered one.
-		if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+		if (!isPasswordValid(password)) {
 			mPasswordView.setError(getString(R.string.error_invalid_password));
 			focusView = mPasswordView;
 			cancel = true;
@@ -163,12 +163,12 @@ public class SignInActivity extends PreferenceActivity {
 
 	private boolean isUserValid(String user) {
 		// TODO: Replace this with your own logic
-		return user.length() > 3;
+		return user.length() > 2;
 	}
 
 	private boolean isPasswordValid(String password) {
 		// TODO: Replace this with your own logic
-		return password.length() > 3;
+		return password.length() > 2;
 	}
 
 }
