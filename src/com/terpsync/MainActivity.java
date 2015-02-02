@@ -335,11 +335,10 @@ public class MainActivity extends Activity {
 		mapTypeFABListener();
 		// listFABListener();
 		locationFABListener();
-		if (!isSignedIn) {
-			signInFABListener();
-		} else {
-			adminFABListener();
-		}
+		signInFABListener();
+		/*
+		 * if (!isSignedIn) { signInFABListener(); } else { adminFABListener(); }
+		 */
 	}
 
 	/**
@@ -350,11 +349,11 @@ public class MainActivity extends Activity {
 		mapTypeFAB.hideFloatingActionButton();
 		// listFAB.hideFloatingActionButton();
 		locationFAB.hideFloatingActionButton();
-		if (isSignedIn) {
-			adminFAB.hideFloatingActionButton();
-		} else {
-			signInFAB.hideFloatingActionButton();
-		}
+		signInFAB.hideFloatingActionButton();
+		/*
+		 * if (isSignedIn) { adminFAB.hideFloatingActionButton(); } else {
+		 * signInFAB.hideFloatingActionButton(); }
+		 */
 		// locationFABListener();
 		listFABListener();
 	}
@@ -518,9 +517,10 @@ public class MainActivity extends Activity {
 							currentUser = x.getUsername();
 							currentOrganization = x.getOrganizatonName();
 							isSignedIn = true;
-							// Replacing signInFAB
-							signInFAB.hideFloatingActionButton();
-							adminFABListener();
+							/*
+							 * // Replacing signInFAB signInFAB.hideFloatingActionButton();
+							 * adminFABListener();
+							 */
 							break;
 						}
 					}
@@ -670,8 +670,9 @@ public class MainActivity extends Activity {
 		currentOrganization = "";
 		isSignedIn = false;
 		// Replaces adminFAB with signInFAB
-		adminFAB.hideFloatingActionButton();
-		signInFABListener();
+		/*
+		 * adminFAB.hideFloatingActionButton(); signInFABListener();
+		 */
 		Toast.makeText(getBaseContext(), "Signed out successfully :)", Toast.LENGTH_SHORT).show();
 	}
 
