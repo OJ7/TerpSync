@@ -241,24 +241,28 @@ public class ManageEventFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				new DatePickerDialog(fragAct, mStartDateListener, mYear, mMonth, mDay).show();
+				startDateText.setError(null);
 			}
 		});
 		endDateText.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new DatePickerDialog(fragAct, mEndDateListener, mYear, mMonth, mDay).show();
+				endDateText.setError(null);
 			}
 		});
 		startTimeText.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new TimePickerDialog(fragAct, mStartTimeListener, mHour, mMinute, false).show();
+				startTimeText.setError(null);
 			}
 		});
 		endTimeText.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new TimePickerDialog(fragAct, mEndTimeListener, mHour, mMinute, false).show();
+				endTimeText.setError(null);
 			}
 		});
 
@@ -276,24 +280,72 @@ public class ManageEventFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				locationClearFocus();
-				boolean formFilled = true;
-				if (orgNameText.getText().toString().isEmpty()
-						|| eventNameText.getText().toString().isEmpty()
-						|| startDateText.getText().toString().isEmpty()
-						|| endDateText.getText().toString().isEmpty()
-						|| startTimeText.getText().toString().isEmpty()
-						|| endTimeText.getText().toString().isEmpty()
-						|| eventLocationText.getText().toString().isEmpty()
-						|| (paidButton.isChecked() && costText.getText().toString().isEmpty())
-						|| (!paidButton.isChecked() && !freeButton.isChecked())) {
-					formFilled = false;
-					Log.i(TAG, "All required fields not filled out");
-					Toast.makeText(fragAct, "Please fill all required fields", Toast.LENGTH_LONG)
-							.show();
+
+				// Reset errors.
+				eventNameText.setError(null);
+				startDateText.setError(null);
+				startTimeText.setError(null);
+				endDateText.setError(null);
+				endTimeText.setError(null);
+				eventLocationText.setError(null);
+				costText.setError(null);
+
+				boolean cancel = false;
+				View focusView = null;
+
+				// Checking if required fields are filled
+				if ((!paidButton.isChecked() && !freeButton.isChecked())) {
+					cancel = true;
+				}
+				if (paidButton.isChecked() && costText.getText().toString().isEmpty()) {
+					costText.setError(getString(R.string.error_field_required));
+					focusView = costText;
+					cancel = true;
+				}
+				if (eventLocationText.getText().toString().isEmpty()) {
+					eventLocationText.setError(getString(R.string.error_field_required));
+					focusView = eventLocationText;
+					cancel = true;
+				}
+				if (endTimeText.getText().toString().isEmpty()
+						|| endDateText.getText().toString().isEmpty()) {
+					endTimeText.setError(getString(R.string.error_field_required));
+					focusView = endTimeText;
+					cancel = true;
+				}
+				if (startTimeText.getText().toString().isEmpty()
+						|| startDateText.getText().toString().isEmpty()) {
+					startTimeText.setError(getString(R.string.error_field_required));
+					focusView = startTimeText;
+					cancel = true;
+				}
+				if (eventNameText.getText().toString().isEmpty()) {
+					eventNameText.setError(getString(R.string.error_field_required));
+					focusView = eventNameText;
+					cancel = true;
 				}
 
-				// All valid input from User, create parse object and add to DB
-				if (formFilled) {
+				/*
+				 * boolean formFilled = true; if (orgNameText.getText().toString().isEmpty() ||
+				 * eventNameText.getText().toString().isEmpty() ||
+				 * startDateText.getText().toString().isEmpty() ||
+				 * endDateText.getText().toString().isEmpty() ||
+				 * startTimeText.getText().toString().isEmpty() ||
+				 * endTimeText.getText().toString().isEmpty() ||
+				 * eventLocationText.getText().toString().isEmpty() || (paidButton.isChecked() &&
+				 * costText.getText().toString().isEmpty()) || (!paidButton.isChecked() &&
+				 * !freeButton.isChecked())) { formFilled = false; Log.i(TAG,
+				 * "All required fields not filled out"); Toast.makeText(fragAct,
+				 * "Please fill all required fields", Toast.LENGTH_LONG) .show(); }
+				 */
+
+				if (cancel) {
+					// There was an error; don't save event and focus the first
+					// form field with an error.
+					focusView.requestFocus();
+					Toast.makeText(fragAct, "Please fill all required fields", Toast.LENGTH_SHORT)
+							.show();
+				} else {
 					Log.i(TAG, "Form filled out, setting eventObject fields");
 					mEvent.setOrgName(orgNameText.getText().toString());
 					mEvent.setEventName(eventNameText.getText().toString());
@@ -301,7 +353,7 @@ public class ManageEventFragment extends Fragment {
 					mEvent.setDescription(eventDescriptionText.getText().toString());
 
 					if (paidButton.isChecked()) {
-						mEvent.setAdmission(costText.getText().toString());
+						mEvent.setAdmission("$" + costText.getText().toString());
 					} else {
 						mEvent.setAdmission("FREE");
 					}
@@ -321,6 +373,29 @@ public class ManageEventFragment extends Fragment {
 						}
 					});
 				}
+
+				/*
+				 * // All valid input from User, create parse object and add to DB if (formFilled) {
+				 * Log.i(TAG, "Form filled out, setting eventObject fields");
+				 * mEvent.setOrgName(orgNameText.getText().toString());
+				 * mEvent.setEventName(eventNameText.getText().toString());
+				 * mEvent.setBuildingName(eventLocationText.getText().toString());
+				 * mEvent.setDescription(eventDescriptionText.getText().toString());
+				 * 
+				 * if (paidButton.isChecked()) { mEvent.setAdmission(costText.getText().toString());
+				 * } else { mEvent.setAdmission("FREE"); }
+				 * 
+				 * if ((!mEvent.getBuildingName().equals(originalBuilding))) isLocationChanged =
+				 * true;
+				 * 
+				 * 
+				 * saveInBackground uploads the parse object to the DB creating a new save callback
+				 * which waits until it is refreshed so we can extract its newly created object ID
+				 * 
+				 * mEvent.saveInBackground(new SaveCallback() {
+				 * 
+				 * @Override public void done(ParseException arg0) { setResult(); } }); }
+				 */
 			}
 		});
 	}
@@ -352,7 +427,6 @@ public class ManageEventFragment extends Fragment {
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 				mEvent.setStartDate(sdf.format(date));
 			} catch (java.text.ParseException e) {
-
 				e.printStackTrace();
 			}
 		}
@@ -376,7 +450,6 @@ public class ManageEventFragment extends Fragment {
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 				mEvent.setEndDate(sdf.format(date));
 			} catch (java.text.ParseException e) {
-
 				e.printStackTrace();
 			}
 		}
@@ -420,7 +493,6 @@ public class ManageEventFragment extends Fragment {
 				SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.US);
 				mEvent.setEndTime(sdf.format(date));
 			} catch (java.text.ParseException e) {
-
 				e.printStackTrace();
 			}
 		}
