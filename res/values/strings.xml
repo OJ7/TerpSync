@@ -51,6 +51,7 @@
 	<string name="pref_title_admin_sign_in">Sign in</string>
 	<string name="pref_summary_admin_sign_in">Sign in as your organization to add events</string>
 	<string name="pref_title_admin_sign_out">Sign out</string>
+	<string name="pref_title_admin_manage">Manage Account</string>
 	<string name="pref_summary_admin_signed_in_as">Signed in as: </string>
 	<string name="pref_title_admin_get_access">Get Access</string>
 	
