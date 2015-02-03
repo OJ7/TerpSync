@@ -9,6 +9,7 @@ import com.terpsync.R;
 import com.terpsync.SignInActivity;
 import com.terpsync.parse.AdminAccounts;
 import com.terpsync.parse.ParseConstants;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -18,7 +19,6 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -171,6 +171,7 @@ public class SettingsFragment extends PreferenceFragment {
 	/**
 	 * Creates a dialog box to change username and/or password.
 	 */
+	@SuppressLint("InflateParams")
 	private void showChangeSignInDialog() {
 		Log.i(TAG, "Creating Change Account Info Dialog");
 
@@ -231,7 +232,6 @@ public class SettingsFragment extends PreferenceFragment {
 		}
 		// Checks if passwords are equal
 		else if (!password.equals(confirm)) {
-			// TODO - change string for below
 			mConfirmView.setError(getString(R.string.error_not_matching_password));
 			focusView = mConfirmView;
 			cancel = true;
@@ -291,8 +291,8 @@ public class SettingsFragment extends PreferenceFragment {
 						Log.i(TAG, "New password:" + password);
 						Toast.makeText(
 								getActivity().getBaseContext(),
-								"Username/Password changed successfully:\n[" + username + "]" + ":["
-										+ password + "]", Toast.LENGTH_SHORT).show();
+								"Username/Password changed successfully:\n[" + username + "]"
+										+ ":[" + password + "]", Toast.LENGTH_SHORT).show();
 					} else { // object retrieval failed throw exception -- fail fast
 						arg1.printStackTrace();
 					}

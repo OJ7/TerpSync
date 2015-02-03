@@ -1,7 +1,6 @@
 package com.terpsync;
 
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.text.TextUtils;
@@ -15,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.List;
 import java.util.Locale;
 import com.parse.FindCallback;
@@ -41,8 +39,6 @@ public class SignInActivity extends PreferenceActivity {
 	// UI references.
 	private AutoCompleteTextView mUserView;
 	private EditText mPasswordView;
-	private View mProgressView;
-	private View mLoginFormView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +67,6 @@ public class SignInActivity extends PreferenceActivity {
 				attemptSignIn();
 			}
 		});
-
-		mLoginFormView = findViewById(R.id.sign_in_form);
-		mProgressView = findViewById(R.id.login_progress);
 	}
 
 	/**

@@ -2,11 +2,9 @@ package com.terpsync;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.card.EventListActivity;
-import com.terpsync.events.AddEventActivity;
 import com.terpsync.parse.AdminAccounts;
 import com.terpsync.parse.EventObject;
 import com.terpsync.parse.ParseConstants;
@@ -54,9 +52,6 @@ public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 	public static final String PREFS_NAME = "MyPrefsFile";
 
-	private final Object lock = new Object();
-	private Context context;
-
 	// Global variable strings used for preferences
 	private final String signedInPref = "isSignedIn", currentUserPref = "currentUser",
 			currentOrgPref = "currentOrganization";
@@ -66,16 +61,16 @@ public class MainActivity extends Activity {
 	String currentUser = "", currentOrganization = "";
 
 	// Global variables for FAB
-	private FloatingActionButton menuFAB, locationFAB, mapTypeFAB, listFAB, signInFAB, adminFAB;
+	private FloatingActionButton menuFAB, locationFAB, mapTypeFAB, listFAB, settingsFAB;
 	private boolean menuExpanded = false;
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
 	private int mapToggle = 0; // 0 = normal map, 1 = hybrid map
 
 	// Global variables for Map
 	private GoogleMap mMap;
-	private final LatLng UMD = new LatLng(38.989822, -76.940637);
+	private final LatLng UMD = new LatLng(38.989822, -76.940637); // Center of UMD Campus
 	private List<Marker> markers = new ArrayList<Marker>();
-	LatLng myLocation = UMD;
+	LatLng myLocation = UMD; // Initially UMD
 	TextView key1, key2, key3;
 
 	// Global variables for Dialog
@@ -137,12 +132,11 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Creates two Floating Action Buttons (FAB): menu and location.
+	 * Creates two Floating Action Buttons (FAB): menu and list.
 	 */
 	private void createInitialFAB() {
 		Log.i(TAG, "Creating initial FAB");
 		menuFABListener();
-		// locationFABListener();
 		listFABListener();
 	}
 
@@ -186,17 +180,14 @@ public class MainActivity extends Activity {
 			locationFAB = new FloatingActionButton.Builder(this)
 					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 					.withButtonColor(Color.parseColor("#00A0B0"))
-					// .withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16,
-					// 86).create();
 					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156)
 					.create();
 		} else {
 			locationFAB = new FloatingActionButton.Builder(this)
 					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 					.withButtonColor(Color.parseColor("#BD1550"))
-					// .withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16,
-					// 86).create();
-					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
+					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156)
+					.create();
 		}
 		locationFAB.hideFloatingActionButton();
 		locationFAB.showFloatingActionButton();
@@ -259,7 +250,6 @@ public class MainActivity extends Activity {
 		listFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_action_database))
 				.withButtonColor(Color.parseColor("#CBE86B"))
-				// .withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
 		listFAB.hideFloatingActionButton();
 		listFAB.showFloatingActionButton();
@@ -277,68 +267,38 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Creates signInFAB and handles click on it: opens a dialog for signing in.
+	 * Creates settingsFAB and handles click on it: opens up preference screen.
 	 */
-	private void signInFABListener() {
-		Log.i(TAG, "Creating Sign In FAB...");
+	private void settingsFABListener() {
+		Log.i(TAG, "Creating Settings FAB...");
 		// Setting up FAB
-		signInFAB = new FloatingActionButton.Builder(this)
+		settingsFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_gear_50))
 				.withButtonColor(Color.parseColor("#FA6900"))
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
-		signInFAB.hideFloatingActionButton();
-		signInFAB.showFloatingActionButton();
+		settingsFAB.hideFloatingActionButton();
+		settingsFAB.showFloatingActionButton();
 
 		// Attaching onClickListener
 		Log.i(TAG, "...attaching onClickListener");
-		signInFAB.setOnClickListener(new OnClickListener() {
+		settingsFAB.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
 				startActivity(intent);
-				// TODO - add signinDialog to settings
-				// showSignInDialog();
 			}
 		});
 	}
 
 	/**
-	 * Creates adminFAB and handles click on it: opens a dialog menu with options for Admin Panel.
-	 */
-	private void adminFABListener() {
-		Log.i(TAG, "Creating Admin FAB...");
-		// Setting up FAB
-		adminFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_user))
-				.withButtonColor(Color.parseColor("#53777A"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
-		adminFAB.hideFloatingActionButton();
-		adminFAB.showFloatingActionButton();
-
-		// Attaching onClickListener
-		Log.i(TAG, "...attaching onClickListener");
-		adminFAB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showAdminPanelDialog();
-			}
-		});
-	}
-
-	/**
-	 * Expands the menu to show the following: mapTypeFAB, listFAB, signInFAB/adminFAB
+	 * Expands the menu to show the following: mapTypeFAB, locationFAB, settingsFAB
 	 */
 	private void expandFABMenu() {
 		Log.i(TAG, "Expanding FAB Menu");
-		// locationFAB.hideFloatingActionButton();
 		listFAB.hideFloatingActionButton();
 		mapTypeFABListener();
-		// listFABListener();
 		locationFABListener();
-		signInFABListener();
-		/*
-		 * if (!isSignedIn) { signInFABListener(); } else { adminFABListener(); }
-		 */
+		settingsFABListener();
 	}
 
 	/**
@@ -347,14 +307,8 @@ public class MainActivity extends Activity {
 	private void collapseFABMenu() {
 		Log.i(TAG, "Collapsing FAB Menu");
 		mapTypeFAB.hideFloatingActionButton();
-		// listFAB.hideFloatingActionButton();
 		locationFAB.hideFloatingActionButton();
-		signInFAB.hideFloatingActionButton();
-		/*
-		 * if (isSignedIn) { adminFAB.hideFloatingActionButton(); } else {
-		 * signInFAB.hideFloatingActionButton(); }
-		 */
-		// locationFABListener();
+		settingsFAB.hideFloatingActionButton();
 		listFABListener();
 	}
 
@@ -396,294 +350,12 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Creates a dialog box to sign-in to an Admin account.
-	 */
-	private void showSignInDialog() {
-		Log.i(TAG, "Creating Sign In Dialog");
-		signInBuilder.setView(signInView).setTitle("Enter Your Username and Password")
-				.setCancelable(false)
-				.setPositiveButton("Sign in", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int item) {
-						attemptSignIn();
-						resetSignInDialog();
-					}
-				}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int item) {
-						resetSignInDialog();
-						dialog.dismiss();
-					}
-				}).create().show();
-	}
-
-	/**
-	 * Creates a dialog menu with options to add events, see current user's events, change
-	 * username/password, or sign out.
-	 */
-	private void showAdminPanelDialog() {
-		Log.i(TAG, "Creating Admin Panel Dialog");
-		adminOptionsListBuilder.setTitle("Admin Panel")
-				.setItems(adminOptions, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int item) {
-						switch (item) {
-							case 0: // Add Event
-								Intent intent = new Intent(MainActivity.this,
-										AddEventActivity.class);
-								intent.putExtra(ParseConstants.admin_org_name, currentOrganization);
-								intent.putExtra("isNewEvent", true);
-								startActivityForResult(intent, 0);
-								break;
-							case 1: // My Events
-								showMyEventsList();
-								break;
-							case 2: // Change PW/UN
-								showChangeSignInCredentialsDialog();
-								break;
-							case 3: // Sign out
-								signOutAdmin();
-								break;
-							case 4: // Settings
-								Intent intent1 = new Intent(MainActivity.this,
-										SettingsActivity.class);
-								startActivity(intent1);
-								break;
-							default:
-								break;
-						}
-					}
-				}).create().show();
-	}
-
-	/**
-	 * Starts a new EventListActivity filtered to show events from current user
-	 */
-	private void showMyEventsList() {
-		Log.i(TAG, "Starting EventListActivity to show events from user");
-		Intent intent = new Intent(MainActivity.this, EventListActivity.class);
-		intent.putExtra("FilterType", ParseConstants.event_org_name);
-		intent.putExtra(ParseConstants.event_org_name, currentOrganization);
-		startActivityForResult(intent, 0);
-	}
-
-	/**
-	 * Creates a dialog box to change username and/or password.
-	 */
-	private void showChangeSignInCredentialsDialog() {
-		Log.i(TAG, "Creating Change Sign In Credentials Dialog");
-		signInBuilder.setView(changeSignInView).setTitle("Update Account Info")
-				.setCancelable(false)
-				.setPositiveButton("Change", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int item) {
-						attemptChangeSignInCredentials();
-						resetChangeSignInDialog();
-					}
-				}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int item) {
-						resetChangeSignInDialog();
-						dialog.dismiss();
-					}
-				}).create().show();
-	}
-
-	/**
-	 * Attempts to sign in using the username and password specified in the sign in dialog box.
-	 * NOTE: Should only be called from the sign in dialog box.
-	 * 
-	 * @return true if sign in is successful, false otherwise.
-	 */
-	private boolean attemptSignIn() {
-		Log.i(TAG, "Attempting to sign in");
-		final String UN = usernameView.getEditableText().toString().toLowerCase(Locale.US)
-				.replaceAll("\\s", "");
-		final String PW = passwordView.getEditableText().toString();
-
-		ParseQuery<AdminAccounts> query = ParseQuery.getQuery(AdminAccounts.class);
-		query.whereExists(ParseConstants.admin_username);
-		query.setLimit(100);
-		query.findInBackground(new FindCallback<AdminAccounts>() {
-			@Override
-			public void done(List<AdminAccounts> arg0, ParseException arg1) {
-				if (arg1 != null) {
-					Log.i(TAG, "No organization accounts found");
-					Toast.makeText(getApplicationContext(), "Invalid username or password",
-							Toast.LENGTH_SHORT).show();
-				} else {
-					for (AdminAccounts x : arg0) {
-						if (x.getUsername().equals(UN) && x.getPassword().equals(PW)) {
-							currentUser = x.getUsername();
-							currentOrganization = x.getOrganizatonName();
-							isSignedIn = true;
-							/*
-							 * // Replacing signInFAB signInFAB.hideFloatingActionButton();
-							 * adminFABListener();
-							 */
-							break;
-						}
-					}
-					if (isSignedIn) {
-						Log.i(TAG, "Signed in successfully");
-						Toast.makeText(getApplicationContext(), "Signed in successfully :)",
-								Toast.LENGTH_SHORT).show();
-					} else {
-						Log.i(TAG, "Sign in failed...either invalid username or password");
-						Toast.makeText(getApplicationContext(), "Invalid username or password",
-								Toast.LENGTH_SHORT).show();
-					}
-				}
-			}
-		});
-		return isSignedIn;
-	}
-
-	/**
-	 * Attempts to change username and/or password (depending on what is specified). If username
-	 * already exists and/or passwords do not match, the changes will not be made.
-	 * 
-	 * Requirements: Usernames and passwords must be at least three characters in length.
-	 * 
-	 * @return true if changed successfully, false otherwise.
-	 */
-	private boolean attemptChangeSignInCredentials() {
-		Log.i(TAG, "Attempting to change sign in credentials");
-		final String newUN = newUNView.getEditableText().toString().toLowerCase(Locale.US).trim();
-		final String newPW = newPWView.getEditableText().toString();
-		final String newPWConfirm = newPWConfirmView.getEditableText().toString();
-
-		validChange = true;
-
-		ParseQuery<AdminAccounts> query = ParseQuery.getQuery(AdminAccounts.class);
-
-		// confirm new username does not already exist
-		if (!newUN.equals(currentUser)) {
-			query.whereContains(ParseConstants.admin_username, newUN);
-			query.findInBackground(new FindCallback<AdminAccounts>() {
-				@Override
-				public void done(List<AdminAccounts> arg0, ParseException arg1) {
-					if (arg0 == null) {
-						Log.i(TAG, "Username already exists");
-						Toast.makeText(getBaseContext(), "Username already exists",
-								Toast.LENGTH_SHORT).show();
-						synchronized (lock) {
-							validChange = false;
-						}
-					}
-				}
-			});
-
-		}
-		// confirm minimum number of characters in username and password
-		if (newUN.length() < 4) {
-			Log.i(TAG, "Username too short... must be 4+ chars");
-			Toast.makeText(getBaseContext(), "Username must be at least 4 characters",
-					Toast.LENGTH_SHORT).show();
-			synchronized (lock) {
-				validChange = false;
-			}
-		}
-		if (newPW.length() < 4) {
-			Log.i(TAG, "Password too short... must be 4+ chars");
-			Toast.makeText(getBaseContext(), "Password must be at least 4 characters",
-					Toast.LENGTH_SHORT).show();
-			synchronized (lock) {
-				validChange = false;
-			}
-		}
-		// confirm passwords match
-		else if (!newPW.equals(newPWConfirm)) {
-			Log.i(TAG, "Passwords do not match");
-			Toast.makeText(getBaseContext(),
-					"Passwords do not match: [" + newPW + "] [" + newPWConfirm + "]",
-					Toast.LENGTH_SHORT).show();
-			synchronized (lock) {
-				validChange = false;
-			}
-		}
-
-		if (!validChange) { // either username already exists, username/password is not enough
-							// characters, or passwords do not match
-			Log.i(TAG, "Changing sign in attempt failed... fix above problem(s)");
-			return false;
-		}
-
-		ParseQuery<AdminAccounts> query2 = ParseQuery.getQuery(AdminAccounts.class);
-		query2.whereContains(ParseConstants.admin_username, currentUser);
-		query2.findInBackground(new FindCallback<AdminAccounts>() {
-			@Override
-			public void done(List<AdminAccounts> arg0, ParseException arg1) {
-				if (arg0 == null || arg0.size() == 0) {
-					Log.d(TAG, "The current signed in user is probably set to a different user");
-					Toast.makeText(
-							getBaseContext(),
-							"Error changing username/password. Try again after signing out and in.",
-							Toast.LENGTH_SHORT).show();
-				} else if (arg1 == null) {
-					arg0.get(0).setUsername(newUN);
-					arg0.get(0).setPassword(newPW);
-					arg0.get(0).saveInBackground();
-					currentUser = newUN;
-					Log.i(TAG, "Change successful!");
-					Log.i(TAG, "New username: " + newUN);
-					Log.i(TAG, "New password:" + newPW);
-					Toast.makeText(
-							context,
-							"Username/Password changed successfully: [" + newUN + "]" + ":["
-									+ newPW + "]", Toast.LENGTH_SHORT).show();
-				} else { // object retrieval failed throw exception -- fail fast
-					arg1.printStackTrace();
-				}
-			}
-		});
-		return true;
-	}
-
-	/**
-	 * Resets the sign in dialog to clear text and remove from view
-	 */
-	private void resetSignInDialog() {
-		Log.i(TAG, "Resetting fields in sign in dialog");
-		usernameView.getText().clear();
-		passwordView.getText().clear();
-		((ViewGroup) signInView.getParent()).removeView(signInView);
-	}
-
-	/**
-	 * Resets the change sign in dialog to clear text and remove from view
-	 */
-	private void resetChangeSignInDialog() {
-		Log.i(TAG, "Resetting fields in change sign in credentials dialog");
-		newUNView.getText().clear();
-		newPWView.getText().clear();
-		newPWConfirmView.getText().clear();
-		((ViewGroup) changeSignInView.getParent()).removeView(changeSignInView);
-	}
-
-	/**
-	 * Signs out the current user and resets the FABs appropriately
-	 */
-	private void signOutAdmin() {
-		Log.i(TAG, "Signing out of admin account");
-		currentUser = "";
-		currentOrganization = "";
-		isSignedIn = false;
-		// Replaces adminFAB with signInFAB
-		/*
-		 * adminFAB.hideFloatingActionButton(); signInFABListener();
-		 */
-		Toast.makeText(getBaseContext(), "Signed out successfully :)", Toast.LENGTH_SHORT).show();
-	}
-
-	/**
 	 * Gets context for all dialogs builders, inflates all views, and gets all needed references to
 	 * views.
 	 */
 	@SuppressLint("InflateParams")
 	private void setupViewsAndCacheWidgets() {
 		Log.i(TAG, "Setting up views and caching widgets");
-		context = this;
 		signInBuilder = new AlertDialog.Builder(this);
 		adminOptionsListBuilder = new AlertDialog.Builder(this);
 		signInView = getLayoutInflater().inflate(R.layout.dialog_signin, null);
@@ -891,7 +563,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * TODO - add documentation
+	 * Shows loading dialog. For use when map is loading (i.e. markers adding to map).
 	 */
 	protected void startLoading() {
 		proDialog = new ProgressDialog(this);
@@ -902,7 +574,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * TODO - add documentation
+	 * Stops the loading dialog.
 	 */
 	protected void stopLoading() {
 		if (proDialog != null && proDialog.isShowing()) {
@@ -910,8 +582,11 @@ public class MainActivity extends Activity {
 		}
 		proDialog = null;
 	}
-	
-	public void onBackPressed(){
+
+	/**
+	 * Collapses menu if expanded, otherwise exits app.
+	 */
+	public void onBackPressed() {
 		if (menuExpanded) {
 			collapseFABMenu();
 			menuExpanded = false;
@@ -1006,7 +681,7 @@ public class MainActivity extends Activity {
 	}
 
 	/*
-	 * Add (Parse) FindCallback functions below to keep the above code more dense and organized
+	 * NOTE: Add (Parse) FindCallback functions below to keep the above code dense and organized
 	 */
 
 	/**
