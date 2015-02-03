@@ -37,6 +37,7 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -53,16 +54,14 @@ public class MainActivity extends Activity {
 	public static final String PREFS_NAME = "MyPrefsFile";
 
 	// Global variable strings used for preferences
-	private final String signedInPref = "isSignedIn", currentUserPref = "currentUser",
-			currentOrgPref = "currentOrganization";
+	private final String mapTypePref = "pref_key_map_type";
 
 	// Global variables for Current User (if signed in)
 	boolean isSignedIn = false;
 	String currentUser = "", currentOrganization = "";
 
 	// Global variables for FAB
-	private FloatingActionButton menuFAB, locationFAB, mapTypeFAB, listFAB, settingsFAB;
-	private boolean menuExpanded = false;
+	private FloatingActionButton locationFAB, listFAB, settingsFAB;
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
 	private int mapToggle = 0; // 0 = normal map, 1 = hybrid map
 
@@ -102,6 +101,7 @@ public class MainActivity extends Activity {
 			queryAndAddEventsFromParse(); // fills map with current events from database
 			createInitialFAB(); // creates all FAB objects - better performance
 			restorePreferences();
+
 		}
 	}
 
@@ -110,25 +110,9 @@ public class MainActivity extends Activity {
 	 */
 	private void restorePreferences() {
 		Log.i(TAG, "Restoring preferences");
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-		isSignedIn = settings.getBoolean(signedInPref, false);
-		currentUser = settings.getString(currentUserPref, "");
-		currentOrganization = settings.getString(currentOrgPref, "");
-	}
-
-	/**
-	 * Saves information about the current user (if signed in) for persistent use.
-	 */
-	private void savePreferences() {
-		Log.i(TAG, "Saving preferences");
-		SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
-		editor.putBoolean(signedInPref, isSignedIn);
-		editor.putString(currentUserPref, currentUser);
-		editor.putString(currentOrgPref, currentOrganization);
-		if (editor.commit())
-			Log.i(TAG, "Preferences saved successfully");
-		else
-			Log.i(TAG, "Preferences failed to save");
+		SharedPreferences settingsDefault = PreferenceManager
+				.getDefaultSharedPreferences(getBaseContext());
+		mapToggle = Integer.parseInt(settingsDefault.getString(mapTypePref, "0"));
 	}
 
 	/**
@@ -136,38 +120,10 @@ public class MainActivity extends Activity {
 	 */
 	private void createInitialFAB() {
 		Log.i(TAG, "Creating initial FAB");
-		menuFABListener();
+		// menuFABListener();
+		locationFABListener();
 		listFABListener();
-	}
-
-	/**
-	 * Creates menuFAB and handles clicks on it: either expanding or collapsing the menu.
-	 */
-	private void menuFABListener() {
-		Log.i(TAG, "Creating Menu FAB...");
-		// Setting up FAB
-		menuFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
-				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-				.withMargins(0, 0, 16, 16).create();
-		// Attaching onClickListener
-		Log.i(TAG, "...attaching onClickListener");
-		menuFAB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (!menuExpanded) { // Expand Menu
-					menuExpanded = true;
-					expandFABMenu();
-					menuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
-							R.drawable.ic_action_cancel));
-				} else { // Collapse Menu
-					menuExpanded = false;
-					collapseFABMenu();
-					menuFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
-							R.drawable.ic_action_star));
-				}
-			}
-		});
+		settingsFABListener();
 	}
 
 	/**
@@ -180,14 +136,12 @@ public class MainActivity extends Activity {
 			locationFAB = new FloatingActionButton.Builder(this)
 					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 					.withButtonColor(Color.parseColor("#00A0B0"))
-					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156)
-					.create();
+					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 16).create();
 		} else {
 			locationFAB = new FloatingActionButton.Builder(this)
 					.withDrawable(getResources().getDrawable(R.drawable.ic_action_locate))
 					.withButtonColor(Color.parseColor("#BD1550"))
-					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156)
-					.create();
+					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 16).create();
 		}
 		locationFAB.hideFloatingActionButton();
 		locationFAB.showFloatingActionButton();
@@ -206,37 +160,6 @@ public class MainActivity extends Activity {
 					locationFAB.setFloatingActionButtonColor(Color.parseColor("#00A0B0"));
 					centerMapOnCampus();
 				}
-			}
-		});
-	}
-
-	/**
-	 * Creates mapTypeFAB and handles click on it: changing map type to either normal or hybrid
-	 */
-	private void mapTypeFABListener() {
-		Log.i(TAG, "Creating Map Type FAB...");
-		// Setting up FAB
-		Log.d(TAG, "mapToggle = " + mapToggle);
-		if (mapToggle == 0) { // Normal Map
-			mapTypeFAB = new FloatingActionButton.Builder(this)
-					.withDrawable(getResources().getDrawable(R.drawable.ic_action_map))
-					.withButtonColor(Color.parseColor("#00A0B0"))
-					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
-		} else { // Hybrid Map
-			mapTypeFAB = new FloatingActionButton.Builder(this)
-					.withDrawable(getResources().getDrawable(R.drawable.ic_satellite))
-					.withButtonColor(Color.parseColor("#C7F464"))
-					.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 86).create();
-		}
-		mapTypeFAB.hideFloatingActionButton();
-		mapTypeFAB.showFloatingActionButton();
-
-		// Attaching onClickListener
-		Log.i(TAG, "...attaching onClickListener");
-		mapTypeFAB.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				toggleMapType();
 			}
 		});
 	}
@@ -275,7 +198,7 @@ public class MainActivity extends Activity {
 		settingsFAB = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_gear_50))
 				.withButtonColor(Color.parseColor("#FA6900"))
-				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 226).create();
+				.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withMargins(0, 0, 16, 156).create();
 		settingsFAB.hideFloatingActionButton();
 		settingsFAB.showFloatingActionButton();
 
@@ -291,61 +214,23 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Expands the menu to show the following: mapTypeFAB, locationFAB, settingsFAB
+	 * Sets the map type to normal or hybrid depending on the preference in settings. Also updates
+	 * the key legend colors so it's easier to read on each map type.
 	 */
-	private void expandFABMenu() {
-		Log.i(TAG, "Expanding FAB Menu");
-		listFAB.hideFloatingActionButton();
-		mapTypeFABListener();
-		locationFABListener();
-		settingsFABListener();
-	}
-
-	/**
-	 * Collapses the menu to revert back to initial FAB layout
-	 */
-	private void collapseFABMenu() {
-		Log.i(TAG, "Collapsing FAB Menu");
-		mapTypeFAB.hideFloatingActionButton();
-		locationFAB.hideFloatingActionButton();
-		settingsFAB.hideFloatingActionButton();
-		listFABListener();
-	}
-
-	/**
-	 * Toggles the map type between normal and hybrid. Also updates the key legend to display better
-	 * with each map type.
-	 */
-	private void toggleMapType() {
-		Log.i(TAG, "Toggling Map Type...");
-		if (mapToggle == 0) { // Change Map Type to Hybrid
-			Log.i(TAG, "...to hybrid");
-			mapToggle = 1;
-			// Changing FAB icon and color
-			mapTypeFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
-					R.drawable.ic_satellite));
-			mapTypeFAB.setFloatingActionButtonColor(Color.parseColor("#C7F464"));
-			// Changing map type
-			mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-			// Updating Key Legend
-			key1.setTextColor(Color.RED);
-			key2.setTextColor(Color.rgb(255, 102, 0)); // ORANGE
-			key3.setTextColor(Color.YELLOW);
-			Toast.makeText(getApplicationContext(), "Hybrid Map", Toast.LENGTH_SHORT).show();
-		} else { // Change Map Type to Normal
-			Log.i(TAG, "...to normal");
-			mapToggle = 0;
-			// Changing FAB icon and color
-			mapTypeFAB.setFloatingActionButtonDrawable(getResources().getDrawable(
-					R.drawable.ic_action_map));
-			mapTypeFAB.setFloatingActionButtonColor(Color.parseColor("#00A0B0"));
-			// Changing map type
+	private void setMapType() {
+		Log.i(TAG, "Setting map type...");
+		if (mapToggle == 0) { // Normal
+			Log.i(TAG, "to NORMAL");
 			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-			// Updating Key Legend
 			key1.setTextColor(Color.BLACK);
 			key2.setTextColor(Color.BLACK);
 			key3.setTextColor(Color.BLACK);
-			Toast.makeText(getApplicationContext(), "Normal Map", Toast.LENGTH_SHORT).show();
+		} else { // Hybrid
+			Log.i(TAG, "to HYBRID");
+			mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+			key1.setTextColor(Color.RED);
+			key2.setTextColor(Color.rgb(255, 102, 0)); // ORANGE
+			key3.setTextColor(Color.YELLOW);
 		}
 	}
 
@@ -403,10 +288,7 @@ public class MainActivity extends Activity {
 				startActivityForResult(intent, 0);
 			}
 		});
-		// Initially sets the colors used with normal map
-		key1.setTextColor(Color.BLACK);
-		key2.setTextColor(Color.BLACK);
-		key3.setTextColor(Color.BLACK);
+		setMapType();
 	}
 
 	/**
@@ -584,18 +466,6 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Collapses menu if expanded, otherwise exits app.
-	 */
-	public void onBackPressed() {
-		if (menuExpanded) {
-			collapseFABMenu();
-			menuExpanded = false;
-		} else {
-			finish();
-		}
-	}
-
-	/**
 	 * TODO - update documentation
 	 * 
 	 * @param requestCode
@@ -665,13 +535,14 @@ public class MainActivity extends Activity {
 		Log.i(TAG, "Resuming Main Activity");
 		super.onResume();
 		restorePreferences();
+		setMapType();
 	}
 
 	@Override
 	protected void onPause() {
 		Log.i(TAG, "Pausing Main Activity");
 		super.onPause();
-		savePreferences();
+		// savePreferences();
 	}
 
 	@Override

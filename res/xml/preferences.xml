@@ -4,8 +4,17 @@
     <PreferenceCategory
         android:key="pref_key_user_settings"
         android:title="@string/pref_user_settings_title" >
+        <ListPreference
+            android:defaultValue="normal"
+            android:entries="@array/MapTypeEntries"
+            android:entryValues="@array/mapTypeValues"
+            android:key="pref_key_map_type"
+            android:summary="@string/pref_summary_map_type"
+            android:title="@string/pref_title_map_type" />
+
         <Preference
             android:key="pref_key_notifications"
+            android:selectable="false"
             android:summary="@string/pref_summary_notifications"
             android:title="@string/pref_title_notifications" />
     </PreferenceCategory>
