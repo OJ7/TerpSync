@@ -675,15 +675,6 @@ public class EventListActivity extends Activity {
 		}
 	}
 
-	public void onBackPressed() {
-		if (filterMenuOpen) {
-			closeFilterMenu();
-			filterMenuOpen = false;
-		} else {
-			finish();
-		}
-	}
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
 		Log.i(TAG, "Getting activity result");
