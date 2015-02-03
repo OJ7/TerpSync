@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -514,6 +515,13 @@ public class EventListActivity extends Activity {
 					mAdapter.getFilter().filter(buildingFilterName);
 				}
 			});
+			builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					buildingFiltered = false;
+					setBuildingFABState();
+				}
+			});
 			builder.setCancelable(false);
 			AlertDialog alert = builder.create();
 			if (!buildingFiltered) { // do not show dialog box if refiltering
@@ -543,6 +551,13 @@ public class EventListActivity extends Activity {
 					orgFilterName = "1." + orgList.get(id);
 					Log.i(TAG, "Filtering by *Organization: " + orgList.get(id) + "*");
 					mAdapter.getFilter().filter(orgFilterName);
+				}
+			});
+			builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					orgFiltered = false;
+					setOrgFABState();
 				}
 			});
 			builder.setCancelable(false);
