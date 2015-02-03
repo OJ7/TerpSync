@@ -48,6 +48,7 @@ public class EventListActivity extends Activity {
 	CardListAdapter mAdapter;
 	ListView lv; // List for all the event cards
 	List<EventObject> fullEventList;
+	int numEvents = 0;
 	AlertDialog.Builder action_builder, delete_builder;
 	View view = null;
 	boolean isDeleted = false, isSignedIn = false, filterMenuOpen = false, orgFiltered = false,
@@ -131,7 +132,7 @@ public class EventListActivity extends Activity {
 	 * @param filterName
 	 *            If events are being filtered, this variable specifies the value to filter by.
 	 */
-	private void getEventsAndCreateList(String filterType, String filterName) {
+	private void getEventsAndCreateList(final String filterType, String filterName) {
 		// Create the Parse Query object
 		ParseQuery<EventObject> eventsQuery = ParseQuery.getQuery(EventObject.class);
 		// Sort events by Start Date
@@ -147,12 +148,14 @@ public class EventListActivity extends Activity {
 			public void done(List<EventObject> events, ParseException e) {
 				if (e == null) { // All events were successfully returned
 					fullEventList = events;
+					numEvents = fullEventList.size();
 					Collections.sort(fullEventList, new DateTimeComparator());
 					mAdapter = new CardListAdapter(getApplicationContext(), R.layout.card, events);
 					lv.setAdapter(mAdapter);
 				} else { // object retrieval failed throw exception -- fail fast
 					e.printStackTrace();
 				}
+				// updateActionBarColor();
 				stopLoading();
 			}
 		});
@@ -167,7 +170,6 @@ public class EventListActivity extends Activity {
 	 * Creates a dialog box to allow the following actions on an event: edit and delete
 	 */
 	private void setActionDialog() {
-		// TODO - change this so it only adds dialog to current user's events
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adaptView, View v, int position, long id) {
@@ -257,6 +259,31 @@ public class EventListActivity extends Activity {
 			createFABListener();
 		}
 		filterFABListener();
+	}
+
+	/**
+	 * Updates the ActionBar color depending on the number of events.
+	 * 
+	 * 0 = Blue, 1-2 = Yellow, 3-5 = Orange, 6+ = Red
+	 */
+	private void updateActionBarColor() {
+		switch (numEvents) {
+			case 0: // Blue Gray
+				actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#607D8B")));
+				break;
+			case 1:
+			case 2: // Yellow
+				actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FFC107")));
+				break;
+			case 3:
+			case 4:
+			case 5: // Orange
+				actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF9800")));
+				break;
+			default: // Red
+				actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F44336")));
+		}
+
 	}
 
 	/**
