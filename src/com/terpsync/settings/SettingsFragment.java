@@ -39,7 +39,7 @@ public class SettingsFragment extends PreferenceFragment {
 
 	Preference signInPreference;
 	Builder manageAccountDialog, changeSignInBuilder;
-	String[] manageAccountOptions = { "Change Username/Ppassword", "Sign Out" };
+	String[] manageAccountOptions = { "Change Username/Password", "Sign Out" };
 	AlertDialog myDialog;
 	EditText mUserView, mPasswordView, mConfirmView;
 	Button mChangeButton;
