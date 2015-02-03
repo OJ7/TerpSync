@@ -116,12 +116,12 @@ public class SignInActivity extends PreferenceActivity {
 			mUser = username;
 			mPassword = password;
 			ParseQuery<AdminAccounts> query = ParseQuery.getQuery(AdminAccounts.class);
-			query.whereContains(ParseConstants.admin_username, mUser);
+			query.whereEqualTo(ParseConstants.admin_username, mUser);
 			query.setLimit(2);
 			query.findInBackground(new FindCallback<AdminAccounts>() {
 				@Override
 				public void done(List<AdminAccounts> arg0, ParseException arg1) {
-					if (arg1 != null && arg0.size() < 1) {
+					if (arg1 != null || arg0.size() < 1) {
 						Log.i(TAG, "No organization accounts found");
 						mUserView.setError(getString(R.string.error_incorrect_username));
 						mUserView.requestFocus();
