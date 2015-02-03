@@ -264,7 +264,7 @@ public class EventListActivity extends Activity {
 	 */
 	private void createFABListener() {
 		createFAB = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.ic_action_star))
+				.withDrawable(getResources().getDrawable(R.drawable.ic_action_add))
 				.withButtonColor(Color.RED).withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
 		createFAB.setOnClickListener(new OnClickListener() {
@@ -593,7 +593,7 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * TODO - add documentation
+	 * Shows loading dialog. For use when list is loading.
 	 */
 	protected void startLoading() {
 		proDialog = new ProgressDialog(this);
@@ -604,7 +604,7 @@ public class EventListActivity extends Activity {
 	}
 
 	/**
-	 * TODO - add documentation
+	 * Stops the loading dialog.
 	 */
 	protected void stopLoading() {
 		if (proDialog != null && proDialog.isShowing()) {
@@ -647,8 +647,8 @@ public class EventListActivity extends Activity {
 			getParent().setResult(Activity.RESULT_OK, mResultIntent);
 		}
 	}
-	
-	public void onBackPressed(){
+
+	public void onBackPressed() {
 		if (filterMenuOpen) {
 			closeFilterMenu();
 			filterMenuOpen = false;
