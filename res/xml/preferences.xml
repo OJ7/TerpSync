@@ -5,7 +5,7 @@
         android:key="pref_key_user_settings"
         android:title="@string/pref_user_settings_title" >
         <ListPreference
-            android:defaultValue="normal"
+            android:defaultValue="0"
             android:entries="@array/MapTypeEntries"
             android:entryValues="@array/mapTypeValues"
             android:key="pref_key_map_type"
