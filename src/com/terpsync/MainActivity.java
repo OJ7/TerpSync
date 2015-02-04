@@ -63,7 +63,7 @@ public class MainActivity extends Activity {
 	// Global variables for FAB
 	private FloatingActionButton locationFAB, listFAB, settingsFAB;
 	private int locToggle = 0; // 0 = will center on current location, 1 = will center on map
-	private int mapToggle = 0; // 0 = normal map, 1 = hybrid map
+	private int mapType = 0; // 0 = normal map, 1 = hybrid map
 
 	// Global variables for Map
 	private GoogleMap mMap;
@@ -112,7 +112,12 @@ public class MainActivity extends Activity {
 		Log.i(TAG, "Restoring preferences");
 		SharedPreferences settingsDefault = PreferenceManager
 				.getDefaultSharedPreferences(getBaseContext());
-		mapToggle = Integer.parseInt(settingsDefault.getString(mapTypePref, "0"));
+		try {
+			mapType = Integer.parseInt(settingsDefault.getString(mapTypePref, "0"));
+		} catch (Exception e) {
+			// If fail to get mapType preference, default to 0 (normal map);
+			mapType = 0;
+		}
 	}
 
 	/**
@@ -219,7 +224,7 @@ public class MainActivity extends Activity {
 	 */
 	private void setMapType() {
 		Log.i(TAG, "Setting map type...");
-		if (mapToggle == 0) { // Normal
+		if (mapType == 0) { // Normal
 			Log.i(TAG, "to NORMAL");
 			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 			key1.setTextColor(Color.BLACK);
