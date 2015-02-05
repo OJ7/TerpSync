@@ -32,35 +32,33 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="title_activity_setup_login_info">SetupLoginInfo</string>
-    
+
     <!-- Main activity strings -->
     <string name="newUsername">New username</string>
-	<string name="oldUsername">Old username</string>
-	<string name="newPassword">New password</string>
-	<string name="newPasswordConfirm">Confirm password</string>
-	<string name="ora">#ffa500</string>
-	
-	<!-- Preferences Strings -->
-	<string name="pref_user_settings_title">User Settings</string>
-	<string name="pref_title_placeholder">Placeholder</string>
-	<string name="pref_summary_placeholder">A place for future options</string>
-	<string name="pref_title_map_type">Map Type</string>
-	<string name="pref_summary_map_type">Switch between normal and hybrid</string>
-	<string name="pref_title_notifications">Notifications</string>
-	<string name="pref_summary_notifications">Coming soon</string>
-	
-	<string name="pref_admin_settings_title">Student Organization Access</string>
-	<string name="pref_title_admin_sign_in">Sign in</string>
-	<string name="pref_summary_admin_sign_in">Sign in as your organization to add events</string>
-	<string name="pref_title_admin_sign_out">Sign out</string>
-	<string name="pref_title_admin_manage">Manage Account</string>
-	<string name="pref_summary_admin_signed_in_as">Signed in as: </string>
-	<string name="pref_title_admin_get_access">Get Access</string>
-	
-	<string name="pref_about_settings_title">TerpSync</string>
-	<string name="pref_about_title">Visit website</string>
-	<string name="pref_summary_about">Click to find out more about the app</string>
-	
-	
-	
+    <string name="oldUsername">Old username</string>
+    <string name="newPassword">New password</string>
+    <string name="newPasswordConfirm">Confirm password</string>
+    <string name="ora">#ffa500</string>
+
+    <!-- Preferences Strings -->
+    <string name="pref_user_settings_title">User Settings</string>
+    <string name="pref_title_placeholder">Placeholder</string>
+    <string name="pref_summary_placeholder">A place for future options</string>
+    <string name="pref_title_map_type">Map Type</string>
+    <string name="pref_summary_map_type">Switch between normal and hybrid</string>
+    <string name="pref_title_notifications">Notifications</string>
+    <string name="pref_summary_notifications">Coming soon</string>
+    <string name="pref_admin_settings_title">Student Organization Access</string>
+    <string name="pref_title_admin_sign_in">Sign in</string>
+    <string name="pref_summary_admin_sign_in">Sign in as your organization to add events</string>
+    <string name="pref_title_admin_sign_out">Sign out</string>
+    <string name="pref_title_admin_manage">Manage Account</string>
+    <string name="pref_summary_admin_signed_in_as">Signed in as: </string>
+    <string name="pref_title_admin_get_access">Get Access</string>
+    <string name="pref_about_settings_title">TerpSync</string>
+    <string name="pref_about_title">Visit website</string>
+    <string name="pref_summary_about">Click to find out more about the app</string>
+    <string name="title_activity_view_event">ViewEventActivity</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>

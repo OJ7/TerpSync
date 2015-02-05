@@ -11,6 +11,7 @@ import com.terpsync.FloatingActionButton;
 import com.terpsync.R;
 import com.terpsync.events.AddEventActivity;
 import com.terpsync.events.EditEventActivity;
+import com.terpsync.events.ViewEventActivity;
 import com.terpsync.parse.EventObject;
 import com.terpsync.parse.ParseConstants;
 import com.parse.FindCallback;
@@ -180,6 +181,9 @@ public class EventListActivity extends Activity {
 				// Don't add dialog to events by other organizations
 				if (!(currentOrganization.equals(x.getOrgName()))) {
 					Log.i(TAG, "Clicked on another organization's event: " + x.getEventName());
+					Intent intent = new Intent(EventListActivity.this, ViewEventActivity.class);
+					intent.putExtra("objectID", x.getObjectId());
+					//startActivity(intent);
 					return;
 				}
 				Log.i(TAG, "Clicked on your event: " + x.getEventName());
