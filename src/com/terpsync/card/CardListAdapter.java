@@ -3,6 +3,7 @@ package com.terpsync.card;
 import java.util.ArrayList;
 import java.util.List;
 import com.terpsync.R;
+import com.terpsync.UtilityMethods;
 import com.terpsync.parse.EventObject;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -24,10 +25,17 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 	private Context mContext;
 	private final Object lock = new Object();
 	private ArrayList<EventObject> mOriginalEvents;
+	private static UtilityMethods utils = new UtilityMethods();
 
 	List<EventObject> mEventsList;
 
-	// Constructor
+	/**
+	 * Constructor
+	 * 
+	 * @param context
+	 * @param resourceId
+	 * @param item
+	 */
 	public CardListAdapter(Context context, int resourceId, List<EventObject> item) {
 		super(context, resourceId, item);
 		this.mContext = context;
@@ -83,17 +91,9 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 		vh.organization.setText(currCard.getOrgName());
 		vh.location.setText(currCard.getBuildingName());
 		// Get background image
-		String resourceLocation = getBitMapLocation(currCard.getBuildingName());
-		Drawable mapImage = mContext.getResources().getDrawable(
-				mContext.getResources().getIdentifier(resourceLocation, "drawable",
-						mContext.getPackageName()));
+		Drawable mapImage = utils.getBitMapImage(mContext, currCard.getBuildingName());
 		// Set background image for card
-		if (mapImage == null) { // set to default picture
-			vh.cardBackGround.setBackground(mContext.getResources().getDrawable(
-					R.drawable.adele_h_stamp_student_union_building));
-		} else {
-			vh.cardBackGround.setBackground(mapImage);
-		}
+		vh.cardBackGround.setBackground(mapImage);
 		// Set date
 		if (currCard.getStartDate().equals(currCard.getEndDate())) {
 			vh.date.setText(currCard.getEndDate());
@@ -116,19 +116,6 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 	@Override
 	public EventObject getItem(final int position) {
 		return this.mEventsList.get(position);
-	}
-
-	/**
-	 * Takes in a building name and returns the corresponding resource name for the png file
-	 */
-	@SuppressLint("DefaultLocale")
-	private String getBitMapLocation(String buildingName) {
-		buildingName = buildingName.toLowerCase();
-		buildingName = buildingName.replaceAll("[.]", "");
-		buildingName = buildingName.replaceAll("\\s+", " ");
-		buildingName = buildingName.replaceAll("[^a-z0-9\\s]", " ");
-		buildingName = buildingName.replaceAll("\\s", "_");
-		return buildingName;
 	}
 
 	@Override
@@ -157,36 +144,37 @@ public class CardListAdapter extends ArrayAdapter<EventObject> implements Filter
 					int numEvents = 0;
 					for (EventObject eventObject : mEventsList) {
 						switch (i) {
-						case 0: // filter by building
-							// Log.i(TAG, "Filtering by Building: " + filterName);
-							if (eventObject.getBuildingName().equals(filterName)) {
-								filteredEvents.add(eventObject);
-								Log.i(TAG, "Number of events added: " + ++numEvents);
-							}
-							break;
-						case 1: // filter by organization
-							// Log.i(TAG, "Filtering by Organization: " + filterName);
-							if (eventObject.getOrgName().equals(filterName)) {
-								filteredEvents.add(eventObject);
-								Log.i(TAG, "Number of events added: " + ++numEvents);
-							}
-							break;
-						case 2: // filter by free
-							// Log.i(TAG, "Filtering by Free Events");
-							if (eventObject.getAdmission().equals(filterName)) {
-								filteredEvents.add(eventObject);
-								Log.i(TAG, "Number of events added: " + ++numEvents);
-							}
-							break;
-						case 3: // filter by paid
-							// Log.i(TAG, "Filtering by Paid EventObject");
-							if (!eventObject.getAdmission().equals(filterName)) {
-								filteredEvents.add(eventObject);
-								Log.i(TAG, "Number of events added: " + ++numEvents);
-							}
-							break;
-						default:
-							break;
+							case 0: // filter by building
+								// Log.i(TAG, "Filtering by Building: " + filterName);
+								if (eventObject.getBuildingName().equals(filterName)) {
+									filteredEvents.add(eventObject);
+									Log.i(TAG, "Number of events added: " + ++numEvents);
+								}
+								break;
+							case 1: // filter by organization
+								// Log.i(TAG, "Filtering by Organization: " + filterName);
+								if (eventObject.getOrgName().equals(filterName)) {
+									filteredEvents.add(eventObject);
+									Log.i(TAG, "Number of events added: " + ++numEvents);
+								}
+								break;
+							case 2: // filter by free
+								// Log.i(TAG, "Filtering by Free Events");
+								Log.i(TAG, "Event Cost: " + eventObject.getAdmission());
+								if (eventObject.getAdmission().equals(filterName)) {
+									filteredEvents.add(eventObject);
+									Log.i(TAG, "Number of events added: " + ++numEvents);
+								}
+								break;
+							case 3: // filter by paid
+								Log.i(TAG, "Event Cost: " + eventObject.getAdmission());
+								if (!(eventObject.getAdmission().equals(filterName))) {
+									filteredEvents.add(eventObject);
+									Log.i(TAG, "Number of events added: " + ++numEvents);
+								}
+								break;
+							default:
+								break;
 						}
 
 					}

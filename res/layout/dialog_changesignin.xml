@@ -9,7 +9,7 @@
         android:paddingLeft="5dp" >
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/organization_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -83,9 +83,23 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/newPasswordConfirm"
-            android:inputType="textPassword"
             android:imeOptions="actionDone"
+            android:inputType="textPassword"
             android:singleLine="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/changeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change" />
     </LinearLayout>
 
 </LinearLayout>

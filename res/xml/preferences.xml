@@ -4,21 +4,39 @@
     <PreferenceCategory
         android:key="pref_key_user_settings"
         android:title="@string/pref_user_settings_title" >
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/MapTypeEntries"
+            android:entryValues="@array/mapTypeValues"
+            android:key="pref_key_map_type"
+            android:summary="@string/pref_summary_map_type"
+            android:title="@string/pref_title_map_type" />
+
         <Preference
-            android:key="pref_key_placeholder"
-            android:summary="@string/pref_summary_placeholder"
-            android:title="@string/pref_title_placeholder" />
+            android:key="pref_key_notifications"
+            android:selectable="false"
+            android:summary="@string/pref_summary_notifications"
+            android:title="@string/pref_title_notifications" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="pref_key_admin_settings"
         android:title="@string/pref_admin_settings_title" >
         <Preference
-            android:key="pref_key_admin_signed_in"
-            android:title="@string/pref_admin_sign_in_title" />
-        <Preference android:title="@string/pref_admin_get_access_title" >
+            android:key="pref_admin_sign_in"
+            android:summary="@string/pref_summary_admin_sign_in"
+            android:title="@string/pref_title_admin_sign_in" >
+            <intent android:action=".SignInActivity" />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="pref_key_about_settings"
+        android:title="@string/pref_about_settings_title" >
+        <Preference
+            android:summary="@string/pref_summary_about"
+            android:title="@string/pref_about_title" >
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="http://www.google.com" />
+                android:data="http://oj7.github.io/TerpSync" />
         </Preference>
     </PreferenceCategory>
 

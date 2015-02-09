@@ -1,4 +1,4 @@
-package com.terpsync;
+package com.terpsync.settings;
 
 import android.app.Activity;
 import android.os.Bundle;
